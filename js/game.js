@@ -409,6 +409,7 @@ window.onload = function(){
 								remove(laserShot[i]);
 								laserShot.splice(i,1);
 								i--;
+								rez++;
 								break;
 							}
 						}
