@@ -1,6 +1,6 @@
 window.onload = function(){
     init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
-	alert("'W' - move up 'S' - move down 'SPACE' shoot 'A' move slower 'D' move faster");
+	alert("'W' - move up 'S' - move down 'SPACE' shoot 'A' move slower 'D' move faster GOAL is to hit enemys/lasers");
 	var backElement1 = rectangle(0, 0, window.innerWidth, window.innerHeight, 0x339966)
 	var backElement2 = image(window.innerWidth/2-87.5, window.innerHeight/2-100, 'images/button1.png');
 	var scorNr;
