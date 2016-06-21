@@ -8,6 +8,9 @@ window.onload = function(){
 	var shop=false;
 	var shipX;var shipY;var shipMove;
 	var ship;
+	var laserSoundEn=[];
+	var laserSoundShip=[];
+	var explosionSound=[];
 	var laserShot = [];var lastShot;
 	var POWER = [];var lastCharge;var coold;
 	var laserEnShot = [];var lastEnShot = [];
@@ -147,14 +150,23 @@ window.onload = function(){
 			var l = rectangle(ship.position.x+66, ship.position.y+2, 20, 3, 0x3366ff);
 			l.zindex = 102;
 			laserShot.push(l);
+			laserSoundShip.push(new Sound('sounds/laser1.mp3'));
+			laserSoundShip[laserSoundShip.length-1].play();
+			laserSoundShip.pop;
 			l = rectangle(ship.position.x+66, ship.position.y+63, 20, 3, 0x3366ff)
 			l.zindex = 102;
 			laserShot.push(l);
+			laserSoundShip.push(new Sound('sounds/laser1.mp3'));
+			laserSoundShip[laserSoundShip.length-1].play();
+			laserSoundShip.pop;
 			coold=1700;
 		}else{
 			var l = rectangle(ship.position.x+49, ship.position.y+32.5, 20, 3, 0x3366ff);
 			l.zindex = 102;
 			laserShot.push(l);
+			laserSoundShip.push(new Sound('sounds/laser1.mp3'));
+			laserSoundShip[laserSoundShip.length-1].play();
+			laserSoundShip.pop;
 			coold=1100;
 		}
 	}
@@ -162,6 +174,9 @@ window.onload = function(){
 		var l = rectangle(x+2, y+12, 20, 3, 0xff0000);
 		l.zindex = 102;
 		laserEnShot.push(l);
+		laserSoundEn.push(new Sound('sounds/laser2.mp3'));
+		laserSoundEn[laserSoundEn.length-1].play();
+		laserSoundEn.pop;
 	}
 	function power(){
 		POWER.push(rectangle(energy.position.x+100+16*POWER.length, energy.position.y, 15, 24, 0x3366ff))
@@ -362,6 +377,9 @@ window.onload = function(){
 						if(isCollision(laserShot[i],enemy[j],0)){
 							clearTimeout(handler);
 							move(bomb, laserShot[i].position.x, laserShot[i].position.y);
+							explosionSound.push(new Sound('sounds/explosion.mp3'));
+							explosionSound.play();
+							explosionSound.pop;
 							handler = setTimeout(function(){
 								move(bomb, -100, -100);
 							}, 3000);
@@ -407,6 +425,9 @@ window.onload = function(){
 							dualTime=0;
 							clearTimeout(handler);
 							move(bomb, laserEnShot[i].position.x, laserEnShot[i].position.y);
+							explosionSound.push(new Sound('sounds/explosion.mp3'));
+							explosionSound.play();
+							explosionSound.pop;
 							handler = setTimeout(function(){
 								move(bomb, -100, -100);
 							}, 3000);
@@ -414,6 +435,9 @@ window.onload = function(){
 							laserEnShot.splice(i,1);
 							i--;
 						}else{
+							explosionSound.push(new Sound('sounds/explosion.mp3'));
+							explosionSound.play();
+							explosionSound.pop;
 							gameOver();
 							break;
 						}
@@ -454,6 +478,9 @@ window.onload = function(){
 				//enemy hits my ship
 				if(isCollision(enemy[i],ship,0)){
 					if(shield.length==0){
+						explosionSound.push(new Sound('sounds/explosion.mp3'));
+						explosionSound.play();
+						explosionSound.pop;
 						gameOver();
 						break;
 					}else if(shield.length==1){
@@ -464,6 +491,9 @@ window.onload = function(){
 						}else{
 							remove(shield[shield.length-1]);
 							shield.splice(shield.length-1,1);
+							explosionSound.push(new Sound('sounds/explosion.mp3'));
+							explosionSound.play();
+							explosionSound.pop;
 							gameOver();
 							break;
 						}
@@ -487,6 +517,9 @@ window.onload = function(){
 						}
 						clearTimeout(handler);
 						move(bomb, enemy[i].position.x, enemy[i].position.y);
+						explosionSound.push(new Sound('sounds/explosion.mp3'));
+						explosionSound.play();
+						explosionSound.pop;
 						handler = setTimeout(function(){
 							move(bomb, -100, -100);
 						}, 3000);
