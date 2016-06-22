@@ -9,7 +9,7 @@ window.onload = function(){
 	var ship;
 	var gameSound=[];
 	var laserShot = [];var lastShot;
-	var POWER = [];var lastCharge;var coold;
+	var POWER;var lastCharge;var coold;
 	var laserEnShot = [];var lastEnShot = [];
 	var enemy = [];var lastEnMade;var enemyMoveY = [];var enspTime;
 	var now;
@@ -36,6 +36,9 @@ window.onload = function(){
 	var speedBuff=false;
 	var speedDeBuff=false;
 	var laserColision;
+	var POWERlength;
+	var POWERlenOne;
+	var POWERnr=0;
 	onClick(backElement2, function(){
 		remove(backElement2);
 		shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
@@ -65,6 +68,9 @@ window.onload = function(){
 		spark = image(-100, -100, 'images/spark1.png');
 		spark.zindex = 101;
 		energy = text(5, window.innerHeight*0.95, "POWER:", { font: '24px arial', fill: 0xffffff });
+		POWERlength = window.innerWidth/2+80-106;
+		POWERlenOne = POWERlength/20;
+		POWER = rectangle(-100,-100,10,10,0x3366ff);
 		scor = text(5, window.innerHeight*0.010, "SCORE:", { font: '24px arial', fill: 0xffffff });
 		rez=0;
 		recorde=0;
@@ -173,7 +179,14 @@ window.onload = function(){
 	}
 	function power(){
 		if(game==true){
-			POWER.push(rectangle(energy.position.x+100+16*POWER.length, energy.position.y, 15, 24, 0x3366ff))
+			remove(POWER)
+			POWER=rectangle(energy.position.x+100, energy.position.y, POWERlenOne*POWERnr, 24, 0x3366ff);
+		}
+	}
+	function unpower(){
+		if(game==true){
+			remove(POWER)
+			POWER=rectangle(energy.position.x+100, energy.position.y, POWERlenOne*POWERnr-1, 24, 0x3366ff);
 		}
 	}
 	function enemy1(){
@@ -219,10 +232,8 @@ window.onload = function(){
 			remove(laserShot[i]);
 		}
 		laserShot.length = 0;
-		for(var i=0;POWER.length>i;++i){
-			remove(POWER[i]);
-		}
-		POWER.length = 0;
+		remove(POWER);
+		POWERnr=0;
 		for(var i=0;laserEnShot.length>i;++i){
 			remove(laserEnShot[i]);
 		}
@@ -251,6 +262,8 @@ window.onload = function(){
 		var backElement8 = text(window.innerWidth/2+100, window.innerHeight/2-8, recorde, { font: '48px arial', fill: 0x3366ff });
 		remove(shieldPOW);
 		shop=false;
+		remove(bomb);
+		remove(spark);
 		enspTime=5000;
 		rez=0;
 		en=0;
@@ -283,6 +296,13 @@ window.onload = function(){
 			remove(backElement7);
 			remove(backElement8);
 			galaxySpeed=1;
+			clearTimeout(handler1);
+			clearTimeout(handler);
+			bomb = image(-100, -100, 'images/explosion.png');
+			bomb.zindex = 101;
+			spark = image(-100, -100, 'images/spark1.png');
+			spark.zindex = 101;
+			POWER = rectangle(-100,-100,10,10,0x3366ff);
 			HPtime = new Date().getTime();
 			lastShot = new Date().getTime();
 			lastCharge = new Date().getTime();
@@ -332,7 +352,7 @@ window.onload = function(){
 			remove(scorNr);
 			scorNr = text(105, window.innerHeight*0.010, rez, { font: '24px arial', fill: 0xffffff })
 			//recoil activates
-			if(POWER.length==0){
+			if(POWERnr==0){
 				recoil=480;
 				setTimeout(function(){
 					recoil=280;
@@ -345,10 +365,10 @@ window.onload = function(){
 				shipMove=0;
 			}
 			//laser makeing ship
-			if(POWER.length>=1 && now-lastShot>=200 && shooting==true){
+			if(POWERnr>=1 && now-lastShot>=200 && shooting==true){
 				lastShot = new Date().getTime();
-				remove(POWER[POWER.length-1]);
-				POWER.splice(POWER.length-1,1);
+				POWERnr--;
+				unpower();
 				shoot();
 			}
 			//explosion movements
@@ -580,9 +600,10 @@ window.onload = function(){
 			}
 			//energy charges
 			now = new Date().getTime();
-			if(energy.position.x+80+16*POWER.length+60>=shieldPOW.position.x || POWER.length==18){
+			if(POWERnr>=20){
 				
 			}else if(now-lastCharge>=coold*galaxySpeed){
+				POWERnr++;
 				power();
 				lastCharge = new Date().getTime();
 			}
