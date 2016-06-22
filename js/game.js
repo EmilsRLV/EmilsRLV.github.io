@@ -1,16 +1,13 @@
 window.onload = function(){
     init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
 	alert("'W' - move up 'S' - move down 'SPACE' shoot 'A' move slower 'D' move faster GOAL is to hit enemys/lasers");
-	var backElement1 = rectangle(0, 0, window.innerWidth, window.innerHeight, 0x339966)
 	var backElement2 = image(window.innerWidth/2-87.5, window.innerHeight/2-100, 'images/button1.png');
 	var scorNr;
 	var game=false;
 	var shop=false;
 	var shipX;var shipY;var shipMove;
 	var ship;
-	var laserSoundEn=[];
-	var laserSoundShip=[];
-	var explosionSound=[];
+	var gameSound=[];
 	var laserShot = [];var lastShot;
 	var POWER = [];var lastCharge;var coold;
 	var laserEnShot = [];var lastEnShot = [];
@@ -28,18 +25,18 @@ window.onload = function(){
 	var recoil;
 	var HPtime;
 	var shooting=false;
-	var fon;
-	var fon1;
+	var fon = image(0, 0, 'images/stars1.png');
+	fon.zindex = -1;
+	var fon1 = image(fon.position.x+window.innerWidth, 0, 'images/stars2.png');
+	fon1.zindex = -1;
 	var shieldPOW;
 	var shield = [];
 	var starTurn=true;
-	var galaxySpeed;
+	var galaxySpeed=1;
 	var speedBuff=false;
 	var speedDeBuff=false;
 	var laserColision;
-	pause();
 	onClick(backElement2, function(){
-		remove(backElement1);
 		remove(backElement2);
 		shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
 		if(shieldPOW.position.x+100+16*shield.length+15<window.innerWidth){
@@ -60,7 +57,6 @@ window.onload = function(){
 		lastCharge = new Date().getTime();
 		dualTimer = new Date().getTime();
 		coold=1100;
-		galaxySpeed=1;
 		lastEnMade =0;
 		enspTime=5000;
 		boostDual=false;
@@ -77,17 +73,12 @@ window.onload = function(){
 		dualTime = 0;
 		recoil=280;
 		HPtime = new Date().getTime();
-		fon = image(0, 0, 'images/stars1.png');
-		fon.zindex = -1;
-		fon1 = image(fon.position.x+window.innerWidth, 0, 'images/stars2.png');
-		fon1.zindex = -1;
 		game=true;
-		resume();
 	});
 	onKeyDown(KEY_UP, function(){
 		if(game==true){
 			if(shipY>=30){
-				shipMove=-4;
+				shipMove=-4*galaxySpeed;
 			}
 		}
 	});
@@ -101,7 +92,7 @@ window.onload = function(){
 	onKeyDown(KEY_DOWN, function(){
 		if(game==true){
 			if(shipY+130<=window.innerHeight){
-				shipMove=4;
+				shipMove=4*galaxySpeed;
 			}
 		}
 	});
@@ -147,73 +138,83 @@ window.onload = function(){
 		}
 	});
 	function shoot(){
-		if(boostDual==true){
-			var l = rectangle(ship.position.x+66, ship.position.y+2, 20, 3, 0x3366ff);
-			l.zindex = 102;
-			laserShot.push(l);
-			laserSoundShip.push(new Sound('sounds/laser1.mp3'));
-			laserSoundShip[laserSoundShip.length-1].play();
-			laserSoundShip.pop;
-			l = rectangle(ship.position.x+66, ship.position.y+63, 20, 3, 0x3366ff)
-			l.zindex = 102;
-			laserShot.push(l);
-			laserSoundShip.push(new Sound('sounds/laser1.mp3'));
-			laserSoundShip[laserSoundShip.length-1].play();
-			laserSoundShip.pop;
-			coold=1700;
-		}else{
-			var l = rectangle(ship.position.x+49, ship.position.y+32.5, 20, 3, 0x3366ff);
-			l.zindex = 102;
-			laserShot.push(l);
-			laserSoundShip.push(new Sound('sounds/laser1.mp3'));
-			laserSoundShip[laserSoundShip.length-1].play();
-			laserSoundShip.pop;
-			coold=1100;
+		if(game==true){
+			if(boostDual==true){
+				var l = rectangle(ship.position.x+66, ship.position.y+2, 20, 3, 0x3366ff);
+				l.zindex = 102;
+				laserShot.push(l);;
+				l = rectangle(ship.position.x+66, ship.position.y+63, 20, 3, 0x3366ff)
+				l.zindex = 102;
+				laserShot.push(l);
+				gameSound.push(new Sound('sounds/laser3.mp3'));
+				gameSound[gameSound.length-1].play();
+				gameSound.pop;
+				coold=1700;
+			}else{
+				var l = rectangle(ship.position.x+49, ship.position.y+32.5, 20, 3, 0x3366ff);
+				l.zindex = 102;
+				laserShot.push(l);
+				gameSound.push(new Sound('sounds/laser1.mp3'));
+				gameSound[gameSound.length-1].play();
+				gameSound.pop;
+				coold=1100;
+			}
 		}
 	}
 	function shootEn(x,y){
-		var l = rectangle(x+2, y+12, 20, 3, 0xff0000);
-		l.zindex = 102;
-		laserEnShot.push(l);
-		laserSoundEn.push(new Sound('sounds/laser2.mp3'));
-		laserSoundEn[laserSoundEn.length-1].play();
-		laserSoundEn.pop;
+		if(game==true){
+			var l = rectangle(x+2, y+12, 20, 3, 0xff0000);
+			l.zindex = 102;
+			laserEnShot.push(l);
+			gameSound.push(new Sound('sounds/laser2.mp3'));
+			gameSound[gameSound.length-1].play();
+			gameSound.pop;
+		}
 	}
 	function power(){
-		POWER.push(rectangle(energy.position.x+100+16*POWER.length, energy.position.y, 15, 24, 0x3366ff))
+		if(game==true){
+			POWER.push(rectangle(energy.position.x+100+16*POWER.length, energy.position.y, 15, 24, 0x3366ff))
+		}
 	}
 	function enemy1(){
-		var randomEnShipY = Math.random() * (window.innerHeight - 130);
-		if(randomEnShipY<=31){
-			randomEnShipY=32;
+		if(game==true){
+			var randomEnShipY = Math.random() * (window.innerHeight - 130);
+			if(randomEnShipY<=31){
+				randomEnShipY=32;
+			}
+			var e=image(window.innerWidth+20, randomEnShipY, 'images/enemy1.png');
+			e.zindex = 100;
+			enemy.push(e);
+			enemymSpeed*=-1;
+			enemyMoveY.push(enemymSpeed);
+			lastEnShot.push(new Date().getTime());
 		}
-		var e=image(window.innerWidth+20, randomEnShipY, 'images/enemy1.png');
-		e.zindex = 100;
-		enemy.push(e);
-		enemymSpeed*=-1;
-		enemyMoveY.push(enemymSpeed);
-		lastEnShot.push(new Date().getTime());
 	}
 	function dualBoost(){
-		var randomDualBoostY = Math.random() * (window.innerHeight - 130);
-		if(randomDualBoostY<30){
-			randomDualBoostY=30;
+		if(game==true){
+			var randomDualBoostY = Math.random() * (window.innerHeight - 130);
+			if(randomDualBoostY<30){
+				randomDualBoostY=30;
+			}
+			boost.push(image(window.innerWidth, randomDualBoostY, 'images/dual.png'));
 		}
-		boost.push(image(window.innerWidth, randomDualBoostY, 'images/dual.png'));
-		
 	}
 	function shieldBoost(){
-		var randomShieldBoostY = Math.random() * (window.innerHeight - 130);
-		if(randomShieldBoostY<30){
-			randomShieldBoostY=30;
+		if(game==true){
+			var randomShieldBoostY = Math.random() * (window.innerHeight - 130);
+			if(randomShieldBoostY<30){
+				randomShieldBoostY=30;
+			}
+			HP.push(image(window.innerWidth-40, randomShieldBoostY, 'images/shield.png'));
 		}
-		HP.push(image(window.innerWidth-40, randomShieldBoostY, 'images/shield.png'));
-		
 	}
 	function HPUP(){
-		shield.push(rectangle(shieldPOW.position.x+100+16*shield.length, shieldPOW.position.y, 15, 24, 0x993399))
+		if(game==true){
+			shield.push(rectangle(shieldPOW.position.x+100+16*shield.length, shieldPOW.position.y, 15, 24, 0x993399))
+		}
 	}
 	function gameOver(){
+		game=false;
 		for(var i=0;laserShot.length>i;++i){
 			remove(laserShot[i]);
 		}
@@ -243,17 +244,13 @@ window.onload = function(){
 			localStorage.setItem('high',rez);
 		}
 		recorde=localStorage.getItem('high') ? localStorage.getItem('high') : 0;
-		var backElement6 = image(window.innerWidth/2-960, window.innerHeight/2-540, 'images/Planets.jpg');
 		var backElement5 = text(window.innerWidth/2-200, window.innerHeight/2-55, "SCORE:", { font: '48px arial', fill: 0x3366ff });
 		var backElement4 = text(window.innerWidth/2, window.innerHeight/2-55, rez, { font: '48px arial', fill: 0x3366ff });
 		var backElement3 = image(window.innerWidth/2-173.5, window.innerHeight/2+48, 'images/button2.png');
 		var backElement7 = text(window.innerWidth/2-200, window.innerHeight/2-8, "HIGH SCORE:", { font: '44px arial', fill: 0x3366ff })
 		var backElement8 = text(window.innerWidth/2+100, window.innerHeight/2-8, recorde, { font: '48px arial', fill: 0x3366ff });
-		remove(fon);
-		remove(fon1);
-		game=false;
+		remove(shieldPOW);
 		shop=false;
-		starTurn=true;
 		enspTime=5000;
 		rez=0;
 		en=0;
@@ -270,24 +267,30 @@ window.onload = function(){
 		backElement3.zindex = 105;
 		backElement4.zindex = 105;
 		backElement5.zindex = 105;
-		backElement6.zindex = 104;
 		backElement7.zindex = 105;
 		backElement8.zindex = 105;
-		coold=180;
+		coold=1100;
 		recoil=280;
 		dualTime=0;
 		remove(ship);
+		remove(energy);
+		remove(scor);
+		remove(scorNr);
 		onClick(backElement3, function(){
 			remove(backElement3);
 			remove(backElement4);
 			remove(backElement5);
-			remove(backElement6);
 			remove(backElement7);
 			remove(backElement8);
+			galaxySpeed=1;
 			HPtime = new Date().getTime();
 			lastShot = new Date().getTime();
 			lastCharge = new Date().getTime();
 			dualTimer = new Date().getTime();
+			shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
+			energy = text(5, window.innerHeight*0.95, "POWER:", { font: '24px arial', fill: 0xffffff });
+			scor = text(5, window.innerHeight*0.010, "SCORE:", { font: '24px arial', fill: 0xffffff });
+			scorNr=text(105, window.innerHeight*0.010, 0, { font: '24px arial', fill: 0xffffff });
 			if(shieldPOW.position.x+100+16*shield.length+15<window.innerWidth){
 				shield.push(rectangle(shieldPOW.position.x+100+16*shield.length, shieldPOW.position.y, 15, 24, 0x993399))
 			}
@@ -301,36 +304,30 @@ window.onload = function(){
 			ship.zindex = 99;
 			move(bomb,-100,-100);
 			move(spark,-100,-100);
-			fon = image(0, 0, 'images/stars1.png');
-			fon.zindex = -1;
-			fon1 = image(fon.position.x+window.innerWidth, 0, 'images/stars2.png');
-			fon1.zindex = -1;
-			resume();
 			game=true;
 		});
-		pause();
 	}
 	animate(function(){
+		//star effects
+		if(fon.position.x+2732-window.innerWidth>0 && starTurn==true){
+			moveBy(fon,-8.5*galaxySpeed,0);
+		}else if(fon.position.x+2732>0 && fon.position.x+2732-window.innerWidth<=0){
+			moveBy(fon,-8.5*galaxySpeed,0);
+			moveBy(fon1,-8.5*galaxySpeed,0);
+		}else if(fon.position.x+2732<=0){
+			move(fon,window.innerWidth,0);
+			starTurn=false;
+		}
+		if(fon1.position.x+4098-window.innerWidth>0 && starTurn==false){
+			moveBy(fon1,-8.5*galaxySpeed,0);
+		}else if(fon1.position.x+4098>0 && fon1.position.x+4098-window.innerWidth<=0){
+			moveBy(fon1,-8.5*galaxySpeed,0);
+			moveBy(fon,-8.5*galaxySpeed,0);
+		}else if(fon1.position.x+4098<=0){
+			move(fon1,window.innerWidth,0);
+			starTurn=true;
+		}
 		if(game==true){
-			//star effects
-			if(fon.position.x+2732-window.innerWidth>0 && starTurn==true){
-				moveBy(fon,-8.5*galaxySpeed,0);
-			}else if(fon.position.x+2732>0 && fon.position.x+2732-window.innerWidth<=0){
-				moveBy(fon,-8.5*galaxySpeed,0);
-				moveBy(fon1,-8.5*galaxySpeed,0);
-			}else if(fon.position.x+2732<=0){
-				move(fon,window.innerWidth,0);
-				starTurn=false;
-			}
-			if(fon1.position.x+4098-window.innerWidth>0 && starTurn==false){
-				moveBy(fon1,-8.5*galaxySpeed,0);
-			}else if(fon1.position.x+4098>0 && fon1.position.x+4098-window.innerWidth<=0){
-				moveBy(fon1,-8.5*galaxySpeed,0);
-				moveBy(fon,-8.5*galaxySpeed,0);
-			}else if(fon1.position.x+4098<=0){
-				move(fon1,window.innerWidth,0);
-				starTurn=true;
-			}
 			//score counting
 			remove(scorNr);
 			scorNr = text(105, window.innerHeight*0.010, rez, { font: '24px arial', fill: 0xffffff })
@@ -380,9 +377,9 @@ window.onload = function(){
 							laserColision=true;
 							clearTimeout(handler);
 							move(bomb, laserShot[i].position.x, laserShot[i].position.y);
-							explosionSound.push(new Sound('sounds/explosion.mp3'));
-							explosionSound[explosionSound.length-1].play();
-							explosionSound.pop;
+							gameSound.push(new Sound('sounds/explosion.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 							handler = setTimeout(function(){
 								move(bomb, -100, -100);
 							}, 3000);
@@ -403,11 +400,14 @@ window.onload = function(){
 								move(spark, laserShot[i].position.x, laserShot[i].position.y-31);
 								handler1 = setTimeout(function(){
 									move(spark, -100, -100);
-								}, 500);
+								}, 300);
 								remove(laserEnShot[j]);
 								laserEnShot.splice(j,1);
 								remove(laserShot[i]);
 								laserShot.splice(i,1);
+								gameSound.push(new Sound('sounds/laserColision.mp3'));
+								gameSound[gameSound.length-1].play();
+								gameSound.pop;
 								i--;
 								rez++;
 								break;
@@ -431,9 +431,9 @@ window.onload = function(){
 							dualTime=0;
 							clearTimeout(handler);
 							move(bomb, laserEnShot[i].position.x, laserEnShot[i].position.y);
-							explosionSound.push(new Sound('sounds/explosion.mp3'));
-							explosionSound[explosionSound.length-1].play();
-							explosionSound.pop;
+							gameSound.push(new Sound('sounds/explosion.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 							handler = setTimeout(function(){
 								move(bomb, -100, -100);
 							}, 3000);
@@ -441,9 +441,9 @@ window.onload = function(){
 							laserEnShot.splice(i,1);
 							i--;
 						}else{
-							explosionSound.push(new Sound('sounds/explosion.mp3'));
-							explosionSound[explosionSound.length-1].play();
-							explosionSound.pop;
+							gameSound.push(new Sound('sounds/explosion.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 							gameOver();
 							break;
 						}
@@ -452,7 +452,7 @@ window.onload = function(){
 						move(spark, laserEnShot[i].position.x-30, ship.position.y);
 						handler1 = setTimeout(function(){
 							move(spark, -100, -100);
-						}, 500);
+						}, 300);
 						remove(laserEnShot[i]);
 						laserEnShot.splice(i,1);
 						remove(shield[shield.length-1]);
@@ -465,7 +465,7 @@ window.onload = function(){
 						move(spark, laserEnShot[i].position.x-30, ship.position.y);
 						handler1 = setTimeout(function(){
 							move(spark, -100, -100);
-						}, 500);
+						}, 300);
 						remove(laserEnShot[i]);
 						laserEnShot.splice(i,1);
 						remove(shield[shield.length-1]);
@@ -473,6 +473,13 @@ window.onload = function(){
 						if(shield.length==0){
 							remove(ship);
 							ship = image(shipX , shipY , 'images/ship.png');
+							gameSound.push(new Sound('sounds/forceField2.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
+						}else{
+							gameSound.push(new Sound('sounds/forceField1.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 						}
 						i--;
 					}
@@ -484,9 +491,9 @@ window.onload = function(){
 				//enemy hits my ship
 				if(isCollision(enemy[i],ship,0)){
 					if(shield.length==0){
-						explosionSound.push(new Sound('sounds/explosion.mp3'));
-						explosionSound[explosionSound.length-1].play();
-						explosionSound.pop;
+						gameSound.push(new Sound('sounds/explosion.mp3'));
+						gameSound[gameSound.length-1].play();
+						gameSound.pop;
 						gameOver();
 						break;
 					}else if(shield.length==1){
@@ -497,9 +504,9 @@ window.onload = function(){
 						}else{
 							remove(shield[shield.length-1]);
 							shield.splice(shield.length-1,1);
-							explosionSound.push(new Sound('sounds/explosion.mp3'));
-							explosionSound[explosionSound.length-1].play();
-							explosionSound.pop;
+							gameSound.push(new Sound('sounds/explosion.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 							gameOver();
 							break;
 						}
@@ -523,9 +530,9 @@ window.onload = function(){
 						}
 						clearTimeout(handler);
 						move(bomb, enemy[i].position.x, enemy[i].position.y);
-						explosionSound.push(new Sound('sounds/explosion.mp3'));
-						explosionSound[explosionSound.length-1].play();
-						explosionSound.pop;
+						gameSound.push(new Sound('sounds/explosion.mp3'));
+						gameSound[gameSound.length-1].play();
+						gameSound.pop;
 						handler = setTimeout(function(){
 							move(bomb, -100, -100);
 						}, 3000);
@@ -541,10 +548,28 @@ window.onload = function(){
 					enemyMoveY.splice(i,1);
 					lastEnShot.splice(i,1);
 					i--;
-				}else if(enemy[i].position.y+130>=window.innerHeight){
+				}else if(enemy[i].position.y+130>=window.innerHeight || enemy[i].position.y<=30){
 					enemyMoveY[i]*=-1;
-				}else if(enemy[i].position.y<=30){
-					enemyMoveY[i]*=-1;
+				}else{
+					var laserUnder=false;
+					var laserOver=false;
+					//trys to doge
+					for(var j=0;j<laserShot.length;j++){
+						if(enemy[i].position.y+55<laserShot[j].position.y && enemy[i].position.y+58>=laserShot[j].position.y && enemy[i].position.x>=laserShot[j].x && enemy[i].position.x+123>=laserShot[j].x){
+							laserUnder=true;
+						}else if(enemy[i].position.y>laserShot[j].position.y+3 && enemy[i].position.y<=laserShot[j].position.y+6 && enemy[i].position.x>=laserShot[j].x && enemy[i].position.x+123>=laserShot[j].x){
+							laserOver=true;
+						}
+					}
+					if(laserUnder==true){
+						if(enemy[i].position.y>=85){
+							enemyMoveY[i]=-3.75;
+						}
+					}else if(laserOver==true){
+						if(enemy[i].position.y<=185){
+							enemyMoveY[i]=+3.75;
+						}
+					}
 				}
 				//enemy shoots laser
 				now = new Date().getTime();
@@ -557,7 +582,7 @@ window.onload = function(){
 			now = new Date().getTime();
 			if(energy.position.x+80+16*POWER.length+60>=shieldPOW.position.x || POWER.length==18){
 				
-			}else if(now-lastCharge>=coold){
+			}else if(now-lastCharge>=coold*galaxySpeed){
 				power();
 				lastCharge = new Date().getTime();
 			}
@@ -588,6 +613,9 @@ window.onload = function(){
 						ship = image(shipX, shipY, 'images/ship2.png');
 					}else{
 						ship = image(shipX, shipY, 'images/ship2SH.png');
+						gameSound.push(new Sound('sounds/forceField3.mp3'));
+						gameSound[gameSound.length-1].play();
+						gameSound.pop;
 					}
 					i--;
 				}else if(boost[i].position.x==-74){
@@ -607,6 +635,9 @@ window.onload = function(){
 					ship=image(shipX, shipY, 'images/ship.png');
 				}else{
 					ship=image(shipX, shipY, 'images/shipSH.png');
+					gameSound.push(new Sound('sounds/forceField3.mp3'));
+					gameSound[gameSound.length-1].play();
+					gameSound.pop;
 				}
 			}
 			//spawns a shieldBoost
@@ -625,9 +656,15 @@ window.onload = function(){
 						if(shield.length==0 && boostDual==true){
 							remove(ship);
 							ship = image(shipX ,shipY , 'images/ship2SH.png');
+							gameSound.push(new Sound('sounds/forceField3.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 						}else if(shield.length==0){
 							remove(ship);
 							ship = image(shipX ,shipY , 'images/shipSH.png');
+							gameSound.push(new Sound('sounds/forceField3.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
 						}
 						HPUP();
 					}else if(HP[i].position.x==-75){
