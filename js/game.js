@@ -615,6 +615,15 @@ window.onload = function(){
 				}else if(enemy[i].position.y+130>=window.innerHeight || enemy[i].position.y<=30){
 					enemyMoveY[i]*=-1;
 					moveBy(enemy[i],-1.75*galaxySpeed,enemyMoveY[i]);
+				}else if(enemyMoveY[i]==0){
+						if(enemy[i]+55<=window.innerHeight/2){
+							enemyMoveY[i]=+3.75;
+						}else{
+							enemyMoveY[i]=-3.75;
+						}
+						moveBy(enemy[i],-1.75*galaxySpeed,enemyMoveY[i]);
+				}else{
+					moveBy(enemy[i],-1.75*galaxySpeed,enemyMoveY[i]);
 				}
 				//enemy shoots laser
 				now = new Date().getTime();
