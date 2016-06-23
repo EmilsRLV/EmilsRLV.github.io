@@ -507,7 +507,6 @@ window.onload = function(){
 			}
 			//enemy movement(unfinished)
 			for(var i=0;i<enemy.length;i++){
-				moveBy(enemy[i],-1.75*galaxySpeed,enemyMoveY[i]);
 				//enemy hits my ship
 				if(isCollision(enemy[i],ship,0)){
 					if(shield.length==0){
@@ -568,20 +567,30 @@ window.onload = function(){
 					enemyMoveY.splice(i,1);
 					lastEnShot.splice(i,1);
 					i--;
-				}else if(enemy[i].position.y+130>=window.innerHeight || enemy[i].position.y<=30){
-					enemyMoveY[i]*=-1;
-				}else{
+				}else if(laserShot.length>=1){
 					var laserUnder=false;
 					var laserOver=false;
+					var laserFront=false;
 					//trys to doge
 					for(var j=0;j<laserShot.length;j++){
-						if(enemy[i].position.y+55<laserShot[j].position.y && enemy[i].position.y+58>=laserShot[j].position.y && enemy[i].position.x>=laserShot[j].x && enemy[i].position.x+123>=laserShot[j].x){
+						if((enemy[i].position.y<=laserShot[j].position.y && enemy[i].position.y+61>=laserShot[j].position.y && laserShot[j].position.x-20>=enemy[i].position.x && laserShot[j].position.x<=enemy[i].position.x+143) || enemy[i].position.y+130>=window.innerHeight){
 							laserUnder=true;
-						}else if(enemy[i].position.y>laserShot[j].position.y+3 && enemy[i].position.y<=laserShot[j].position.y+6 && enemy[i].position.x>=laserShot[j].x && enemy[i].position.x+123>=laserShot[j].x){
+						}else if((enemy[i].position.y>=laserShot[j].position.y && enemy[i].position.y-6<=laserShot[j].position.y && laserShot[j].position.x+20>=enemy[i].position.x && laserShot[j].position.x<=enemy[i].position.x+143) || enemy[i].position.y<=30){
 							laserOver=true;
+						}else if(enemy[i].position.y-3<=laserShot[j].position.y && enemy[i].position.y+58>=laserShot[j].position.y && enemy[i].position.x-160<=laserShot[j].position.x && enemy[i].position.x>=laserShot[j].position.x+20){
+							laserFront=true;
 						}
 					}
-					if(laserUnder==true){
+					if(laserUnder==true && laserOver==true && laserFront==true){
+						enemyMoveY[i]=0;
+						now = new Date().getTime();
+						if(now-lastEnShot[i]>=600){
+							shootEn(enemy[i].position.x,enemy[i].position.y);
+							lastEnShot[i] = new Date().getTime();
+						}
+					}else if(laserUnder==true && laserOver==true){
+						enemyMoveY[i]=0;
+					}else if(laserUnder==true){
 						if(enemy[i].position.y>=85){
 							enemyMoveY[i]=-3.75;
 						}
@@ -589,7 +598,23 @@ window.onload = function(){
 						if(enemy[i].position.y<=185){
 							enemyMoveY[i]=+3.75;
 						}
+					}else if(laserFront==true){
+						if(enemy[i]+55<=window.innerHeight/2){
+							enemyMoveY[i]=+3.75;
+						}else{
+							enemyMoveY[i]=-3.75;
+						}
+					}else if(enemyMoveY[i]==0){
+						if(enemy[i]+55<=window.innerHeight/2){
+							enemyMoveY[i]=+3.75;
+						}else{
+							enemyMoveY[i]=-3.75;
+						}
 					}
+					moveBy(enemy[i],-1.75*galaxySpeed,enemyMoveY[i]);
+				}else if(enemy[i].position.y+130>=window.innerHeight || enemy[i].position.y<=30){
+					enemyMoveY[i]*=-1;
+					moveBy(enemy[i],-1.75*galaxySpeed,enemyMoveY[i]);
 				}
 				//enemy shoots laser
 				now = new Date().getTime();
