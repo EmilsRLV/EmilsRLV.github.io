@@ -1,7 +1,5 @@
 window.onload = function(){
     init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
-	var mp3='Black Bullet ed full.mp3';
-	var music=new Sound(mp3);
 	var start=false;
 	//localStorage.clear();
 	//localStorage.removeItem('generate');
@@ -169,7 +167,6 @@ window.onload = function(){
 	}
 	animate(function(){
 		if(start==true){
-			music.play();
 			//playerY+=TheWorldMoveY*-1;
 			for(var worldY=0;worldY<=1625;worldY+=65){
 				for(var worldX=0;worldX<=1625;worldX+=65){
