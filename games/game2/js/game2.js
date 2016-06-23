@@ -35,8 +35,6 @@ window.onload = function(){
 		}
 	});
 	onKeyDown(KEY_DOWN, function(){
-		alert(TheWorldLevel0[65][65].position.y);
-		alert(TheWorldLevel0[65][65].position.x);
 		if(TheWorldLevel0[1625][0].position.y>=player.position.y && moveY1==false){
 			TheWorldMoveY=-1.3;
 			remove(player);
