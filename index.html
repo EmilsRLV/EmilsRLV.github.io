@@ -1,9 +1,20 @@
 <!DOCTYPE html>
 <html>
-<body>
+<body onload="myFunction()">
 
-<p><a href="games/game1/index.html">Game1</a></p>
-<p><a href="games/game2/index.html">Game2</a></p>
+<button id="demo"></button>
+<button id="demo" onclick="myFunction2()">Game2</button>
+
+<script>
+function myFunction() {
+    var str = "Game1";
+    var result = str.link("games/game1/index.html");
+    document.getElementById("demo").innerHTML = result;
+}
+function myFunction2() {
+    alert("Sorry this currently do doesn't work");
+}
+</script>
 
 </body>
 </html>
