@@ -1,16 +1,11 @@
 <!DOCTYPE html>
 <html>
-<body onload="myFunction()">
-
-<button id="demo"></button>
+<body>
+<form method="get" action="games/game1/index.html">
+    <button type="submit">Game1</button>
+</form>
 <button id="demo" onclick="myFunction2()">Game2</button>
-
 <script>
-function myFunction() {
-    var str = "Game1";
-    var result = str.link("games/game1/index.html");
-    document.getElementById("demo").innerHTML = result;
-}
 function myFunction2() {
     alert("Sorry this currently do doesn't work");
 }
