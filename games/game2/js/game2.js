@@ -2,7 +2,7 @@ window.onload = function(){
 	init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
 	var start=false;
 	//localStorage.clear();
-	//localStorage.removeItem('generate');
+	localStorage.removeItem('generate');
 	var worldMoveX=0;
 	var worldMoveY=0;
 	var player=image(window.innerWidth/2-32.5,window.innerHeight/2-32.5,'images/playerN.png');
