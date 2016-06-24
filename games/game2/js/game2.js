@@ -182,7 +182,7 @@ window.onload = function(){
 		}
 	}
 	animate(function(){
-		if(start==true){
+		if(start==true && TheWorldLevel0[10][10]!='hey'){
 			//playerY+=TheWorldMoveY*-1;
 			for(var worldY=0;worldY<=10;worldY++){
 				for(var worldX=0;worldX<=10;worldX++){
