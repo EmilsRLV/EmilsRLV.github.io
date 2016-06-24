@@ -30,6 +30,7 @@ window.onload = function(){
 	var TheWorldMoveX=0;
 	var movedX=0;
 	var movedY=0;
+	var speed=1;
 	var resetAll = text(0, 0, "RESET", { font: '24px arial', fill: 0xffffff });
 	resetAll.zindex=1000;
 	onKeyDown(KEY_UP, function(){
@@ -50,7 +51,7 @@ window.onload = function(){
 		}
 	});
 	onKeyDown(KEY_DOWN, function(){
-		if(TheWorldLevel0[10][0].position.y>=player.position.y && moveY1==false){
+		if(TheWorldLevel0[50][0].position.y>=player.position.y && moveY1==false){
 			TheWorldMoveY=-1.3;
 			remove(player);
 			player=image(window.innerWidth/2-32.5,window.innerHeight/2-32.5,'images/playerS.png');
@@ -84,7 +85,7 @@ window.onload = function(){
 		}
 	});
 	onKeyDown(KEY_RIGHT, function(){
-		if(TheWorldLevel0[0][10].position.x>=player.position.x && moveX1==false){
+		if(TheWorldLevel0[0][50].position.x>=player.position.x && moveX1==false){
 			TheWorldMoveX=-1.3;
 			remove(player);
 			player=image(window.innerWidth/2-32.5,window.innerHeight/2-32.5,'images/playerE.png');
@@ -113,22 +114,22 @@ window.onload = function(){
 		if(start==false){
 			var boxX=startX;
 			var boxY=startY;	
-			for(i=0;i<=100;i++) {
+			for(i=0;i<=50;i++) {
 				TheWorldLevel0[i]=new Array();
-				for (j=0;j<=100;j++) {
+				for (j=0;j<=50;j++) {
 					TheWorldLevel0[i][j]="hey";
 				}
 			}
-			for(i=0;i<=100;i++) {
+			for(i=0;i<=50;i++) {
 				TheWorldLevel1[i]=new Array();
-				for (j=0;j<=100;j++) {
+				for (j=0;j<=50;j++) {
 					TheWorldLevel1[i][j]="hey";
 				}
 			}
 			var sk0;
 			var sk1;
-			for(var worldY=0;worldY<=10;worldY++){
-				for(var worldX=0;worldX<=10;worldX++){
+			for(var worldY=0;worldY<=50;worldY++){
+				for(var worldX=0;worldX<=50;worldX++){
 					sk0=(boxY*10+boxX)/10;
 					sk1=sk0;
 					var generatedTerain=Math.random()*100;
@@ -172,13 +173,13 @@ window.onload = function(){
 		if(start==false){
 			var boxX=startX;
 			var boxY=startY;	
-			for(i=0;i<=100;i++) {
+			for(i=0;i<=50;i++) {
 				TheWorldLevel0[i]=new Array();
 				for (j=0;j<=100;j++) {
 					TheWorldLevel0[i][j]="hey";
 				}
 			}
-			for(i=0;i<=100;i++) {
+			for(i=0;i<=50;i++) {
 				TheWorldLevel1[i]=new Array();
 				for (j=0;j<=100;j++) {
 					TheWorldLevel1[i][j]="hey";
@@ -186,8 +187,8 @@ window.onload = function(){
 			}
 			var sk0;
 			var sk1;
-			for(var worldY=0;worldY<=10;worldY++){
-				for(var worldX=0;worldX<=10;worldX++){
+			for(var worldY=0;worldY<=50;worldY++){
+				for(var worldX=0;worldX<=50;worldX++){
 					sk0=(boxY*10+boxX)/10;
 					sk1=sk0;
 					var grass;
@@ -227,14 +228,26 @@ window.onload = function(){
 		}
 	}
 	animate(function(){
-		if(start==true && TheWorldLevel0[10][10]!='hey'){
+		if(start==true && TheWorldLevel0[50][50]!='hey'){
 			movedY-=TheWorldMoveY;
 			movedX-=TheWorldMoveX;
-			for(var worldY=0;worldY<=10;worldY++){
-				for(var worldX=0;worldX<=10;worldX++){
-					moveBy(TheWorldLevel0[worldY][worldX],TheWorldMoveX,TheWorldMoveY);
+			for(var worldY=0,sk0,sk1;worldY<=50;worldY++){
+				for(var worldX=0;worldX<=50;worldX++){
+					sk0=((TheWorldLevel0[worldY][worldX].position.y+TheWorldMoveY)*10+TheWorldLevel0[worldY][worldX].position.x+TheWorldMoveX)/10;
+					sk1=(TheWorldLevel0[worldY][worldX].position.y*10+TheWorldLevel0[worldY][worldX].position.x)/10;
+					if(localStorage.getItem(sk1)=='grass1'){
+						localStorage.setItem(sk0,'grass1');
+					}else if(localStorage.getItem(sk1)=='stone1'){
+						localStorage.setItem(sk0,'stone1');
+					}
+					moveBy(TheWorldLevel0[worldY][worldX],TheWorldMoveX*speed,TheWorldMoveY*speed);
 					if(TheWorldLevel1[worldY][worldX]!='hey'){
-						moveBy(TheWorldLevel1[worldY][worldX],TheWorldMoveX,TheWorldMoveY);
+						if(localStorage.getItem(sk1)=='tree1'){
+							localStorage.setItem(sk0,'tree1');
+						}else if(localStorage.getItem(sk1)=='rock1'){
+							localStorage.setItem(sk0,'rock1');
+						}
+						moveBy(TheWorldLevel1[worldY][worldX],TheWorldMoveX*speed,TheWorldMoveY*speed);
 					}
 				}
 			}
