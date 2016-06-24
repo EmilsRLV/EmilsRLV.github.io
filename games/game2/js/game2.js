@@ -120,16 +120,6 @@ window.onload = function(){
 			boxX=startX;
 			boxY+=65;
 		}
-		console.log(player.position.y);
-		console.log(nrY);
-		console.log(valueYadd);
-		console.log(startY);
-		console.log(TheWorldLevel0[0][0].position.y);
-		console.log(player.position.x);
-		console.log(nrX);
-		console.log(valueXadd);
-		console.log(startX);
-		console.log(TheWorldLevel0[0][0].position.x);
 		start=true;
 		}
 	}
