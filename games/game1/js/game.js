@@ -2,26 +2,26 @@ window.onload = function(){
     init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
 	alert("'W' - move up 'S' - move down 'SPACE' shoot 'A' move slower 'D' move faster GOAL is to hit enemys/lasers");
 	var backElement2 = image(window.innerWidth/2-87.5, window.innerHeight/2-100, 'images/button1.png');
-	var scorNr;
 	var game=false;
+	var level0=true, level1=false, level2=false, level3=false;
 	var shop=false;
-	var shipX;var shipY;var shipMove;
+	var shipX, shipY, shipMove;
 	var ship;
+	//localStorage.clear();
 	var gameSound=[];
-	var laserShot = [];var lastShot;
-	var POWER;var lastCharge;var coold;
-	var laserEnShot = [];var lastEnShot = [];
-	var enemy = [];var lastEnMade;var enemyMoveY = [];var enspTime;
+	var laserShot = [], lastShot;
+	var POWER, lastCharge, coold;
+	var laserEnShot = [], lastEnShot = [];
+	var enemy = [], lastEnMade, enemyMoveY = [], enspTime;
 	var now;
-	var boostDual=false;var dualTime;var dualTimer;
+	var boostDual=false, dualTime, dualTimer;
 	var bomb;
 	var spark;
 	var energy;
-	var scor;
-	var rez;var recorde;
-	var handler;var handler1;
+	var rezEn, recordeEn;
+	var handler, handler1;
 	var enemymSpeed;
-	var boost = [];var HP = [];
+	var boost = [], HP = [];
 	var recoil;
 	var HPtime;
 	var shooting=false;
@@ -35,10 +35,13 @@ window.onload = function(){
 	var galaxySpeed=1;
 	var speedBuff=false;
 	var speedDeBuff=false;
+	var newHighEn=false;
 	var laserColision;
 	var POWERlength;
 	var POWERlenOne;
 	var POWERnr=0;
+	var dis=0,disBest=0;
+	var newHighDis=false;
 	onClick(backElement2, function(){
 		remove(backElement2);
 		shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
@@ -71,10 +74,10 @@ window.onload = function(){
 		POWERlength = window.innerWidth/2+80-106;
 		POWERlenOne = POWERlength/20;
 		POWER = rectangle(-100,-100,10,10,0x3366ff);
-		scor = text(5, window.innerHeight*0.010, "SCORE:", { font: '24px arial', fill: 0xffffff });
-		rez=0;
-		recorde=0;
-		scorNr=text(105, window.innerHeight*0.010, 0, { font: '24px arial', fill: 0xffffff });
+		//scor = text(5, window.innerHeight*0.010, "SCORE:", { font: '24px arial', fill: 0xffffff });
+		rezEn=0;
+		recordeEn=0;
+		//scorNr=text(105, window.innerHeight*0.010, 0, { font: '24px arial', fill: 0xffffff });
 		enemymSpeed=-3.75;
 		dualTime = 0;
 		recoil=280;
@@ -251,21 +254,45 @@ window.onload = function(){
 			remove(HP[i]);
 		}
 		HP.length = 0;
-		if(rez>localStorage.getItem('high')){
-			localStorage.setItem('high',rez);
+		if(rezEn>localStorage.getItem('high')){
+			newHighEn=true;
+			localStorage.setItem('high',rezEn);
+		}else{
+			newHighEn=false;
 		}
-		recorde=localStorage.getItem('high') ? localStorage.getItem('high') : 0;
-		var backElement5 = text(window.innerWidth/2-200, window.innerHeight/2-55, "SCORE:", { font: '48px arial', fill: 0x3366ff });
-		var backElement4 = text(window.innerWidth/2, window.innerHeight/2-55, rez, { font: '48px arial', fill: 0x3366ff });
-		var backElement3 = image(window.innerWidth/2-173.5, window.innerHeight/2+48, 'images/button2.png');
-		var backElement7 = text(window.innerWidth/2-200, window.innerHeight/2-8, "HIGH SCORE:", { font: '44px arial', fill: 0x3366ff })
-		var backElement8 = text(window.innerWidth/2+100, window.innerHeight/2-8, recorde, { font: '48px arial', fill: 0x3366ff });
+		recordeEn=localStorage.getItem('high') ? localStorage.getItem('high') : 0;
+		if(dis>localStorage.getItem('distance')){
+			newHighDis=true;
+			localStorage.setItem('distance',dis/1000);
+		}else{
+			newHighDis=false;
+		}
+		disBest=localStorage.getItem('distance') ? localStorage.getItem('distance') : 0;
+		var backElement5 = text(10, 10, "ENEMYS SHOT:", { font: '28px arial', fill: 0x3366ff });
+		var backElement4 = text(17.5*12+10, 10, rezEn, { font: '28px arial', fill: 0x3366ff });
+		var backElement11 = text(10, 38, "LY:", { font: '28px arial', fill: 0x3366ff });
+		var backElement12 = text(17.5*3+10, 38, dis/1000, { font: '28px arial', fill: 0x3366ff });
+		var backElement3 = image(window.innerWidth/2-173.5, window.innerHeight-68, 'images/button2.png');
+		if(newHighEn==false){
+			var backElement7 = text(window.innerWidth/2, 10, "SHOT BEST:", { font: '28px arial', fill: 0x3366ff })
+			var backElement8 = text(window.innerWidth/2+17.5*10, 10, recordeEn, { font: '28px arial', fill: 0x3366ff });
+		}else if(newHighEn==true){
+			var backElement7 = text(window.innerWidth/2, 10, "NEW SHOT BEST:", { font: '28px arial', fill: 0x3366ff })
+			var backElement8 = text(window.innerWidth/2+17.5*14, 10, recordeEn, { font: '28px arial', fill: 0x3366ff });
+		}
+		if(newHighDis==false){
+			var backElement9 = text(window.innerWidth/2, 38, "LY BEST:", { font: '28px arial', fill: 0x3366ff })
+			var backElement10 = text(window.innerWidth/2+17.5*8, 38, disBest, { font: '28px arial', fill: 0x3366ff });
+		}else if(newHighDis==true){
+			var backElement9 = text(window.innerWidth/2, 38, "NEW LY BEST:", { font: '28px arial', fill: 0x3366ff })
+			var backElement10 = text(window.innerWidth/2+17.5*12, 38, disBest, { font: '28px arial', fill: 0x3366ff });
+		}
 		remove(shieldPOW);
 		shop=false;
 		remove(bomb);
 		remove(spark);
 		enspTime=5000;
-		rez=0;
+		rezEn=0;
 		en=0;
 		shipMove=0;
 		enemyMoveY.length=0;
@@ -276,6 +303,7 @@ window.onload = function(){
 		shooting=false;
 		speedBuff=false;
 		speedDeBuff=false;
+		level0=true, level1=false, level2=false, level3=false;
 		time=0;
 		backElement3.zindex = 105;
 		backElement4.zindex = 105;
@@ -295,6 +323,10 @@ window.onload = function(){
 			remove(backElement5);
 			remove(backElement7);
 			remove(backElement8);
+			remove(backElement9);
+			remove(backElement10);
+			remove(backElement11);
+			remove(backElement12);
 			galaxySpeed=1;
 			clearTimeout(handler1);
 			clearTimeout(handler);
@@ -309,8 +341,6 @@ window.onload = function(){
 			dualTimer = new Date().getTime();
 			shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
 			energy = text(5, window.innerHeight*0.95, "POWER:", { font: '24px arial', fill: 0xffffff });
-			scor = text(5, window.innerHeight*0.010, "SCORE:", { font: '24px arial', fill: 0xffffff });
-			scorNr=text(105, window.innerHeight*0.010, 0, { font: '24px arial', fill: 0xffffff });
 			if(shieldPOW.position.x+100+16*shield.length+15<window.innerWidth){
 				shield.push(rectangle(shieldPOW.position.x+100+16*shield.length, shieldPOW.position.y, 15, 24, 0x993399))
 			}
@@ -331,26 +361,29 @@ window.onload = function(){
 		//star effects
 		if(fon.position.x+2732-window.innerWidth>0 && starTurn==true){
 			moveBy(fon,-8.5*galaxySpeed,0);
+			dis+=8.5;
 		}else if(fon.position.x+2732>0 && fon.position.x+2732-window.innerWidth<=0){
 			moveBy(fon,-8.5*galaxySpeed,0);
 			moveBy(fon1,-8.5*galaxySpeed,0);
+			dis+=8.5;
 		}else if(fon.position.x+2732<=0){
 			move(fon,window.innerWidth,0);
+			dis+=8.5;
 			starTurn=false;
 		}
 		if(fon1.position.x+4098-window.innerWidth>0 && starTurn==false){
 			moveBy(fon1,-8.5*galaxySpeed,0);
+			dis+=8.5;
 		}else if(fon1.position.x+4098>0 && fon1.position.x+4098-window.innerWidth<=0){
 			moveBy(fon1,-8.5*galaxySpeed,0);
 			moveBy(fon,-8.5*galaxySpeed,0);
+			dis+=8.5;
 		}else if(fon1.position.x+4098<=0){
 			move(fon1,window.innerWidth,0);
+			dis+=8.5;
 			starTurn=true;
 		}
 		if(game==true){
-			//score counting
-			remove(scorNr);
-			scorNr = text(105, window.innerHeight*0.010, rez, { font: '24px arial', fill: 0xffffff })
 			//recoil activates
 			if(POWERnr==0){
 				recoil=480;
@@ -409,7 +442,7 @@ window.onload = function(){
 							remove(laserShot[i]);
 							laserShot.splice(i,1);
 							i--;
-							rez++;
+							rezEn++;
 							break;
 						}
 					}
@@ -429,7 +462,6 @@ window.onload = function(){
 								gameSound[gameSound.length-1].play();
 								gameSound.pop;
 								i--;
-								rez++;
 								break;
 							}
 						}
@@ -508,6 +540,15 @@ window.onload = function(){
 			//enemy movement(unfinished)
 			for(var i=0;i<enemy.length;i++){
 				//enemy hits my ship
+				if(rezEn>=10){
+					level1=true;
+				}
+				if(rezEn>=20){
+					level2=true;
+				}
+				if(rezEn>=30){
+					level3=true;
+				}
 				if(isCollision(enemy[i],ship,0)){
 					if(shield.length==0){
 						gameSound.push(new Sound('sounds/explosion.mp3'));
@@ -567,38 +608,38 @@ window.onload = function(){
 					enemyMoveY.splice(i,1);
 					lastEnShot.splice(i,1);
 					i--;
-				}else if(laserShot.length>=1){
+				}else if(laserShot.length>=1 && level1==true){
 					var laserUnder=false;
 					var laserOver=false;
 					var laserFront=false;
 					//trys to doge
 					for(var j=0;j<laserShot.length;j++){
-						if((enemy[i].position.y<=laserShot[j].position.y && enemy[i].position.y+61>=laserShot[j].position.y && laserShot[j].position.x-20>=enemy[i].position.x && laserShot[j].position.x<=enemy[i].position.x+143) || enemy[i].position.y+130>=window.innerHeight){
+						if((enemy[i].position.y+55<laserShot[j].position.y && enemy[i].position.y+64>=laserShot[j].position.y && laserShot[j].position.x+20>=enemy[i].position.x && laserShot[j].position.x<=enemy[i].position.x+143) || enemy[i].position.y+130>=window.innerHeight){
 							laserUnder=true;
-						}else if((enemy[i].position.y>=laserShot[j].position.y && enemy[i].position.y-6<=laserShot[j].position.y && laserShot[j].position.x+20>=enemy[i].position.x && laserShot[j].position.x<=enemy[i].position.x+143) || enemy[i].position.y<=30){
+						}else if((enemy[i].position.y>laserShot[j].position.y+3 && enemy[i].position.y-9<=laserShot[j].position.y && laserShot[j].position.x+20>=enemy[i].position.x && laserShot[j].position.x<=enemy[i].position.x+143) || enemy[i].position.y<=30){
 							laserOver=true;
-						}else if(enemy[i].position.y-3<=laserShot[j].position.y && enemy[i].position.y+58>=laserShot[j].position.y && enemy[i].position.x-160<=laserShot[j].position.x && enemy[i].position.x>=laserShot[j].position.x+20){
+						}else if(enemy[i].position.y-3<=laserShot[j].position.y && enemy[i].position.y+58>=laserShot[j].position.y+3 && enemy[i].position.x-160<=laserShot[j].position.x && enemy[i].position.x>=laserShot[j].position.x+20){
 							laserFront=true;
 						}
 					}
-					if(laserUnder==true && laserOver==true && laserFront==true){
+					if(laserUnder==true && laserOver==true && laserFront==true && level3==true){
 						enemyMoveY[i]=0;
 						now = new Date().getTime();
 						if(now-lastEnShot[i]>=600){
 							shootEn(enemy[i].position.x,enemy[i].position.y);
 							lastEnShot[i] = new Date().getTime();
 						}
-					}else if(laserUnder==true && laserOver==true){
+					}else if(laserUnder==true && laserOver==true && level2==true){
 						enemyMoveY[i]=0;
-					}else if(laserUnder==true){
+					}else if(laserUnder==true && level1==true){
 						if(enemy[i].position.y>=85){
 							enemyMoveY[i]=-3.75;
 						}
-					}else if(laserOver==true){
+					}else if(laserOver==true && level1==true){
 						if(enemy[i].position.y<=185){
 							enemyMoveY[i]=+3.75;
 						}
-					}else if(laserFront==true){
+					}else if(laserFront==true && level3==true){
 						if(enemy[i]+55<=window.innerHeight/2){
 							enemyMoveY[i]=+3.75;
 						}else{
