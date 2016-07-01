@@ -7,13 +7,14 @@ window.onload = function(){
 	var shop=false;
 	var shipX, shipY, shipMove;
 	var ship;
+	//var music=new Sound('');
 	//localStorage.clear();
 	var gameSound=[];
 	var laserShot = [], lastShot;
 	var POWER, lastCharge, coold;
 	var laserEnShot = [], lastEnShot = [];
 	var enemy = [], lastEnMade, enemyMoveY = [], enspTime;
-	var now;
+	var now,lastTimeCh;
 	var boostDual=false, dualTime, dualTimer;
 	var bomb;
 	var spark;
@@ -30,7 +31,7 @@ window.onload = function(){
 	var fon1 = image(fon.position.x+window.innerWidth, 0, 'images/stars2.png');
 	fon1.zindex = -1;
 	var shieldPOW;
-	var shield = [];
+	var shield = [], shieldEn = [], shieldEnCount=0;
 	var starTurn=true;
 	var galaxySpeed=1;
 	var speedBuff=false;
@@ -43,6 +44,7 @@ window.onload = function(){
 	var dis=0,disBest=0;
 	var newHighDis=false;
 	onClick(backElement2, function(){
+		//music.play();
 		remove(backElement2);
 		shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
 		if(shieldPOW.position.x+100+16*shield.length+15<window.innerWidth){
@@ -62,6 +64,7 @@ window.onload = function(){
 		lastShot = new Date().getTime();
 		lastCharge = new Date().getTime();
 		dualTimer = new Date().getTime();
+		lastTimeCh = new Date().getTime();
 		coold=1100;
 		lastEnMade =0;
 		enspTime=5000;
@@ -74,10 +77,8 @@ window.onload = function(){
 		POWERlength = window.innerWidth/2+80-106;
 		POWERlenOne = POWERlength/20;
 		POWER = rectangle(-100,-100,10,10,0x3366ff);
-		//scor = text(5, window.innerHeight*0.010, "SCORE:", { font: '24px arial', fill: 0xffffff });
 		rezEn=0;
 		recordeEn=0;
-		//scorNr=text(105, window.innerHeight*0.010, 0, { font: '24px arial', fill: 0xffffff });
 		enemymSpeed=-3.75;
 		dualTime = 0;
 		recoil=280;
@@ -189,20 +190,21 @@ window.onload = function(){
 	function unpower(){
 		if(game==true){
 			remove(POWER)
-			POWER=rectangle(energy.position.x+100, energy.position.y, POWERlenOne*POWERnr-1, 24, 0x3366ff);
+			if(POWERnr>0){
+				POWER=rectangle(energy.position.x+100, energy.position.y, POWERlenOne*POWERnr-1, 24, 0x3366ff);
+			}else{
+				POWER=rectangle(energy.position.x+100, -100, POWERlenOne*POWERnr-1, 24, 0x3366ff);
+			}
 		}
 	}
-	function enemy1(){
+	function enemy1(x,y,pho,SH,mY){
 		if(game==true){
-			var randomEnShipY = Math.random() * (window.innerHeight - 130);
-			if(randomEnShipY<=31){
-				randomEnShipY=32;
-			}
-			var e=image(window.innerWidth+20, randomEnShipY, 'images/enemy1.png');
+			var e;
+			e=image(x, y, pho);
 			e.zindex = 100;
 			enemy.push(e);
-			enemymSpeed*=-1;
-			enemyMoveY.push(enemymSpeed);
+			enemyMoveY.push(mY);
+			shieldEn.push(SH);
 			lastEnShot.push(new Date().getTime());
 		}
 	}
@@ -269,7 +271,7 @@ window.onload = function(){
 		}
 		disBest=localStorage.getItem('distance') ? localStorage.getItem('distance') : 0;
 		var backElement5 = text(10, 10, "ENEMYS SHOT:", { font: '28px arial', fill: 0x3366ff });
-		var backElement4 = text(17.5*12+10, 10, rezEn, { font: '28px arial', fill: 0x3366ff });
+		var backElement4 = text(17.5*13+10, 10, rezEn, { font: '28px arial', fill: 0x3366ff });
 		var backElement11 = text(10, 38, "LY:", { font: '28px arial', fill: 0x3366ff });
 		var backElement12 = text(17.5*3+10, 38, dis/1000, { font: '28px arial', fill: 0x3366ff });
 		var backElement3 = image(window.innerWidth/2-173.5, window.innerHeight-68, 'images/button2.png');
@@ -289,6 +291,7 @@ window.onload = function(){
 		}
 		remove(shieldPOW);
 		shop=false;
+		shieldEnCount=0;
 		remove(bomb);
 		remove(spark);
 		enspTime=5000;
@@ -296,6 +299,7 @@ window.onload = function(){
 		en=0;
 		shipMove=0;
 		enemyMoveY.length=0;
+		shieldEn.length=0;
 		shooting=false;
 		shipX=window.innerWidth/20;
 		shipY=window.innerHeight/2-80;
@@ -315,8 +319,6 @@ window.onload = function(){
 		dualTime=0;
 		remove(ship);
 		remove(energy);
-		remove(scor);
-		remove(scorNr);
 		onClick(backElement3, function(){
 			remove(backElement3);
 			remove(backElement4);
@@ -384,6 +386,19 @@ window.onload = function(){
 			starTurn=true;
 		}
 		if(game==true){
+			if(rezEn>=10){
+				level1=true;
+			}
+			if(rezEn>=20){
+				level2=true;
+			}
+			if(rezEn>=30){
+				level3=true;
+			}
+			if(shieldEnCount*2+2<=rezEn){
+				shieldEnCount++;
+				enspTime*=1.4
+			}
 			//recoil activates
 			if(POWERnr==0){
 				recoil=480;
@@ -426,7 +441,7 @@ window.onload = function(){
 				}else{
 					laserColision=false;
 					for(var j=0;j<enemy.length;j++){
-						if(isCollision(laserShot[i],enemy[j],0)){
+						if(isCollision(laserShot[i],enemy[j],0) && shieldEn[j]<=0){
 							laserColision=true;
 							clearTimeout(handler);
 							move(bomb, laserShot[i].position.x, laserShot[i].position.y);
@@ -441,8 +456,26 @@ window.onload = function(){
 							enemyMoveY.splice(j,1);
 							remove(laserShot[i]);
 							laserShot.splice(i,1);
+							shieldEn.splice(j,1)
 							i--;
 							rezEn++;
+							break;
+						}else if(isCollision(laserShot[i],enemy[j],0)){
+							laserColision=true;
+							clearTimeout(handler1);
+							move(spark, laserShot[i].position.x+20, laserShot[i].position.y+1.5);
+							handler1 = setTimeout(function(){
+								move(spark, -100, -100);
+							}, 300);
+							remove(laserShot[i]);
+							laserShot.splice(i,1);
+							shieldEn[j]--;
+							if(shieldEn[j]>0){
+								gameSound.push(new Sound('sounds/forceField1.mp3'));
+								gameSound[gameSound.length-1].play();
+								gameSound.pop;
+							}
+							i--;
 							break;
 						}
 					}
@@ -539,16 +572,18 @@ window.onload = function(){
 			}
 			//enemy movement(unfinished)
 			for(var i=0;i<enemy.length;i++){
+				if(shieldEn[i]==0){
+					gameSound.push(new Sound('sounds/forceField2.mp3'));
+					gameSound[gameSound.length-1].play();
+					gameSound.pop;
+					var enX=enemy[i].position.x,enY=enemy[i].position.y;
+					remove(enemy[i]);
+					enemy.splice(i,1);
+					shieldEn.splice(i,1);
+					enemy1(enX, enY,'images/enemy1.png', -1, enemyMoveY[i]);
+					enemyMoveY.splice(i,1);
+				}
 				//enemy hits my ship
-				if(rezEn>=10){
-					level1=true;
-				}
-				if(rezEn>=20){
-					level2=true;
-				}
-				if(rezEn>=30){
-					level3=true;
-				}
 				if(isCollision(enemy[i],ship,0)){
 					if(shield.length==0){
 						gameSound.push(new Sound('sounds/explosion.mp3'));
@@ -600,6 +635,7 @@ window.onload = function(){
 						enemy.splice(i,1);
 						enemyMoveY.splice(i,1);
 						lastEnShot.splice(i,1);
+						shieldEn.splice(i,1);
 						i--;
 					}
 				}else if(enemy[i].position.x+200<=0){
@@ -607,6 +643,7 @@ window.onload = function(){
 					enemy.splice(i,1);
 					enemyMoveY.splice(i,1);
 					lastEnShot.splice(i,1);
+					shieldEn.splice(i,1);
 					i--;
 				}else if(laserShot.length>=1 && level1==true){
 					var laserUnder=false;
@@ -683,12 +720,25 @@ window.onload = function(){
 				lastCharge = new Date().getTime();
 			}
 			now = new Date().getTime();
-			//enemy spawns
-			if(now-lastEnMade>=enspTime){
+			if(now-lastTimeCh>=4500){
 				if(enspTime>1000){
 					enspTime*=0.95;
 				}
-				enemy1();
+				lastTimeCh = new Date().getTime();
+			}
+			now = new Date().getTime();
+			//enemy spawns
+			if(now-lastEnMade>=enspTime){
+				enemymSpeed*=-1;
+				var randomEnShipY = Math.random() * (window.innerHeight - 130);
+				if(randomEnShipY<=31){
+					randomEnShipY=32;
+				}
+				if(shieldEnCount==0){
+					enemy1(window.innerWidth+20,randomEnShipY,'images/enemy1.png',-1,enemymSpeed);
+				}else{
+					enemy1(window.innerWidth+20,randomEnShipY,'images/enemy1SH.png',shieldEnCount,enemymSpeed);
+				}
 				lastEnMade = new Date().getTime();
 			}
 			//spawns a dualBoost
