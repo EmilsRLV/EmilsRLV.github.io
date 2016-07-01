@@ -7,7 +7,7 @@ window.onload = function(){
 	var shop=false;
 	var shipX, shipY, shipMove;
 	var ship;
-	//var music=new Sound('');
+	var music=new Sound('C:/Users/PC/Desktop/GAME/Black Bullet ed full.mp3');
 	//localStorage.clear();
 	var gameSound=[];
 	var laserShot = [], lastShot;
@@ -44,7 +44,7 @@ window.onload = function(){
 	var dis=0,disBest=0;
 	var newHighDis=false;
 	onClick(backElement2, function(){
-		//music.play();
+		music.play();
 		remove(backElement2);
 		shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
 		if(shieldPOW.position.x+100+16*shield.length+15<window.innerWidth){
