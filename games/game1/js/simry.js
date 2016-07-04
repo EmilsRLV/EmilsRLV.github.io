@@ -14,7 +14,9 @@ var KEY_RIGHT = 68;
 /** @var {Number} KEY_LEFT "A" taustiņš */
 var KEY_LEFT = 65;
 /** @var {Number} KEY_SPACEBAR "Spacebar" taustiņš */
-var KEY_SPACEBAR = 32
+var KEY_SPACEBAR = 32;
+/** @var {Number} KEY_L "L" taustiņš */
+var KEY_L = 76;
 
 /** @var {Number} COLOR_RED Sarkana krāsa */
 var COLOR_RED = 0xFF0000;
