@@ -1,6 +1,6 @@
 window.onload = function(){
     init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
-	alert("'W' - move up 'S' - move down 'SPACE' shoot 'A' move slower 'D' move faster GOAL is to hit enemys/lasers");
+	alert("'W' - move up 'S' - move down 'SPACE' shoot 'L' shoot Missle 'A' move slower 'D' move faster GOAL is to hit enemys/lasers");
 	var backElement2 = image(window.innerWidth/2-87.5, window.innerHeight/2-100, 'images/button1.png');
 	var game=false;
 	var level0=true, level1=false, level2=false, level3=false;
