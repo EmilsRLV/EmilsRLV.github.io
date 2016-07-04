@@ -7,10 +7,10 @@ window.onload = function(){
 	var shop=false;
 	var shipX, shipY, shipMove;
 	var ship;
-	var music=new Sound('C:/Users/PC/Desktop/GAME/Black Bullet ed full.mp3');
+	//var music=new Sound('');
 	//localStorage.clear();
 	var gameSound=[];
-	var laserShot = [], lastShot;
+	var laserShot = [], lastShot, lastShotMis;
 	var POWER, lastCharge, coold;
 	var laserEnShot = [], lastEnShot = [];
 	var enemy = [], lastEnMade, enemyMoveY = [], enspTime;
@@ -25,7 +25,7 @@ window.onload = function(){
 	var boost = [], HP = [];
 	var recoil;
 	var HPtime;
-	var shooting=false;
+	var shooting=false,shootingMis=false;
 	var fon = image(0, 0, 'images/stars1.png');
 	fon.zindex = -1;
 	var fon1 = image(fon.position.x+window.innerWidth, 0, 'images/stars2.png');
@@ -43,8 +43,9 @@ window.onload = function(){
 	var POWERnr=0;
 	var dis=0,disBest=0;
 	var newHighDis=false;
+	var missle = [];
 	onClick(backElement2, function(){
-		music.play();
+		//music.play();
 		remove(backElement2);
 		shieldPOW = text(window.innerWidth/2+80, window.innerHeight*0.95, "SHIELD:", { font: '24px arial', fill: 0xffffff });
 		if(shieldPOW.position.x+100+16*shield.length+15<window.innerWidth){
@@ -62,12 +63,13 @@ window.onload = function(){
 		ship = image(shipX, shipY, 'images/shipSH.png');
 		ship.zindex = 99;
 		lastShot = new Date().getTime();
+		lastShotMis = new Date().getTime();
 		lastCharge = new Date().getTime();
 		dualTimer = new Date().getTime();
 		lastTimeCh = new Date().getTime();
 		coold=1100;
 		lastEnMade =0;
-		enspTime=5000;
+		enspTime=4000;
 		boostDual=false;
 		bomb = image(-100, -100, 'images/explosion.png');
 		bomb.zindex = 101;
@@ -88,7 +90,7 @@ window.onload = function(){
 	onKeyDown(KEY_UP, function(){
 		if(game==true){
 			if(shipY>=30){
-				shipMove=-4*galaxySpeed;
+				shipMove=-5*galaxySpeed;
 			}
 		}
 	});
@@ -102,7 +104,7 @@ window.onload = function(){
 	onKeyDown(KEY_DOWN, function(){
 		if(game==true){
 			if(shipY+130<=window.innerHeight){
-				shipMove=4*galaxySpeed;
+				shipMove=5*galaxySpeed;
 			}
 		}
 	});
@@ -145,6 +147,16 @@ window.onload = function(){
 	onKeyUp(KEY_SPACEBAR, function(){
 		if(game==true){
 			shooting=false;
+		}
+	});
+	onKeyDown(KEY_L, function(){
+		if(game==true){
+			shootingMis=true;
+		}
+	});
+	onKeyUp(KEY_L, function(){
+		if(game==true){
+			shootingMis=false;
 		}
 	});
 	function shoot(){
@@ -231,6 +243,13 @@ window.onload = function(){
 			shield.push(rectangle(shieldPOW.position.x+100+16*shield.length, shieldPOW.position.y, 15, 24, 0x993399))
 		}
 	}
+	function missle1(){
+		if(game==true){
+			var m=image(ship.position.x+49,ship.position.y+30,'images/missle1.png');
+			m.zindex=102;
+			missle.push(m);
+		}
+	}
 	function gameOver(){
 		game=false;
 		for(var i=0;laserShot.length>i;++i){
@@ -247,6 +266,10 @@ window.onload = function(){
 			remove(enemy[i]);
 		}
 		enemy.length = 0;
+		for(var i=0;missle.length>i;++i){
+			remove(missle[i]);
+		}
+		missle.length = 0;
 		for(var i=0;boost.length>i;i++){
 			remove(boost[i]);
 		}
@@ -413,11 +436,116 @@ window.onload = function(){
 				shipMove=0;
 			}
 			//laser makeing ship
+			now = new Date().getTime();
 			if(POWERnr>=1 && now-lastShot>=200 && shooting==true){
 				lastShot = new Date().getTime();
 				POWERnr--;
 				unpower();
 				shoot();
+			}
+			now = new Date().getTime();
+			if(now-lastShotMis>=700 && shootingMis==true){
+				lastShotMis = new Date().getTime();
+				missle1();
+			}
+			//missle movement
+			var target=0,misRatio=0;
+			for(var i=0;i<missle.length;i++){
+				var misCol=false;
+				for(var j=0;j<laserEnShot.length;j++){
+					if(isCollision(missle[i],laserEnShot[j],0)){
+						clearTimeout(handler);
+						move(bomb, missle[i].position.x, missle[i].position.y-27);
+						gameSound.push(new Sound('sounds/explosion.mp3'));
+						gameSound[gameSound.length-1].play();
+						gameSound.pop;
+						handler = setTimeout(function(){
+							move(bomb, -100, -100);
+						}, 3000);
+						remove(missle[i]);
+						missle.splice(i,1);
+						remove(laserEnShot[j]);
+						laserEnShot.splice(j,1);
+						misCol=true;
+						break;
+					}
+				}
+				if(misCol==false){
+					for(var j=0;j<laserShot.length;j++){
+						if(isCollision(missle[i],laserShot[j],0)){
+							clearTimeout(handler);
+							move(bomb, laserShot[j].position.x, laserShot[j].position.y-29);
+							gameSound.push(new Sound('sounds/explosion.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
+							handler = setTimeout(function(){
+								move(bomb, -100, -100);
+							}, 3000);
+							remove(missle[i]);
+							missle.splice(i,1);
+							remove(laserShot[j]);
+							laserShot.splice(j,1);
+							misCol=true;
+							break;
+						}
+					}
+				}
+				if(misCol==false){
+					var targetNow=false;
+					for(var j=0;j<enemy.length;j++){
+						if(misRatio>=enemy.length){
+							misRatio=1;
+						}
+						if(enemy[j].position.x>missle[i].position.x+25 && j==misRatio && targetNow==false){
+							target=j;
+							targetNow=true;
+							misRatio++;
+						}else if(targetNow==false && j==misRatio){
+							misRatio++;
+						}
+						if(isCollision(missle[i],enemy[j],0)){
+							clearTimeout(handler);
+							move(bomb, missle[i].position.x, missle[i].position.y);
+							gameSound.push(new Sound('sounds/explosion.mp3'));
+							gameSound[gameSound.length-1].play();
+							gameSound.pop;
+							handler = setTimeout(function(){
+								move(bomb, -100, -100);
+							}, 3000);
+							remove(missle[i]);
+							missle.splice(i,1);
+							if(shieldEn[j]<=1){
+								remove(enemy[j]);
+								enemy.splice(j,1);
+								shieldEn.splice(j,1);
+								rezEn++;
+							}else{
+								shieldEn[j]-=2
+							}
+							misCol=true;
+							break;
+						}
+					}
+				}
+				if(misCol==false){
+					if(missle[i].position.x>=window.innerWidth){
+						remove(missle[i]);
+						missle.splice(i,1);
+					}else if(enemy.length>0){
+						if(enemy[target].position.x+143<missle[i].position.x){
+							misY=0;
+						}else if(missle[i].position.y>enemy[target].position.y+55){
+							misY=-3;
+						}else if(missle[i].position.y+5<enemy[target].position.y){
+							misY=3;
+						}else{
+							misY=0;
+						}
+						moveBy(missle[i],4*galaxySpeed,misY);
+					}else{
+						moveBy(missle[i],4*galaxySpeed,0);
+					}
+				}
 			}
 			//explosion movements
 			if(bomb.position.x!=-100){
@@ -456,7 +584,7 @@ window.onload = function(){
 							enemyMoveY.splice(j,1);
 							remove(laserShot[i]);
 							laserShot.splice(i,1);
-							shieldEn.splice(j,1)
+							shieldEn.splice(j, 1);
 							i--;
 							rezEn++;
 							break;
@@ -719,15 +847,15 @@ window.onload = function(){
 				power();
 				lastCharge = new Date().getTime();
 			}
+			//enemy spawns
 			now = new Date().getTime();
 			if(now-lastTimeCh>=4500){
-				if(enspTime>1000){
-					enspTime*=0.95;
+				if(enspTime>8000){
+					enspTime*=0.9;
 				}
 				lastTimeCh = new Date().getTime();
 			}
 			now = new Date().getTime();
-			//enemy spawns
 			if(now-lastEnMade>=enspTime){
 				enemymSpeed*=-1;
 				var randomEnShipY = Math.random() * (window.innerHeight - 130);
