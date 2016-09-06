@@ -1,6 +1,6 @@
 window.onload = function(){
     init(window.innerWidth, window.innerHeight, { backgroundColor: 0x000000 });
-	alert("'W' - move up 'S' - move down 'SPACE' shoot 'L' shoot Missle 'A' move slower 'D' move faster GOAL is to hit enemys/lasers");
+	alert("'W' - move up 'S' - move down 'SPACE' shoot 'L' shoot Missle 'A' move slower 'D' move faster 'P' pause GOAL is to hit enemys/lasers");
 	var backElement2 = image(window.innerWidth/2-87.5, window.innerHeight/2-100, 'images/button1.png');
 	var game=false;
 	var level0=true, level1=false, level2=false, level3=false;
@@ -44,6 +44,7 @@ window.onload = function(){
 	var dis=0,disBest=0;
 	var newHighDis=false;
 	var missle = [];
+	var pause=false,pauseing=false;
 	onClick(backElement2, function(){
 		//music.play();
 		remove(backElement2);
@@ -159,6 +160,21 @@ window.onload = function(){
 			shootingMis=false;
 		}
 	});
+	onKeyDown(KEY_P, function(){
+		if(game==false && pause==true & pauseing==false){
+			game=true;
+			pause=false;
+		}else if(game==true && pause==false){
+			game=false;
+			pause=true;
+			puseing=true;
+		}
+	});
+	onKeyUp(KEY_L, function(){
+		if(game==false && pause==true){
+			pauseing=false;
+		}
+	});
 	function shoot(){
 		if(game==true){
 			if(boostDual==true){
@@ -252,6 +268,8 @@ window.onload = function(){
 	}
 	function gameOver(){
 		game=false;
+		pause=false;
+		pauseing=false;
 		for(var i=0;laserShot.length>i;++i){
 			remove(laserShot[i]);
 		}
@@ -384,30 +402,31 @@ window.onload = function(){
 	}
 	animate(function(){
 		//star effects
-		if(fon.position.x+2732-window.innerWidth>0 && starTurn==true){
+		if(fon.position.x+2732-window.innerWidth>0 && starTurn==true && pause==false){
 			moveBy(fon,-8.5*galaxySpeed,0);
 			dis+=8.5;
-		}else if(fon.position.x+2732>0 && fon.position.x+2732-window.innerWidth<=0){
+		}else if(fon.position.x+2732>0 && fon.position.x+2732-window.innerWidth<=0 && pause==false){
 			moveBy(fon,-8.5*galaxySpeed,0);
 			moveBy(fon1,-8.5*galaxySpeed,0);
 			dis+=8.5;
-		}else if(fon.position.x+2732<=0){
+		}else if(fon.position.x+2732<=0 && pause==false){
 			move(fon,window.innerWidth,0);
 			dis+=8.5;
 			starTurn=false;
 		}
-		if(fon1.position.x+4098-window.innerWidth>0 && starTurn==false){
+		if(fon1.position.x+4098-window.innerWidth>0 && starTurn==false && pause==false){
 			moveBy(fon1,-8.5*galaxySpeed,0);
 			dis+=8.5;
-		}else if(fon1.position.x+4098>0 && fon1.position.x+4098-window.innerWidth<=0){
+		}else if(fon1.position.x+4098>0 && fon1.position.x+4098-window.innerWidth<=0 && pause==false){
 			moveBy(fon1,-8.5*galaxySpeed,0);
 			moveBy(fon,-8.5*galaxySpeed,0);
 			dis+=8.5;
-		}else if(fon1.position.x+4098<=0){
+		}else if(fon1.position.x+4098<=0 && pause==false){
 			move(fon1,window.innerWidth,0);
 			dis+=8.5;
 			starTurn=true;
 		}
+		
 		if(game==true){
 			if(rezEn>=10){
 				level1=true;
@@ -444,14 +463,16 @@ window.onload = function(){
 				shoot();
 			}
 			now = new Date().getTime();
+			//missle makeing
 			if(now-lastShotMis>=700 && shootingMis==true){
 				lastShotMis = new Date().getTime();
 				missle1();
 			}
 			//missle movement
-			var target=0,misRatio=0;
+			var target=0;
 			for(var i=0;i<missle.length;i++){
-				var misCol=false;
+				var misCol=false; 
+				//en laser & missle col
 				for(var j=0;j<laserEnShot.length;j++){
 					if(isCollision(missle[i],laserEnShot[j],0)){
 						clearTimeout(handler);
@@ -471,6 +492,7 @@ window.onload = function(){
 					}
 				}
 				if(misCol==false){
+				//my laser & missle col
 					for(var j=0;j<laserShot.length;j++){
 						if(isCollision(missle[i],laserShot[j],0)){
 							clearTimeout(handler);
@@ -491,18 +513,11 @@ window.onload = function(){
 					}
 				}
 				if(misCol==false){
-					var targetNow=false;
+				//enemy & missle	
 					for(var j=0;j<enemy.length;j++){
-						if(misRatio>=enemy.length){
+						/*if(misRatio>=enemy.length){
 							misRatio=1;
-						}
-						if(enemy[j].position.x>missle[i].position.x+25 && j==misRatio && targetNow==false){
-							target=j;
-							targetNow=true;
-							misRatio++;
-						}else if(targetNow==false && j==misRatio){
-							misRatio++;
-						}
+						}*/
 						if(isCollision(missle[i],enemy[j],0)){
 							clearTimeout(handler);
 							move(bomb, missle[i].position.x, missle[i].position.y);
@@ -524,10 +539,14 @@ window.onload = function(){
 							}
 							misCol=true;
 							break;
+						}else if(enemy[j].position.x+143>missle[i].position.x+25){
+							target=j;
+							break;
 						}
 					}
 				}
 				if(misCol==false){
+				//missle miss
 					if(missle[i].position.x>=window.innerWidth){
 						remove(missle[i]);
 						missle.splice(i,1);
