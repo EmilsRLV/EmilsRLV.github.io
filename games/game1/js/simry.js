@@ -7,7 +7,7 @@ var events = {};
 
 /** @var {Number} KEY_DOWN "S" taustiņš */
 var KEY_DOWN = 83;
-/** @var {Number} KEY_UP "W" taustiņš */
+/** @var {Number} KEY_UP "W" taustiņš 87 */
 var KEY_UP = 87;
 /** @var {Number} KEY_RIGHT "D" taustiņš */
 var KEY_RIGHT = 68;
@@ -17,6 +17,8 @@ var KEY_LEFT = 65;
 var KEY_SPACEBAR = 32;
 /** @var {Number} KEY_L "L" taustiņš */
 var KEY_L = 76;
+/** @var {Number} KEY_P "P" taustiņš */
+var KEY_P = 80;
 
 /** @var {Number} COLOR_RED Sarkana krāsa */
 var COLOR_RED = 0xFF0000;
