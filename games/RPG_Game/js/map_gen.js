@@ -356,7 +356,6 @@ function build_map(cor_x,cor_y){
 function make_mini_map(dose){
 	if(dose==1 && map_prop.min_map==true){
 		var sc=(map_prop.game_y/5*2)/(map_prop.tile_size*(map_prop.height*map_prop.world_size));
-		alert(sc);
 		for(var i=0;i<map_prop.height*map_prop.world_size;i++){
 			for(var j=0;j<map_prop.width*map_prop.world_size;j++){
 				var nx = j*(map_prop.tile_size*sc);
