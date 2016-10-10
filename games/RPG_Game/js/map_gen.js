@@ -317,34 +317,63 @@ function build_map(cor_x,cor_y){
 			if(map[i][j].id==0){
 				var r = rnd(1,7);
 				if(r<=4){
+					map[i][j].id = 0.1;
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
 				}else if(r<=6){
-					map[i][j].id = 0.1;
+					map[i][j].id = 0.2;
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass2');
 				}else{
-					map[i][j].id = 0.2;
+					map[i][j].id = 0.3;
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass3');
+				}
+			}if(map[i][j].id<1){
+				if(map[i][j].id==0.1){
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
+				}else if(map[i][j].id==0.2){
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass2');
+				}else{
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass3');
 				}
 			}else if(map[i][j].id==1){
 				map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
 				var r = rnd(1,4);
 				if(r>1){
+					map[i][j].id = 1.1;
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree');
 				}else{
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree2');
-					map[i][j].id = 1.1;
+					map[i][j].id = 1.2;
+				}
+			}else if(map[i][j].id<2){
+				map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
+				if(map[i][j].id = 1.1){
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree');
+				}else{
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree2');
 				}
 			}else if(map[i][j].id==2){
+				map[i][j].id = 2.1;
+				map[i][j].sprite_1=game.add.sprite(nx, ny, 'sand');
+			}else if(map[i][j].id<3){
 				map[i][j].sprite_1=game.add.sprite(nx, ny, 'sand');
 			}else if(map[i][j].id==3){
 				var r = rnd(1,3);
 				if(r==1){
+					map[i][j].id = 3.1;
 					map[i][j].sprite_1=game.add.sprite(nx, ny, 'water');
 				}else if(r==2){
-					map[i][j].id = 3.1;
+					map[i][j].id = 3.2;
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water2');
 				}else{
-					map[i][j].id = 3.2;
+					map[i][j].id = 3.3;
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water3');
+				}
+			}else if(map[i][j].id<4){
+				if(map[i][j].id==3.1){
+					map[i][j].sprite_1=game.add.sprite(nx, ny, 'water');
+				}else if(map[i][j].id==3.2){
+					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water2');
+				}else{
 					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water3');
 				}
 			}
@@ -355,84 +384,71 @@ function build_map(cor_x,cor_y){
 
 function make_mini_map(dose){
 	if(dose==1 && map_prop.min_map==true){
-		var sc=(map_prop.game_y/5*2)/(map_prop.tile_size*(map_prop.height*map_prop.world_size));
+		var sc=map_prop.game_y/(map_prop.tile_size*(map_prop.height*map_prop.world_size));
 		for(var i=0;i<map_prop.height*map_prop.world_size;i++){
 			for(var j=0;j<map_prop.width*map_prop.world_size;j++){
-				var nx = j*(map_prop.tile_size*sc);
-				var ny = i*(map_prop.tile_size*sc)+map_prop.game_y/5*3;
-				if(map[i][j].id==0){
+				alert(sc);
+				var nx = map_prop.game_x/2-(map_prop.tile_size*sc)*map_prop.width*(map_prop.world_size/2)+j*(map_prop.tile_size*sc);
+				var ny = /*map_prop.game_y/2-(map_prop.tile_size*sc)*map_prop.height*map_prop.world_size+*/i*(map_prop.tile_size*sc);
+				if(map[i][j].id==0.1){
 					var main = game.add.sprite(nx, ny, 'grass');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}if(map[i][j].id==0.1){
-					var main = game.add.sprite(nx, ny, 'grass2');
-					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
 				}if(map[i][j].id==0.2){
-					var main = game.add.sprite(nx, ny, 'grass3');
+					var main = game.add.sprite(nx, ny, 'grass2');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
-				}else if(map[i][j].id==1){
+				}if(map[i][j].id==0.3){
 					var main = game.add.sprite(nx, ny, 'grass3');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
-					main.fixedToCamera=true;
-					min_map.add(main);
-					var main = game.add.sprite(nx, ny, 'tree');
-					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
 				}else if(map[i][j].id==1.1){
 					var main = game.add.sprite(nx, ny, 'grass3');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
+					main.fixedToCamera=true;
+					min_map.add(main);
+					var main = game.add.sprite(nx, ny, 'tree');
+					main.scale.setTo(sc,sc);
+					main.fixedToCamera=true;
+					min_map.add(main);
+				}else if(map[i][j].id==1.2){
+					var main = game.add.sprite(nx, ny, 'grass3');
+					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
 					min_map.add(main);
 					var main = game.add.sprite(nx, ny, 'tree2');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
-				}else if(map[i][j].id==2){
+				}else if(map[i][j].id==2.1){
 					var main = game.add.sprite(nx, ny, 'sand');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==3){
-					var main = game.add.sprite(nx, ny, 'water');
-					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
 				}else if(map[i][j].id==3.1){
-					var main = game.add.sprite(nx, ny, 'water2');
+					var main = game.add.sprite(nx, ny, 'water');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
 				}else if(map[i][j].id==3.2){
+					var main = game.add.sprite(nx, ny, 'water2');
+					main.scale.setTo(sc,sc);
+					main.fixedToCamera=true;
+					min_map.add(main);
+				}else if(map[i][j].id==3.3){
 					var main = game.add.sprite(nx, ny, 'water3');
 					main.scale.setTo(sc,sc);
-					main.alpha=0.5;
 					main.fixedToCamera=true;
 					min_map.add(main);
 				}
 			}
 		}
-	}else if(map_prop.min_map==true){
+	}else if(map_prop.min_map==0 && map_prop.min_map==true){
+		min_map.kill();
 		min_map.destroy();
-		min_map = game.add.group();
-		make_mini_map(1);
-		night.bringToTop(); 
-		ui.pause.bringToTop(); 
 	}
 }
 
@@ -440,7 +456,7 @@ function spawnPlayer(x,y,name,cor_x,cor_y){
 	var tpx = x;
 	var tpy = y;
 	while(tpy>=0){
-		if(map[tpy][tpx].id==0 || map[tpy][tpx].id==2){
+		if(map[tpy][tpx].id<1 || map[tpy][tpx].id==2){
 			var gtpx = (tpx-map_prop.width*cor_x)*map_prop.tile_size;
 			var gtpy = (tpy-map_prop.height*cor_y)*map_prop.tile_size;
 			player.sprite = game.add.sprite(gtpx, gtpy, name);
