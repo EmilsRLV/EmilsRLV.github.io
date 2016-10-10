@@ -1,16 +1,16 @@
-var game = new Phaser.Game(1200, 624, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(1248, 672, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
 	width : 40,
 	height : 40,
 	tile_size : 48,
 	//(game_x/tile_size)%2==1 un (game_y/tile_size)%2==1
-	game_x : 1200,
-	game_y : 624,
+	game_x : 1248,
+	game_y : 672,
 	field : 0,
 	cord_x : 0,
 	cord_y : 0,
-	world_size : 1,
+	world_size : 2,
 	min_map : true
 };
 
@@ -31,7 +31,9 @@ var x_buttons = {
 	pause_presed : false,
 	pause_down : false,
 	mini_map : 0,
-	mini_map_presed : false
+	mini_map_presed : false,
+	esc : 0,
+	esc_presed : false
 }
 
 var int=14;
@@ -49,7 +51,7 @@ var player = {
 	ap : 20,
 	ap_re : 1,
 	ap_ui : 0,
-}
+};
 
 var move_rule = {
 	l : false,
@@ -58,13 +60,17 @@ var move_rule = {
 	d : false,
 	x_ass : false,
 	y_ass : false
-}
+};
 
 var ui = {
 	pause : 0,
-	inventory : 0,
-	mini_map : 0
-}
+	inventory_button : 0,
+	inventory_button_down : false,
+	map_button : 0,
+	map_button_x : 0,
+	map_button_y : 0,
+	map_button_down : false
+};
 
 var map;
 
@@ -93,8 +99,10 @@ function preload() {
 	//Buttond & ui
 	game.load.image('night', 'assets/ui/night.png'); //overlayer
 	game.load.image('pause', 'assets/ui/pause.png'); //pauselayer
-	game.load.image('new_button', 'assets/ui/buttons/new_button.png');  //new game
-	game.load.image('load_button', 'assets/ui/buttons/load_button.png'); //load game
+	game.load.image('new_button', 'assets/ui/buttons/new_button.png');  //new game button
+	game.load.image('load_button', 'assets/ui/buttons/load_button.png'); //load game button
+	game.load.image('inventory_button', 'assets/ui/buttons/inventory_button.png'); //inventory button
+	game.load.image('map_button', 'assets/ui/buttons/map_button.png'); //map button
 	game.load.image('HP', 'assets/ui/buttons/HP.png'); //hp ui
 	game.load.image('AP', 'assets/ui/buttons/AP.png'); //ap ui
 
@@ -131,12 +139,39 @@ function setTime() {
 }
 
 function update() {
+	var mouse = {
+		local : game.input.activePointer
+	};
 	x_buttons.pause = game.input.keyboard.addKey(Phaser.Keyboard.P);
-	x_buttons.mini_map = game.input.keyboard.addKey(Phaser.Keyboard.M);
+	x_buttons.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+	//x_buttons.mini_map = game.input.keyboard.addKey(Phaser.Keyboard.M);
 	if(x_buttons.pause_presed==true && x_buttons.pause_down==false){
-		if(x_buttons.pause.isDown && x_buttons.pause_presed==true){
+	    if(map_prop.min_map!=true){
+	    	ui.map_button.alpha=0.5;
+	    }else if(mouse.local.x>=ui.map_button_x && mouse.local.x<=ui.map_button_x+96 && mouse.local.y>=ui.map_button_y && mouse.local.y<=ui.map_button_y+48){
+	        ui.map_button.alpha=1;
+	        if(mouse.local.isDown){
+	 			min_map = game.add.group();
+	        	ui.map_button_down=true;
+	        	min_map.pendingDestroy=false;
+	        	make_mini_map(1);
+	        }
+	    }else if(ui.map_button_down==false){
+	    	ui.map_button.alpha=0.8;
+	    }else if(x_buttons.esc.isDown && x_buttons.esc_presed==false){
+	    	min_map.pendingDestroy=true;
+	    	ui.map_button_down=false;
+	    	x_buttons.esc_presed=true;
+	    }
+	    if(x_buttons.esc.isUp){
+	    	x_buttons.esc_presed=false;
+	    }
+	    if(x_buttons.esc.isDown && x_buttons.pause_presed==true && x_buttons.esc_presed==false){
 			x_buttons.pause_presed=false;
 			ui.pause.visible = false;
+			ui.inventory_button.visible = false;
+			ui.map_button.visible = false;
+			x_buttons.esc_presed=true;
 			x_buttons.pause_down = true;
 			setTime();
 	    }else if(x_buttons.pause.isUp){
@@ -155,8 +190,6 @@ function update() {
 		//map_prop.field.scale.setTo(map_prop.width, map_prop.height);
 		map=build_map(map_prop.cord_x,map_prop.cord_y);
 		spawnPlayer(0,0,'man',map_prop.cord_x,map_prop.cord_y);
-		min_map = game.add.group();
-		make_mini_map(1);
 		turn = {
 			time : rnd(0,200),
 			pas : 1
@@ -164,9 +197,18 @@ function update() {
 		night = game.add.sprite(0, 0,'night');
 		night.scale.setTo(map_prop.width, map_prop.height);
 		night.fixedToCamera = true;
-		ui.pause = game.add.sprite(220, 0, 'pause');
+		ui.pause = game.add.sprite(map_prop.game_x/2-380, map_prop.game_y/2-312, 'pause');
 		ui.pause.fixedToCamera = true;
 		ui.pause.visible = false;
+		ui.inventory_button = game.add.sprite(map_prop.game_x/2-83, map_prop.game_y/2-272, 'inventory_button');
+		ui.inventory_button.fixedToCamera = true;
+		ui.inventory_button.visible = false;
+		ui.map_button = game.add.sprite(map_prop.game_x/2-48, map_prop.game_y/2-204, 'map_button');
+		ui.map_button_x=map_prop.game_x/2-48;
+		ui.map_button_y=map_prop.game_y/2-204;
+		ui.map_button.fixedToCamera = true;
+		ui.map_button.visible = false;
+		min_map = game.add.group();
 		setTime();
 		game.camera.x = player.x*map_prop.tile_size-(map_prop.game_x-map_prop.tile_size)/2;
 		game.camera.y = player.y*map_prop.tile_size-(map_prop.game_y-map_prop.tile_size)/2;
@@ -181,17 +223,19 @@ function update() {
 		if (x_buttons.pause.isDown && x_buttons.pause_presed==false && x_buttons.pause_down==false){
 			x_buttons.pause_presed=true;
 			ui.pause.visible = true;
+			ui.inventory_button.visible = true;
+			ui.map_button.visible = true;
 			x_buttons.pause_down = true;
 			night.alpha=1;
 	    }else if(x_buttons.pause.isUp){
 	    	x_buttons.pause_down = false;
 	    }
-	    if (x_buttons.mini_map.isDown && x_buttons.mini_map_presed==false){
+	    /*if (x_buttons.mini_map.isDown && x_buttons.mini_map_presed==false){
 			x_buttons.mini_map_presed=true;
 			make_mini_map(0);
 	    }else if(x_buttons.mini_map.isUp){
 	    	x_buttons.mini_map_presed=false;
-	    }
+	    }*/
 		if (x_buttons.space.isDown && x_buttons.space_presed==false){
 	        x_buttons.space_presed=true;
 	        turn.time+=turn.pas;
@@ -205,7 +249,7 @@ function update() {
 	    	 x_buttons.space_presed=false;
 	    }
 		if (cursors.up.isDown && y_ass==false){
-	        if(player.y>map_prop.height*map_prop.cord_y && (map[player.y-1][player.x].id<1 || map[player.y-1][player.x].id==2)){
+	        if(player.y>map_prop.height*map_prop.cord_y && (map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>2))){
 	        	player.sprite.y -= map_prop.tile_size;
 	        	player.y--;
 	        	game.camera.y -= map_prop.tile_size;
@@ -216,7 +260,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.y>0 && (map[player.y-1][player.x].id==2 || map[player.y-1][player.x].id<1)){
+	        }else if(player.y>0 && ((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>2) || map[player.y-1][player.x].id<1)){
 	        	map=build_map(map_prop.cord_x,map_prop.cord_y-1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y-1,'man',map_prop.cord_x,map_prop.cord_y-1);
@@ -233,6 +277,8 @@ function update() {
 		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
+				ui.inventory_button.bringToTop();
+				ui.map_button.bringToTop();
 	        }
 	        player.sprite.animations.play('up');
 	        move_rule.u=true;
@@ -242,7 +288,7 @@ function update() {
 	    	 move_rule.u=false;
 	    }
 	    if (cursors.down.isDown && y_ass==false){
-	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || map[player.y+1][player.x].id==2)){
+	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>2))){
 	        	player.sprite.y += map_prop.tile_size;
 	        	player.y++;
 	        	game.camera.y += map_prop.tile_size;
@@ -253,7 +299,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.y<map_prop.height*map_prop.world_size-1 && (map[player.y+1][player.x].id==2 || map[player.y+1][player.x].id<1)){
+	        }else if(player.y<map_prop.height*map_prop.world_size-1 && ((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>2) || map[player.y+1][player.x].id<1)){
 	        	map=build_map(map_prop.cord_x,map_prop.cord_y+1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y+1,'man',map_prop.cord_x,map_prop.cord_y+1);
@@ -270,6 +316,8 @@ function update() {
 		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
+				ui.inventory_button.bringToTop();
+				ui.map_button.bringToTop();
 	        }
 	        player.sprite.animations.play('down');
 	        move_rule.d=true;
@@ -279,7 +327,7 @@ function update() {
 	    	 y_ass=false;
 	    }
 	    if (cursors.left.isDown && x_ass==false){
-	        if(player.x>map_prop.width*map_prop.cord_x && (map[player.y][player.x-1].id<1 || map[player.y][player.x-1].id==2)){
+	        if(player.x>map_prop.width*map_prop.cord_x && (map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>2 && map[player.y][player.x-1].id<3))){
 	        	player.sprite.x -= map_prop.tile_size;
 	        	player.x--;
 	        	game.camera.x -= map_prop.tile_size;
@@ -290,7 +338,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.x>0 && (map[player.y][player.x-1].id==2 || map[player.y][player.x-1].id<1)){
+	        }else if(player.x>0 && ((map[player.y][player.x-1].id>2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)){
 	        	map=build_map(map_prop.cord_x-1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x-1,player.y,'man',map_prop.cord_x-1,map_prop.cord_y);
@@ -307,6 +355,8 @@ function update() {
 		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
+				ui.inventory_button.bringToTop();
+				ui.map_button.bringToTop();
 	        }
 	        player.sprite.animations.play('left');
 	        move_rule.l=true;
@@ -316,7 +366,7 @@ function update() {
 	    	 x_ass=false;
 	    }
 	    if (cursors.right.isDown && x_ass==false){
-	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (map[player.y][player.x+1].id<1 || map[player.y][player.x+1].id==2)){
+	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>2))){
 	        	game.camera.x += map_prop.tile_size;
 	        	player.sprite.x += map_prop.tile_size;
 	        	player.x++;
@@ -327,7 +377,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.x<map_prop.width*map_prop.world_size-1 && (map[player.y][player.x+1].id==2 || map[player.y][player.x+1].id<1)){
+	        }else if(player.x<map_prop.width*map_prop.world_size-1 && ((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>2) || map[player.y][player.x+1].id<1)){
 	        	map=build_map(map_prop.cord_x+1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x+1,player.y,'man',map_prop.cord_x+1,map_prop.cord_y);
@@ -344,6 +394,8 @@ function update() {
 		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
+				ui.inventory_button.bringToTop();
+				ui.map_button.bringToTop();
 	        }
 	        player.sprite.animations.play('right');
 	        move_rule.r=true;
@@ -353,9 +405,6 @@ function update() {
 	    	 x_ass=false;
 	    }
 	}else{
-		var mouse = {
-			local : game.input.activePointer
-		}
 		if(localStorage.getItem('IsSaved')!=1){
 			boot.load_sprite.alpha=0.5;
 		}else if (mouse.local.x>=boot.load_sprite.x && mouse.local.x<=boot.load_sprite.x+209 && mouse.local.y>=boot.load_sprite.y && mouse.local.y<=boot.load_sprite.y+53){
