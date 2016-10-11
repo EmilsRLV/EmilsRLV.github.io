@@ -387,7 +387,6 @@ function make_mini_map(dose){
 		var sc=map_prop.game_y/(map_prop.tile_size*(map_prop.height*map_prop.world_size));
 		for(var i=0;i<map_prop.height*map_prop.world_size;i++){
 			for(var j=0;j<map_prop.width*map_prop.world_size;j++){
-				alert(sc);
 				var nx = map_prop.game_x/2-(map_prop.tile_size*sc)*map_prop.width*(map_prop.world_size/2)+j*(map_prop.tile_size*sc);
 				var ny = /*map_prop.game_y/2-(map_prop.tile_size*sc)*map_prop.height*map_prop.world_size+*/i*(map_prop.tile_size*sc);
 				if(map[i][j].id==0.1){
