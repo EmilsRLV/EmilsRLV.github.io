@@ -1,8 +1,8 @@
 var game = new Phaser.Game(1248, 672, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
-	width : 40,
-	height : 40,
+	width : 30,
+	height : 30,
 	tile_size : 48,
 	//(game_x/tile_size)%2==1 un (game_y/tile_size)%2==1
 	game_x : 1248,
