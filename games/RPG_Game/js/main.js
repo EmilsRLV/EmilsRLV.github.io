@@ -10,7 +10,7 @@ var map_prop = {
 	field : 0,
 	cord_x : 0,
 	cord_y : 0,
-	world_size : 20,
+	world_size : 15,
 	min_map : true
 };
 
