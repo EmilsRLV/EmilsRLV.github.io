@@ -10,7 +10,7 @@ var map_prop = {
 	field : 0,
 	cord_x : 0,
 	cord_y : 0,
-	world_size : 2,
+	world_size : 3,
 	min_map : true
 };
 
@@ -249,7 +249,7 @@ function update() {
 	    	 x_buttons.space_presed=false;
 	    }
 		if (cursors.up.isDown && y_ass==false){
-	        if(player.y>map_prop.height*map_prop.cord_y && (map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>2))){
+	        if(player.y>map_prop.height*map_prop.cord_y && (map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2))){
 	        	player.sprite.y -= map_prop.tile_size;
 	        	player.y--;
 	        	game.camera.y -= map_prop.tile_size;
@@ -260,7 +260,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.y>0 && ((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>2) || map[player.y-1][player.x].id<1)){
+	        }else if(player.y>0 && ((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2) || map[player.y-1][player.x].id<1)){
 	        	map=build_map(map_prop.cord_x,map_prop.cord_y-1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y-1,'man',map_prop.cord_x,map_prop.cord_y-1);
@@ -288,7 +288,8 @@ function update() {
 	    	 move_rule.u=false;
 	    }
 	    if (cursors.down.isDown && y_ass==false){
-	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>2))){
+	        alert(map[player.y+1][player.x].id);
+	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2))){
 	        	player.sprite.y += map_prop.tile_size;
 	        	player.y++;
 	        	game.camera.y += map_prop.tile_size;
@@ -299,7 +300,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.y<map_prop.height*map_prop.world_size-1 && ((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>2) || map[player.y+1][player.x].id<1)){
+	        }else if(player.y<map_prop.height*map_prop.world_size-1 && ((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1)){
 	        	map=build_map(map_prop.cord_x,map_prop.cord_y+1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y+1,'man',map_prop.cord_x,map_prop.cord_y+1);
@@ -327,7 +328,7 @@ function update() {
 	    	 y_ass=false;
 	    }
 	    if (cursors.left.isDown && x_ass==false){
-	        if(player.x>map_prop.width*map_prop.cord_x && (map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>2 && map[player.y][player.x-1].id<3))){
+	        if(player.x>map_prop.width*map_prop.cord_x && (map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3))){
 	        	player.sprite.x -= map_prop.tile_size;
 	        	player.x--;
 	        	game.camera.x -= map_prop.tile_size;
@@ -338,7 +339,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.x>0 && ((map[player.y][player.x-1].id>2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)){
+	        }else if(player.x>0 && ((map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)){
 	        	map=build_map(map_prop.cord_x-1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x-1,player.y,'man',map_prop.cord_x-1,map_prop.cord_y);
@@ -366,7 +367,7 @@ function update() {
 	    	 x_ass=false;
 	    }
 	    if (cursors.right.isDown && x_ass==false){
-	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>2))){
+	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2))){
 	        	game.camera.x += map_prop.tile_size;
 	        	player.sprite.x += map_prop.tile_size;
 	        	player.x++;
@@ -377,7 +378,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.x<map_prop.width*map_prop.world_size-1 && ((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>2) || map[player.y][player.x+1].id<1)){
+	        }else if(player.x<map_prop.width*map_prop.world_size-1 && ((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1)){
 	        	map=build_map(map_prop.cord_x+1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x+1,player.y,'man',map_prop.cord_x+1,map_prop.cord_y);
