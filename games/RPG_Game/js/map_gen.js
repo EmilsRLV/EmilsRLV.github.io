@@ -456,7 +456,7 @@ function spawnPlayer(x,y,name,cor_x,cor_y){
 	var tpx = x;
 	var tpy = y;
 	while(tpy>=0){
-		if(map[tpy][tpx].id<1 || map[tpy][tpx].id==2){
+		if(map[tpy][tpx].id<1 || (map[tpy][tpx].id>=2 && map[tpy][tpx].id<3)){
 			var gtpx = (tpx-map_prop.width*cor_x)*map_prop.tile_size;
 			var gtpy = (tpy-map_prop.height*cor_y)*map_prop.tile_size;
 			player.sprite = game.add.sprite(gtpx, gtpy, name);
