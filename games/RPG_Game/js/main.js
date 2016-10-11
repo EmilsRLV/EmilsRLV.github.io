@@ -187,7 +187,6 @@ function update() {
 		//Draw all the map tiles
 		//map_prop.field = game.add.sprite(0, 0, 'grass3');
 		//map_prop.field.scale.setTo(map_prop.width, map_prop.height);
-		alert("Pleas wait, don't kill");
 		map=build_map(map_prop.cord_x,map_prop.cord_y);
 		spawnPlayer(0,0,'man',map_prop.cord_x,map_prop.cord_y);
 		turn = {
@@ -409,6 +408,7 @@ function update() {
 	        	boot.load_game=1;
 	        	boot.load_sprite.destroy();
 	        	boot.new_sprite.destroy();
+			alert("Pleas wait, don't kill");
 	        }
 	    }else{
 	    	boot.load_sprite.alpha=0.8;
@@ -419,6 +419,7 @@ function update() {
 	        	boot.new_game=1;
 	        	boot.load_sprite.destroy();
 	        	boot.new_sprite.destroy();
+			alert("Pleas wait, don't kill");
 	        }
 	    }else{
 	    	boot.new_sprite.alpha=0.8;
