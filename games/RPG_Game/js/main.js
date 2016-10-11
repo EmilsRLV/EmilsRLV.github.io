@@ -10,7 +10,7 @@ var map_prop = {
 	field : 0,
 	cord_x : 0,
 	cord_y : 0,
-	world_size : 3,
+	world_size : 20,
 	min_map : true
 };
 
@@ -150,28 +150,27 @@ function update() {
 	    	ui.map_button.alpha=0.5;
 	    }else if(mouse.local.x>=ui.map_button_x && mouse.local.x<=ui.map_button_x+96 && mouse.local.y>=ui.map_button_y && mouse.local.y<=ui.map_button_y+48){
 	        ui.map_button.alpha=1;
-	        if(mouse.local.isDown){
-	 			min_map = game.add.group();
+	        if(mouse.local.isDown && ui.map_button_down==false){
 	        	ui.map_button_down=true;
-	        	min_map.pendingDestroy=false;
+	        	min_map = game.add.group();
 	        	make_mini_map(1);
 	        }
 	    }else if(ui.map_button_down==false){
 	    	ui.map_button.alpha=0.8;
 	    }else if(x_buttons.esc.isDown && x_buttons.esc_presed==false){
-	    	min_map.pendingDestroy=true;
+	    	min_map.destroy();
+	    	min_map=0;
 	    	ui.map_button_down=false;
 	    	x_buttons.esc_presed=true;
 	    }
 	    if(x_buttons.esc.isUp){
 	    	x_buttons.esc_presed=false;
 	    }
-	    if(x_buttons.esc.isDown && x_buttons.pause_presed==true && x_buttons.esc_presed==false){
+	    if(x_buttons.pause.isDown && x_buttons.pause_presed==true && x_buttons.pause_down==false){
 			x_buttons.pause_presed=false;
 			ui.pause.visible = false;
 			ui.inventory_button.visible = false;
 			ui.map_button.visible = false;
-			x_buttons.esc_presed=true;
 			x_buttons.pause_down = true;
 			setTime();
 	    }else if(x_buttons.pause.isUp){
@@ -274,7 +273,6 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
@@ -288,7 +286,6 @@ function update() {
 	    	 move_rule.u=false;
 	    }
 	    if (cursors.down.isDown && y_ass==false){
-	        alert(map[player.y+1][player.x].id);
 	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2))){
 	        	player.sprite.y += map_prop.tile_size;
 	        	player.y++;
@@ -314,7 +311,6 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
@@ -353,7 +349,6 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
@@ -392,7 +387,6 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-		        game.world.bringToTop(min_map);
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
