@@ -1,8 +1,8 @@
 var game = new Phaser.Game(1248, 672, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
-	width : 30,
-	height : 30,
+	width : 40,
+	height : 40,
 	tile_size : 48,
 	//(game_x/tile_size)%2==1 un (game_y/tile_size)%2==1
 	game_x : 1248,
@@ -10,7 +10,8 @@ var map_prop = {
 	field : 0,
 	cord_x : 0,
 	cord_y : 0,
-	world_size : 15,
+	world_size_x : 10,
+	world_size_y : 5,
 	min_map : true
 };
 
@@ -297,7 +298,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.y<map_prop.height*map_prop.world_size-1 && ((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1)){
+	        }else if(player.y<map_prop.height*map_prop.world_size_y-1 && ((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1)){
 	        	map=build_map(map_prop.cord_x,map_prop.cord_y+1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y+1,'man',map_prop.cord_x,map_prop.cord_y+1);
@@ -373,7 +374,7 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.x<map_prop.width*map_prop.world_size-1 && ((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1)){
+	        }else if(player.x<map_prop.width*map_prop.world_size_x-1 && ((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1)){
 	        	map=build_map(map_prop.cord_x+1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x+1,player.y,'man',map_prop.cord_x+1,map_prop.cord_y);
@@ -408,7 +409,6 @@ function update() {
 	        	boot.load_game=1;
 	        	boot.load_sprite.destroy();
 	        	boot.new_sprite.destroy();
-			alert("Pleas wait, don't kill");
 	        }
 	    }else{
 	    	boot.load_sprite.alpha=0.8;
@@ -419,7 +419,6 @@ function update() {
 	        	boot.new_game=1;
 	        	boot.load_sprite.destroy();
 	        	boot.new_sprite.destroy();
-			alert("Pleas wait, don't kill");
 	        }
 	    }else{
 	    	boot.new_sprite.alpha=0.8;
