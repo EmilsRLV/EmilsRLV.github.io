@@ -9,9 +9,9 @@ function gen_game(){
 
 function generate_map(width,height,gen_trees,gen_water){
 	var map1 = new Array();
-	for (i=0;i<height*map_prop.world_size;i++) {
+	for (i=0;i<height*map_prop.world_size_y;i++) {
 		map1[i]=new Array();
-		for (j=0;j<width*map_prop.world_size;j++) {
+		for (j=0;j<width*map_prop.world_size_x;j++) {
 			map1[i][j]= {
 				id : 0,
 				sprite_1 : 'NAV'
@@ -19,16 +19,16 @@ function generate_map(width,height,gen_trees,gen_water){
 		}
 	}
 
-	for (i=0;i<height*map_prop.world_size;i++) {
-		for (j=0;j<width*map_prop.world_size;j++) {
+	for (i=0;i<height*map_prop.world_size_y;i++) {
+		for (j=0;j<width*map_prop.world_size_x;j++) {
 			
 			if(gen_water==true){
 				var decision = rnd(0,250);
 
-				if(decision == 0 || (i==0 || i+1==height*map_prop.world_size || j==0 || j+1==width*map_prop.world_size)){
+				if(decision == 0 || (i==0 || i+1==height*map_prop.world_size_y || j==0 || j+1==width*map_prop.world_size_x)){
 					waters++;
 					var nr=1;
-					if(i<3 || i+3>height*map_prop.world_size || j<3 || j+3>width*map_prop.world_size){
+					if(i<3 || i+3>height*map_prop.world_size_y || j<3 || j+3>width*map_prop.world_size_x){
 						nr=9;
 					}
 				//--------LAKE GENERATION--------------
@@ -36,13 +36,13 @@ function generate_map(width,height,gen_trees,gen_water){
 					// var water_count = 5;
 
 					map1[i][j].id=3;
-					make_beach(map1,i,j,height*map_prop.world_size,width*map_prop.world_size,nr);
+					make_beach(map1,i,j,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
 
 					var checked = new Array();
 
-					for (q=0;q<height*map_prop.world_size;q++) {
+					for (q=0;q<height*map_prop.world_size_y;q++) {
 						checked[q]=new Array();
-						for (w=0;w<width*map_prop.world_size;w++) {
+						for (w=0;w<width*map_prop.world_size_x;w++) {
 							checked[q][w]=0;
 						}
 					}
@@ -76,10 +76,10 @@ function generate_map(width,height,gen_trees,gen_water){
 							rinda.push(c);
 
 							map1[p.y-1][p.x].id=3;
-							make_beach(map1,p.y-1,p.x,height*map_prop.world_size,width*map_prop.world_size,nr);
+							make_beach(map1,p.y-1,p.x,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
 						}
 						//East flow
-						if(p.x < width*map_prop.world_size-1 && rnd_right>10 && (map1[p.y][p.x+1].id==0 || map1[p.y][p.x+1].id==2)){
+						if(p.x < width*map_prop.world_size_x-1 && rnd_right>10 && (map1[p.y][p.x+1].id==0 || map1[p.y][p.x+1].id==2)){
 							checked[p.y][p.x+1]=1;
 							var c = {
 								x : p.x+1,
@@ -88,7 +88,7 @@ function generate_map(width,height,gen_trees,gen_water){
 							rinda.push(c);
 
 							map1[p.y][p.x+1].id=3;
-							make_beach(map1,p.y,p.x+1,height*map_prop.world_size,width*map_prop.world_size,nr);
+							make_beach(map1,p.y,p.x+1,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
 						}
 						//West flow
 						if(p.x > 0 && rnd_left>10 && (map1[p.y][p.x-1].id==0 || map1[p.y][p.x-1].id==2)){
@@ -100,10 +100,10 @@ function generate_map(width,height,gen_trees,gen_water){
 							rinda.push(c);
 
 							map1[p.y][p.x-1].id=3;
-							make_beach(map1,p.y,p.x-1,height*map_prop.world_size,width*map_prop.world_size,nr);
+							make_beach(map1,p.y,p.x-1,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
 						}
 						//Down flow
-						if(p.y < height*map_prop.world_size-1 && rnd_left>10 && (map1[p.y+1][p.x].id==0 || map1[p.y+1][p.x].id==2)){
+						if(p.y < height*map_prop.world_size_y-1 && rnd_left>10 && (map1[p.y+1][p.x].id==0 || map1[p.y+1][p.x].id==2)){
 							checked[p.y+1][p.x]=1;
 							var c = {
 								x : p.x,
@@ -112,7 +112,7 @@ function generate_map(width,height,gen_trees,gen_water){
 							rinda.push(c);
 
 							map1[p.y+1][p.x].id=3;
-							make_beach(map1,p.y+1,p.x,height*map_prop.world_size,width*map_prop.world_size,nr);
+							make_beach(map1,p.y+1,p.x,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
 						}
 						water_count--;
 					}
@@ -134,9 +134,9 @@ function generate_map(width,height,gen_trees,gen_water){
 
 					var checked = new Array();
 
-					for (q=0;q<height*map_prop.world_size;q++) {
+					for (q=0;q<height*map_prop.world_size_y;q++) {
 						checked[q]=new Array();
-						for (w=0;w<width*map_prop.world_size;w++) {
+						for (w=0;w<width*map_prop.world_size_x;w++) {
 							checked[q][w]=0;
 						}
 					}
@@ -172,7 +172,7 @@ function generate_map(width,height,gen_trees,gen_water){
 							map1[p.y-1][p.x].id=1;
 						}
 						//East flow
-						if(p.x < width*map_prop.world_size-1 && rnd_right==2 && map1[p.y][p.x+1].id==0){
+						if(p.x < width*map_prop.world_size_x-1 && rnd_right==2 && map1[p.y][p.x+1].id==0){
 							checked[p.y][p.x+1]=1;
 							var c = {
 								x : p.x+1,
@@ -194,7 +194,7 @@ function generate_map(width,height,gen_trees,gen_water){
 							map1[p.y][p.x-1].id=1;
 						}
 						//Down flow
-						if(p.y < height*map_prop.world_size-1 && rnd_bottom==2 && map1[p.y+1][p.x].id==0){
+						if(p.y < height*map_prop.world_size_y-1 && rnd_bottom==2 && map1[p.y+1][p.x].id==0){
 							checked[p.y+1][p.x]=1;
 							var c = {
 								x : p.x,
@@ -384,11 +384,14 @@ function build_map(cor_x,cor_y){
 
 function make_mini_map(dose){
 	if(dose==1 && map_prop.min_map==true){
-		var sc=map_prop.game_y/(map_prop.tile_size*(map_prop.height*map_prop.world_size));
-		for(var i=0;i<map_prop.height*map_prop.world_size;i++){
-			for(var j=0;j<map_prop.width*map_prop.world_size;j++){
-				var nx = map_prop.game_x/2-(map_prop.tile_size*sc)*map_prop.width*(map_prop.world_size/2)+j*(map_prop.tile_size*sc);
-				var ny = /*map_prop.game_y/2-(map_prop.tile_size*sc)*map_prop.height*map_prop.world_size+*/i*(map_prop.tile_size*sc);
+		var sc=map_prop.game_y/(map_prop.tile_size*(map_prop.height*map_prop.world_size_y));
+		if(map_prop.game_x/(map_prop.tile_size*(map_prop.width*map_prop.world_size_x))<sc){
+			sc=map_prop.game_x/(map_prop.tile_size*(map_prop.width*map_prop.world_size_x));
+		}
+		for(var i=0;i<map_prop.height*map_prop.world_size_y;i++){
+			for(var j=0;j<map_prop.width*map_prop.world_size_x;j++){
+				var nx = j*(map_prop.tile_size*sc);
+				var ny = i*(map_prop.tile_size*sc);
 				if(map[i][j].id==0.1){
 					var main = game.add.sprite(nx, ny, 'grass');
 					main.scale.setTo(sc,sc);
