@@ -14,7 +14,7 @@ var map_prop = {
 	max_x : -1,
 	world_size_x : 10,
 	world_size_y : 5,
-	min_map : false
+	min_map : true
 };
 
 var night;
@@ -34,6 +34,7 @@ var x_buttons = {
 	pause : 0,
 	pause_presed : false,
 	pause_down : false,
+	pause_do : true,
 	mini_map : 0,
 	mini_map_presed : false,
 	esc : 0,
@@ -169,8 +170,8 @@ function update() {
 	    }else if(mouse.local.x>=ui.map_button_x && mouse.local.x<=ui.map_button_x+96 && mouse.local.y>=ui.map_button_y && mouse.local.y<=ui.map_button_y+48){
 	        ui.map_button.alpha=1;
 	        if(mouse.local.isDown && ui.map_button_down==false){
-	        	x_buttons.pause_down=true;
 	        	ui.map_button_down=true;
+	        	x_buttons.pause_do=false;
 	        	min_map = game.add.group();
 	        	make_mini_map(1);
 	        }
@@ -181,12 +182,12 @@ function update() {
 	    	min_map=0;
 	    	ui.map_button_down=false;
 	    	x_buttons.esc_presed=true;
-	    	x_buttons.pause_down=false;
+	    	x_buttons.pause_do=true;
 	    }
 	    if(mouse.local.x>=ui.inventory_button_x && mouse.local.x<=ui.inventory_button_x+166 && mouse.local.y>=ui.inventory_button_y && mouse.local.y<=ui.inventory_button_y+48){
 	        ui.inventory_button.alpha=1;
 	        if(mouse.local.isDown && ui.inventory_button_down==false){
-	        	x_buttons.pause_down=true;
+	        	x_buttons.pause_do=false;
 	        	ui.inventory_button_down=true;
 	        }
 	    }else if(ui.inventory_button_down==false){
@@ -194,12 +195,12 @@ function update() {
 	    }else if(x_buttons.esc.isDown && x_buttons.esc_presed==false){
 	    	ui.inventory_button_down=false;
 	    	x_buttons.esc_presed=true;
-	    	x_buttons.pause_down=false;
+	    	x_buttons.pause_do=true;
 	    }
 	    if(x_buttons.esc.isUp){
 	    	x_buttons.esc_presed=false;
 	    }
-	    if(x_buttons.pause.isDown && x_buttons.pause_presed==true && x_buttons.pause_down==false){
+	    if(x_buttons.pause.isDown && x_buttons.pause_presed==true && x_buttons.pause_down==false && x_buttons.pause_do==true){
 			x_buttons.pause_presed=false;
 			ui.pause.visible = false;
 			ui.inventory_button.visible = false;
