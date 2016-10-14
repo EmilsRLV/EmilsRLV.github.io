@@ -2,50 +2,94 @@
 //1-tree
 //2-sand
 //3-water
-function gen_game(){
-
-	
+function gen_map(x,y){
+	for(var i=y;i<100+y;i++){
+		is_map[i] = new Array();
+		for(var j=x;j<100+x;j++){
+			is_map[i][j] = {
+				exist : false
+			}
+		}
+	}
 }
 
-function generate_map(width,height,gen_trees,gen_water){
-	var map1 = new Array();
-	for (i=0;i<height*map_prop.world_size_y;i++) {
-		map1[i]=new Array();
-		for (j=0;j<width*map_prop.world_size_x;j++) {
-			map1[i][j]= {
-				id : 0,
-				sprite_1 : 'NAV'
-			};
+function generate_map(width,height,gen_trees,gen_water,cor_x,cor_y){
+	var indeXneg=1;
+	if(map_prop.max_x<cor_x || cor_x==0 ||  (cor_x>0 && map[height*cor_y][width*cor_x-1].id>=0)){
+		indeXneg=0;
+	}
+	var indeYneg=1;
+	if(map_prop.max_y<cor_y || cor_y==0 || (cor_y>0 && map[height*cor_y-1][width*cor_x].id>=0)){
+		indeYneg=0;
+	}
+	var indeX=1;
+	if(map_prop.max_x>cor_x && map[height*cor_y][width*cor_x+map_prop.width].id>=0){
+		indeX=0;
+	}
+	var indeY=1;
+	if(map_prop.max_y>cor_y && map[height*cor_y+map_prop.height][width*cor_x].id>=0){
+		indeY=0;
+	}
+	for (i=height*cor_y-indeYneg;i<height+height*cor_y+indeY;i++) {
+		if(map_prop.max_y<cor_y){
+			map[i]=new Array();
+		}
+		for (j=width*cor_x-indeXneg;j<width+width*cor_x+indeX;j++) {
+			if(i<height+height*cor_y && j<width+width*cor_x && i>=height*cor_y && j>=width*cor_x){
+				map[i][j]= {
+					id : 0,
+				};
+			}else{
+				map[i][j]= {
+					id : -1,
+				};
+			}
 		}
 	}
 
-	for (i=0;i<height*map_prop.world_size_y;i++) {
-		for (j=0;j<width*map_prop.world_size_x;j++) {
+	for (i=height*cor_y;i<height+height*cor_y;i++) {
+		for (j=width*cor_x;j<width+width*cor_x;j++) {
 			
 			if(gen_water==true){
 				var decision = rnd(0,250);
-
-				if(decision == 0 || (i==0 || i+1==height*map_prop.world_size_y || j==0 || j+1==width*map_prop.world_size_x)){
-					waters++;
-					var nr=1;
-					if(i<3 || i+3>height*map_prop.world_size_y || j<3 || j+3>width*map_prop.world_size_x){
-						nr=9;
+				var nr=0;
+				if(i==0 || j==0){
+					decision=0;
+					nr=10;
+				}
+				if(cor_x>0 && j==width*cor_x){
+					if(map[i][j-1].id>=3){
+						decision=0;
+					}else{
+						decision=1;
 					}
+				}else if(j+1==width+width*cor_x){
+					if(map[i][j+1].id>=3){
+						decision=0;
+					}else{
+						decision=1;
+					}
+				}else if(cor_y>0 && i==height*cor_y){
+					if(map[i-1][j].id>=3){
+						decision=0;
+					}else{
+						decision=1;
+					}
+				}else if(i+1==height+height*cor_y){
+					if(map[i+1][j].id>=3){
+						decision=0;
+					}else{
+						decision=1;
+					}
+				}
+				if(decision == 0 ){
+					waters++;
 				//--------LAKE GENERATION--------------
 					var water_count = rnd(5,40);
 					// var water_count = 5;
 
-					map1[i][j].id=3;
-					make_beach(map1,i,j,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
-
-					var checked = new Array();
-
-					for (q=0;q<height*map_prop.world_size_y;q++) {
-						checked[q]=new Array();
-						for (w=0;w<width*map_prop.world_size_x;w++) {
-							checked[q][w]=0;
-						}
-					}
+					map[i][j].id=3;
+					make_beach(i,j,height+height*cor_y,width+width*cor_x,nr);
 
 					var starting = {
 						x : j,
@@ -55,7 +99,6 @@ function generate_map(width,height,gen_trees,gen_water){
 					var rinda = [];
 
 					rinda.push(starting);
-					checked[starting.y][starting.x] = 1;
 
 					// for(var q = 0;q<water_count;q++){
 					while(rinda.length > 0 && water_count>0){
@@ -67,52 +110,48 @@ function generate_map(width,height,gen_trees,gen_water){
 						var p = rinda.shift(); //Current water tile
 
 						//North flow
-						if(p.y > 0 && rnd_top>10 && (map1[p.y-1][p.x].id==0 || map1[p.y-1][p.x].id==2)){
-							checked[p.y-1][p.x]=1;
+						if(p.y > height*cor_y && rnd_top>10 && (map[p.y-1][p.x].id<=0 || map[p.y-1][p.x].id==2)){
 							var c = {
 								x : p.x,
 								y : p.y-1
 							};
 							rinda.push(c);
 
-							map1[p.y-1][p.x].id=3;
-							make_beach(map1,p.y-1,p.x,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
+							map[p.y-1][p.x].id=3;
+							make_beach(p.y-1,p.x,height+height*cor_y,width+width*cor_x,nr);
 						}
 						//East flow
-						if(p.x < width*map_prop.world_size_x-1 && rnd_right>10 && (map1[p.y][p.x+1].id==0 || map1[p.y][p.x+1].id==2)){
-							checked[p.y][p.x+1]=1;
+						if(p.x < width+width*cor_x-1 && rnd_right>10 && (map[p.y][p.x+1].id<=0 || map[p.y][p.x+1].id==2)){
 							var c = {
 								x : p.x+1,
 								y : p.y
 							};
 							rinda.push(c);
 
-							map1[p.y][p.x+1].id=3;
-							make_beach(map1,p.y,p.x+1,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
+							map[p.y][p.x+1].id=3;
+							make_beach(p.y,p.x+1,height+height*cor_y,width+width*cor_x,nr);
 						}
 						//West flow
-						if(p.x > 0 && rnd_left>10 && (map1[p.y][p.x-1].id==0 || map1[p.y][p.x-1].id==2)){
-							checked[p.y][p.x-1]=1;
+						if(p.x > width*cor_x && rnd_left>10 && (map[p.y][p.x-1].id<=0 || map[p.y][p.x-1].id==2)){
 							var c = {
 								x : p.x-1,
 								y : p.y
 							};
 							rinda.push(c);
 
-							map1[p.y][p.x-1].id=3;
-							make_beach(map1,p.y,p.x-1,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
+							map[p.y][p.x-1].id=3;
+							make_beach(p.y,p.x-1,height+height*cor_y,width+width*cor_x,nr);
 						}
 						//Down flow
-						if(p.y < height*map_prop.world_size_y-1 && rnd_left>10 && (map1[p.y+1][p.x].id==0 || map1[p.y+1][p.x].id==2)){
-							checked[p.y+1][p.x]=1;
+						if(p.y < height+height*cor_y-1 && rnd_left>10 && (map[p.y+1][p.x].id<=0 || map[p.y+1][p.x].id==2)){
 							var c = {
 								x : p.x,
 								y : p.y+1
 							};
 							rinda.push(c);
 
-							map1[p.y+1][p.x].id=3;
-							make_beach(map1,p.y+1,p.x,height*map_prop.world_size_y,width*map_prop.world_size_x,nr);
+							map[p.y+1][p.x].id=3;
+							make_beach(p.y+1,p.x,height+height*cor_y,width+width*cor_x,nr);
 						}
 						water_count--;
 					}
@@ -128,17 +167,8 @@ function generate_map(width,height,gen_trees,gen_water){
 					//--------FOREST GENERATION--------------
 					var tree_count = rnd(5,100);
 					// var water_count = 5;
-					if(map1[i][j].nr<2){
-						map1[i][j].id=1;
-					}
-
-					var checked = new Array();
-
-					for (q=0;q<height*map_prop.world_size_y;q++) {
-						checked[q]=new Array();
-						for (w=0;w<width*map_prop.world_size_x;w++) {
-							checked[q][w]=0;
-						}
+					if(map[i][j].nr<2){
+						map[i][j].id=1;
 					}
 
 					var starting = {
@@ -149,7 +179,6 @@ function generate_map(width,height,gen_trees,gen_water){
 					var rinda = [];
 
 					rinda.push(starting);
-					checked[starting.y][starting.x] = 1;
 
 					// for(var q = 0;q<water_count;q++){
 					while(rinda.length > 0 && tree_count>0){
@@ -161,64 +190,56 @@ function generate_map(width,height,gen_trees,gen_water){
 						var p = rinda.shift(); //Current water tile
 
 						//North flow
-						if(p.y > 0 && rnd_top==2 && map1[p.y-1][p.x].id==0){
-							checked[p.y-1][p.x]=1;
+						if(p.y > height*cor_y && rnd_top==2 && map[p.y-1][p.x].id<=0){
 							var c = {
 								x : p.x,
 								y : p.y-1
 							};
 							rinda.push(c);
 
-							map1[p.y-1][p.x].id=1;
+							map[p.y-1][p.x].id=1;
 						}
 						//East flow
-						if(p.x < width*map_prop.world_size_x-1 && rnd_right==2 && map1[p.y][p.x+1].id==0){
-							checked[p.y][p.x+1]=1;
+						if(p.x < width+width*cor_x-1 && rnd_right==2 && map[p.y][p.x+1].id<=0){
 							var c = {
 								x : p.x+1,
 								y : p.y
 							};
 							rinda.push(c);
 							
-							map1[p.y][p.x+1].id=1;
+							map[p.y][p.x+1].id=1;
 						}
 						//West flow
-						if(p.x > 0 && rnd_left==2 && map1[p.y][p.x-1].id==0){
-							checked[p.y][p.x-1]=1;
+						if(p.x > width+width*cor_x && rnd_left==2 && map[p.y][p.x-1].id<=0){
 							var c = {
 								x : p.x-1,
 								y : p.y
 							};
 							rinda.push(c);
 							
-							map1[p.y][p.x-1].id=1;
+							map[p.y][p.x-1].id=1;
 						}
 						//Down flow
-						if(p.y < height*map_prop.world_size_y-1 && rnd_bottom==2 && map1[p.y+1][p.x].id==0){
-							checked[p.y+1][p.x]=1;
+						if(p.y < height+height*cor_y-1 && rnd_bottom==2 && map[p.y+1][p.x].id<=0){
 							var c = {
 								x : p.x,
 								y : p.y+1
 							};
 							rinda.push(c);
 							
-							map1[p.y+1][p.x].id=1;
+							map[p.y+1][p.x].id=1;
 						}
 						tree_count--;
 					}
 					//---------------------------------------
 				}
 			}
-
 		}
 	}
 
-
-	return map1;
 }
 
-function make_beach(m,y,x,height,width,nr){
-	var map2=m;
+function make_beach(y,x,height,width,nr){
 	var sandy=0;
 	var a = {
 		x : x,
@@ -228,25 +249,25 @@ function make_beach(m,y,x,height,width,nr){
 	rinda.push(a);
 	while(rinda.length > 0 && sandy<nr){
 		var c = rinda.shift();
-		if(c.y>0){
-			if(map2[c.y-1][c.x].id<2){
-				map2[c.y-1][c.x].id=2;
+		if(c.y>height-map_prop.height){
+			if(map[c.y-1][c.x].id<2){
+				map[c.y-1][c.x].id=2;
 				a = {
 					x : c.x,
 					y : c.y-1
 				};
 				rinda.push(a);
 			}
-			if(c.x>0 && map2[c.y-1][c.x-1].id<2){
-				map2[c.y-1][c.x-1].id=2;
+			if(c.x>width-map_prop.height && map[c.y-1][c.x-1].id<2){
+				map[c.y-1][c.x-1].id=2;
 				a = {
 					x : c.x-1,
 					y : c.y-1
 				};
 				rinda.push(a);
 			}
-			if(c.x<width-1 && map2[c.y-1][c.x+1].id<2){
-				map2[c.y-1][c.x+1].id=2;
+			if(c.x<width-1 && map[c.y-1][c.x+1].id<2){
+				map[c.y-1][c.x+1].id=2;
 				a = {
 					x : c.x+1,
 					y : c.y-1
@@ -255,24 +276,24 @@ function make_beach(m,y,x,height,width,nr){
 			}	
 		}
 		if(c.y<height-1){
-			if(map2[c.y+1][c.x].id<2){
-				map2[c.y+1][c.x].id=2;
+			if(map[c.y+1][c.x].id<2){
+				map[c.y+1][c.x].id=2;
 				a = {
 					x : c.x,
 					y : c.y+1
 				};
 				rinda.push(a);
 			}
-			if(c.x>0 && map2[c.y+1][c.x-1].id<2){
-				map2[c.y+1][c.x-1].id=2;
+			if(c.x>width-map_prop.height && map[c.y+1][c.x-1].id<2){
+				map[c.y+1][c.x-1].id=2;
 				a = {
 					x : c.x-1,
 					y : c.y+1
 				};
 				rinda.push(a);
 			}
-			if(c.x<width-1 && map2[c.y+1][c.x+1].id<2){
-				map2[c.y+1][c.x+1].id=2;
+			if(c.x<width-1 && map[c.y+1][c.x+1].id<2){
+				map[c.y+1][c.x+1].id=2;
 				a = {
 					x : c.x+1,
 					y : c.y+1
@@ -280,16 +301,16 @@ function make_beach(m,y,x,height,width,nr){
 				rinda.push(a);
 			}
 		}
-		if(c.x>0 && map2[c.y][c.x-1].id<2){
-			map2[c.y][c.x-1].id=2;
+		if(c.x>width-map_prop.height && map[c.y][c.x-1].id<2){
+			map[c.y][c.x-1].id=2;
 			a = {
 				x : c.x-1,
 				y : c.y
 			};
 			rinda.push(a);
 		}
-		if(c.x<width-1 && map2[c.y][c.x+1].id<2){
-			map2[c.y][c.x+1].id=2;
+		if(c.x<width-1 && map[c.y][c.x+1].id<2){
+			map[c.y][c.x+1].id=2;
 			a = {
 				x : c.x+1,
 				y : c.y
@@ -303,148 +324,148 @@ function make_beach(m,y,x,height,width,nr){
 function build_map(cor_x,cor_y){
 	for(var i=map_prop.height*cor_y;i<map_prop.height+map_prop.height*cor_y;i++){
 		for(var j=map_prop.width*cor_x;j<map_prop.width+map_prop.width*cor_x;j++){
-			if(map_prop.cord_x>cor_x){
-				map[i][j+map_prop.width].sprite_1.destroy();
-			}else if(map_prop.cord_y>cor_y){
-				map[i+map_prop.height][j].sprite_1.destroy();
-			}else if(map_prop.cord_x<cor_x){
-				map[i][j-map_prop.width].sprite_1.destroy();
-			}else if(map_prop.cord_y<cor_y){
-				map[i-map_prop.height][j].sprite_1.destroy();
-			}
 			var nx = (j-map_prop.width*cor_x)*map_prop.tile_size;
 			var ny = (i-map_prop.height*cor_y)*map_prop.tile_size;
-			if(map[i][j].id==0){
+			if(map[i][j].id<=0){
 				var r = rnd(1,7);
 				if(r<=4){
 					map[i][j].id = 0.1;
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
+					this_map.add(game.add.sprite(nx, ny, 'grass'));
 				}else if(r<=6){
 					map[i][j].id = 0.2;
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass2');
+					this_map.add(game.add.sprite(nx, ny, 'grass2'));
 				}else{
 					map[i][j].id = 0.3;
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass3');
+					this_map.add(game.add.sprite(nx, ny, 'grass3'));
 				}
-			}if(map[i][j].id<1){
+			}else if(map[i][j].id<1){
 				if(map[i][j].id==0.1){
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
+					this_map.add(game.add.sprite(nx, ny, 'grass'));
 				}else if(map[i][j].id==0.2){
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass2');
+					this_map.add(game.add.sprite(nx, ny, 'grass2'));
 				}else{
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass3');
+					this_map.add(game.add.sprite(nx, ny, 'grass3'));
 				}
 			}else if(map[i][j].id==1){
-				map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
+				this_map.add(game.add.sprite(nx, ny, 'grass'));
 				var r = rnd(1,4);
 				if(r>1){
 					map[i][j].id = 1.1;
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree');
+					this_map.add(game.add.sprite(nx, ny, 'tree'));
 				}else{
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree2');
 					map[i][j].id = 1.2;
+					this_map.add(game.add.sprite(nx, ny, 'tree2'));
 				}
 			}else if(map[i][j].id<2){
-				map[i][j].sprite_1 = game.add.sprite(nx, ny, 'grass');
-				if(map[i][j].id = 1.1){
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree');
+				this_map.add(game.add.sprite(nx, ny, 'grass'));
+				if(map[i][j].id == 1.1){
+					this_map.add(game.add.sprite(nx, ny, 'tree'));
 				}else{
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'tree2');
+					this_map.add(game.add.sprite(nx, ny, 'tree2'));
 				}
 			}else if(map[i][j].id==2){
 				map[i][j].id = 2.1;
-				map[i][j].sprite_1=game.add.sprite(nx, ny, 'sand');
+				this_map.add(game.add.sprite(nx, ny, 'sand'));
 			}else if(map[i][j].id<3){
-				map[i][j].sprite_1=game.add.sprite(nx, ny, 'sand');
+				this_map.add(game.add.sprite(nx, ny, 'sand'));
 			}else if(map[i][j].id==3){
 				var r = rnd(1,3);
 				if(r==1){
 					map[i][j].id = 3.1;
-					map[i][j].sprite_1=game.add.sprite(nx, ny, 'water');
+					this_map.add(game.add.sprite(nx, ny, 'water'));
 				}else if(r==2){
 					map[i][j].id = 3.2;
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water2');
+					this_map.add(game.add.sprite(nx, ny, 'water2'));
 				}else{
 					map[i][j].id = 3.3;
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water3');
+					this_map.add(game.add.sprite(nx, ny, 'water3'));
 				}
 			}else if(map[i][j].id<4){
 				if(map[i][j].id==3.1){
-					map[i][j].sprite_1=game.add.sprite(nx, ny, 'water');
+					this_map.add(game.add.sprite(nx, ny, 'water'));
 				}else if(map[i][j].id==3.2){
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water2');
+					this_map.add(game.add.sprite(nx, ny, 'water2'));
 				}else{
-					map[i][j].sprite_1 = game.add.sprite(nx, ny, 'water3');
+					this_map.add(game.add.sprite(nx, ny, 'water3'));
 				}
 			}
 		}
 	}
-	return map;
 }
 
 function make_mini_map(dose){
 	if(dose==1 && map_prop.min_map==true){
-		var sc=map_prop.game_y/(map_prop.tile_size*(map_prop.height*map_prop.world_size_y));
-		if(map_prop.game_x/(map_prop.tile_size*(map_prop.width*map_prop.world_size_x))<sc){
-			sc=map_prop.game_x/(map_prop.tile_size*(map_prop.width*map_prop.world_size_x));
+		var sc=map_prop.game_y/(map_prop.tile_size*(map_prop.height*(map_prop.max_y+1)));
+		if(map_prop.game_x/(map_prop.tile_size*(map_prop.width*(map_prop.max_x+1)))<sc){
+			sc=map_prop.game_x/(map_prop.tile_size*(map_prop.width*(map_prop.max_x+1)));
 		}
-		for(var i=0;i<map_prop.height*map_prop.world_size_y;i++){
-			for(var j=0;j<map_prop.width*map_prop.world_size_x;j++){
-				var nx = j*(map_prop.tile_size*sc);
-				var ny = i*(map_prop.tile_size*sc);
-				if(map[i][j].id==0.1){
-					var main = game.add.sprite(nx, ny, 'grass');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}if(map[i][j].id==0.2){
-					var main = game.add.sprite(nx, ny, 'grass2');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}if(map[i][j].id==0.3){
-					var main = game.add.sprite(nx, ny, 'grass3');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==1.1){
-					var main = game.add.sprite(nx, ny, 'grass3');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-					var main = game.add.sprite(nx, ny, 'tree');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==1.2){
-					var main = game.add.sprite(nx, ny, 'grass3');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-					var main = game.add.sprite(nx, ny, 'tree2');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==2.1){
-					var main = game.add.sprite(nx, ny, 'sand');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==3.1){
-					var main = game.add.sprite(nx, ny, 'water');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==3.2){
-					var main = game.add.sprite(nx, ny, 'water2');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
-				}else if(map[i][j].id==3.3){
-					var main = game.add.sprite(nx, ny, 'water3');
-					main.scale.setTo(sc,sc);
-					main.fixedToCamera=true;
-					min_map.add(main);
+		var x=0;
+		var y=0;
+		for(var i=0;i<map_prop.height*(map_prop.max_y+1);i++){
+			if(i>0 && i%map_prop.height==0){
+				y++;
+			}
+			for(var j=0;j<map_prop.width*(map_prop.max_x+1);j++){
+				if(j>0 && j%map_prop.width==0){
+					x=j/20;
+				}
+				if(is_map[y][x].exist==true){
+					var nx = j*(map_prop.tile_size*sc);
+					var ny = i*(map_prop.tile_size*sc);
+					if(map[i][j].id==0.1){
+						var main = game.add.sprite(nx, ny, 'grass');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}if(map[i][j].id==0.2){
+						var main = game.add.sprite(nx, ny, 'grass2');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}if(map[i][j].id==0.3){
+						var main = game.add.sprite(nx, ny, 'grass3');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}else if(map[i][j].id==1.1){
+						var main = game.add.sprite(nx, ny, 'grass3');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+						var main = game.add.sprite(nx, ny, 'tree');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}else if(map[i][j].id==1.2){
+						var main = game.add.sprite(nx, ny, 'grass3');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+						var main = game.add.sprite(nx, ny, 'tree2');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}else if(map[i][j].id==2.1){
+						var main = game.add.sprite(nx, ny, 'sand');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}else if(map[i][j].id==3.1){
+						var main = game.add.sprite(nx, ny, 'water');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}else if(map[i][j].id==3.2){
+						var main = game.add.sprite(nx, ny, 'water2');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}else if(map[i][j].id==3.3){
+						var main = game.add.sprite(nx, ny, 'water3');
+						main.scale.setTo(sc,sc);
+						main.fixedToCamera=true;
+						min_map.add(main);
+					}	
 				}
 			}
 		}
