@@ -15,19 +15,19 @@ function gen_map(x,y){
 
 function generate_map(width,height,gen_trees,gen_water,cor_x,cor_y){
 	var indeXneg=1;
-	if(map_prop.max_x<cor_x || cor_x==0 ||  (cor_x>0 && map[height*cor_y][width*cor_x-1].id>=0)){
+	if(cor_x==0 ||  is_map[cor_y][cor_x-1].exist==true){
 		indeXneg=0;
 	}
 	var indeYneg=1;
-	if(map_prop.max_y<cor_y || cor_y==0 || (cor_y>0 && map[height*cor_y-1][width*cor_x].id>=0)){
+	if(cor_y==0 || is_map[cor_y-1][cor_x].exist==true){
 		indeYneg=0;
 	}
 	var indeX=1;
-	if(map_prop.max_x>cor_x && map[height*cor_y][width*cor_x+map_prop.width].id>=0){
+	if(is_map[cor_y][cor_x+1].exist==true){
 		indeX=0;
 	}
 	var indeY=1;
-	if(map_prop.max_y>cor_y && map[height*cor_y+map_prop.height][width*cor_x].id>=0){
+	if(is_map[cor_y+1][cor_x].exist==true){
 		indeY=0;
 	}
 	for (i=height*cor_y-indeYneg;i<height+height*cor_y+indeY;i++) {
