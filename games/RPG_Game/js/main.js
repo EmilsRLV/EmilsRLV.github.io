@@ -55,6 +55,7 @@ var player = {
 	ap : 20,
 	ap_re : 1,
 	ap_ui : 0,
+	dir : 'z'
 };
 
 var move_rule = {
@@ -69,12 +70,21 @@ var move_rule = {
 var ui = {
 	pause : 0,
 	inventory_button : 0,
+	inventory_button_x : 0,
+	inventory_button_y : 0,
 	inventory_button_down : false,
 	map_button : 0,
 	map_button_x : 0,
 	map_button_y : 0,
 	map_button_down : false
+
 };
+
+var inventory = {
+	icon_log : 0,
+	logText : 0,
+	log : 0
+}
 
 var map;
 
@@ -107,6 +117,7 @@ function preload() {
 	game.load.image('pause', 'assets/ui/pause.png'); //pauselayer
 	game.load.image('new_button', 'assets/ui/buttons/new_button.png');  //new game button
 	game.load.image('load_button', 'assets/ui/buttons/load_button.png'); //load game button
+	game.load.image('log', 'assets/ui/icons/log.png');  //log icon
 	game.load.image('inventory_button', 'assets/ui/buttons/inventory_button.png'); //inventory button
 	game.load.image('map_button', 'assets/ui/buttons/map_button.png'); //map button
 	game.load.image('HP', 'assets/ui/buttons/HP.png'); //hp ui
@@ -146,7 +157,8 @@ function setTime() {
 
 function update() {
 	var mouse = {
-		local : game.input.activePointer
+		local : game.input.activePointer,
+		local_down : false
 	};
 	x_buttons.pause = game.input.keyboard.addKey(Phaser.Keyboard.P);
 	x_buttons.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
@@ -157,6 +169,7 @@ function update() {
 	    }else if(mouse.local.x>=ui.map_button_x && mouse.local.x<=ui.map_button_x+96 && mouse.local.y>=ui.map_button_y && mouse.local.y<=ui.map_button_y+48){
 	        ui.map_button.alpha=1;
 	        if(mouse.local.isDown && ui.map_button_down==false){
+	        	x_buttons.pause_down=true;
 	        	ui.map_button_down=true;
 	        	min_map = game.add.group();
 	        	make_mini_map(1);
@@ -168,6 +181,20 @@ function update() {
 	    	min_map=0;
 	    	ui.map_button_down=false;
 	    	x_buttons.esc_presed=true;
+	    	x_buttons.pause_down=false;
+	    }
+	    if(mouse.local.x>=ui.inventory_button_x && mouse.local.x<=ui.inventory_button_x+166 && mouse.local.y>=ui.inventory_button_y && mouse.local.y<=ui.inventory_button_y+48){
+	        ui.inventory_button.alpha=1;
+	        if(mouse.local.isDown && ui.inventory_button_down==false){
+	        	x_buttons.pause_down=true;
+	        	ui.inventory_button_down=true;
+	        }
+	    }else if(ui.inventory_button_down==false){
+	    	ui.inventory_button.alpha=0.8;
+	    }else if(x_buttons.esc.isDown && x_buttons.esc_presed==false){
+	    	ui.inventory_button_down=false;
+	    	x_buttons.esc_presed=true;
+	    	x_buttons.pause_down=false;
 	    }
 	    if(x_buttons.esc.isUp){
 	    	x_buttons.esc_presed=false;
@@ -209,10 +236,21 @@ function update() {
 		night = game.add.sprite(0, 0,'night');
 		night.scale.setTo(map_prop.game_x/map_prop.tile_size, map_prop.game_y/map_prop.tile_size);
 		night.fixedToCamera = true;
+		inventory.icon_log = game.add.sprite(10,70,'log');
+		inventory.icon_log.scale.setTo(40/128,40/128);
+		inventory.icon_log.fixedToCamera=true;
+		inventory.logText = game.add.text(60, 70, inventory.log, { fontSize: '40px', fill: '#7F5A1C' });
+		inventory.logText.fixedToCamera=true;
+		player.hp_ui = game.add.sprite(10,10,'HP');
+		player.hp_ui.fixedToCamera=true;
+		player.ap_ui = game.add.sprite(10,40,'AP');
+		player.ap_ui.fixedToCamera=true;
 		ui.pause = game.add.sprite(map_prop.game_x/2-380, map_prop.game_y/2-312, 'pause');
 		ui.pause.fixedToCamera = true;
 		ui.pause.visible = false;
 		ui.inventory_button = game.add.sprite(map_prop.game_x/2-83, map_prop.game_y/2-272, 'inventory_button');
+		ui.inventory_button_x=map_prop.game_x/2-83;
+		ui.inventory_button_y=map_prop.game_y/2-272;
 		ui.inventory_button.fixedToCamera = true;
 		ui.inventory_button.visible = false;
 		ui.map_button = game.add.sprite(map_prop.game_x/2-48, map_prop.game_y/2-204, 'map_button');
@@ -232,6 +270,19 @@ function update() {
 	}else if(boot.new_game==2 || boot.load_game==2){
 		x_buttons.space = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
 		var cursors = game.input.keyboard.createCursorKeys();
+		/*if(mouse.local.isDown && mouse.local_down==false){
+			mouse.local_down=true;
+			var x=Math.floor(mouse.local.x/map_prop.tile_size);
+			var y=Math.floor(mouse.local.y/map_prop.tile_size);
+			console.log(Math.floor(mouse.local.x-200));
+			console.log(Math.floor(mouse.local.y-200));
+			if((x-1==player.x || x+1==player.x) && (y-1==player.y || y+1==player.y)){
+				map[y][x].id=0.1;
+				cut_tree((x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+			}
+		}else if(mouse.local.isUp){
+			mouse.local_down=false;
+		}*/
 		if (x_buttons.pause.isDown && x_buttons.pause_presed==false && x_buttons.pause_down==false){
 			x_buttons.pause_presed=true;
 			ui.pause.visible = true;
@@ -249,14 +300,32 @@ function update() {
 	    	x_buttons.mini_map_presed=false;
 	    }*/
 		if (x_buttons.space.isDown && x_buttons.space_presed==false){
-	        x_buttons.space_presed=true;
-	        turn.time+=turn.pas;
-	        player.ap+=player.ap_re*1.5;
-	        if(player.ap>player.ap_max){
-	        	player.ap=player.ap_max;
-	        }
-			player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
-			setTime();
+			if(player.dir=='z' && player.y>map_prop.height*map_prop.cord_y && map[player.y-1][player.x].id<2 && map[player.y-1][player.x].id>=1){
+				map[player.y-1][player.x].id=0.1;
+				cut_tree((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+				x_buttons.space_presed=true;
+		        turn.time+=turn.pas*2;
+				setTime();
+			}else if(player.dir=='s' && player.y<map_prop.height*(map_prop.cord_y+1)-1 && map[player.y+1][player.x].id<2 && map[player.y+1][player.x].id>=1){
+				map[player.y+1][player.x].id=0.1;
+				cut_tree((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+				x_buttons.space_presed=true;
+		        turn.time+=turn.pas*2;
+				setTime();
+			}else if(player.dir=='w' && player.x>map_prop.width*map_prop.cord_x && map[player.y][player.x-1].id<2 && map[player.y][player.x-1].id>=1){
+				map[player.y][player.x-1].id=0.1;
+				cut_tree((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+				x_buttons.space_presed=true;
+		        turn.time+=turn.pas*2;
+				setTime();
+			}else if(player.dir=='e' && player.x<map_prop.width*(map_prop.cord_x+1)-1 && map[player.y][player.x+1].id<2 && map[player.y][player.x+1].id>=1){
+				map[player.y][player.x+1].id=0.1;
+				cut_tree((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+				x_buttons.space_presed=true;
+		        turn.time+=turn.pas*2;
+		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
+				setTime();
+			}
 	    }else if(x_buttons.space.isUp){
 	    	 x_buttons.space_presed=false;
 	    }
@@ -264,17 +333,19 @@ function update() {
 	        if(player.y>0 && (player.y)%map_prop.height==0 && map[player.y-1][player.x].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y-1);
 	        }
-	        if(player.y>map_prop.height*map_prop.cord_y && (map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2))){
-	        	player.sprite.y -= map_prop.tile_size;
-	        	player.y--;
-	        	game.camera.y -= map_prop.tile_size;
-	        	turn.time+=turn.pas;
-	        	player.ap+=player.ap_re;
-		        if(player.ap>player.ap_max){
-		        	player.ap=player.ap_max;
+	        if(player.y>map_prop.height*map_prop.cord_y){
+	        	if(map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2)){
+	        		player.sprite.y -= map_prop.tile_size;
+		        	player.y--;
+		        	game.camera.y -= map_prop.tile_size;
+		        	turn.time+=turn.pas;
+		        	player.ap+=player.ap_re;
+			        if(player.ap>player.ap_max){
+			        	player.ap=player.ap_max;
+			        }
+			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
+			        setTime();
 		        }
-		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
-		        setTime();
 	        }else if(player.y>0 && ((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2) || map[player.y-1][player.x].id<1)){
 				is_map[map_prop.cord_y-1][map_prop.cord_x].exist=true;
 				this_map.destroy();
@@ -296,8 +367,13 @@ function update() {
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
 				ui.map_button.bringToTop();
+				inventory.icon_log.bringToTop();
+				inventory.logText.bringToTop();
+				player.hp_ui.bringToTop();
+				player.ap_ui.bringToTop();
 	        }
 	        player.sprite.animations.play('up');
+	        player.dir='z';
 	        move_rule.u=true;
 	        y_ass=true;
 	    }else if(cursors.up.isUp && move_rule.d==false){
@@ -311,17 +387,19 @@ function update() {
 	        		map_prop.max_y++;
 	        	}
 	        }
-	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2))){
-	        	player.sprite.y += map_prop.tile_size;
-	        	player.y++;
-	        	game.camera.y += map_prop.tile_size;
-	        	turn.time+=turn.pas;
-	        	player.ap+=player.ap_re;
-		        if(player.ap>player.ap_max){
-		        	player.ap=player.ap_max;
-		        }
-		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
-		        setTime();
+	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1){
+	        	if(map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2)){
+	        		player.sprite.y += map_prop.tile_size;
+		        	player.y++;
+		        	game.camera.y += map_prop.tile_size;
+		        	turn.time+=turn.pas;
+		        	player.ap+=player.ap_re;
+			        if(player.ap>player.ap_max){
+			        	player.ap=player.ap_max;
+			        }
+			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
+			        setTime();
+	        	}
 	        }else if((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1){
 				if(map_prop.cord_y+1==100){
 					gen_map(is_map.length,is_map[0].length);
@@ -346,8 +424,13 @@ function update() {
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
 				ui.map_button.bringToTop();
+				inventory.icon_log.bringToTop();
+				inventory.logText.bringToTop();
+				player.hp_ui.bringToTop();
+				player.ap_ui.bringToTop();
 	        }
 	        player.sprite.animations.play('down');
+	        player.dir='s';
 	        move_rule.d=true;
 	        y_ass=true;
 	    }else if(cursors.down.isUp && move_rule.u==false){
@@ -358,17 +441,19 @@ function update() {
 	    	if(player.x>0 && (player.x)%map_prop.width==0 && map[player.y][player.x-1].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x-1,map_prop.cord_y);
 	        }
-	        if(player.x>map_prop.width*map_prop.cord_x && (map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3))){
-	        	player.sprite.x -= map_prop.tile_size;
-	        	player.x--;
-	        	game.camera.x -= map_prop.tile_size;
-	        	turn.time+=turn.pas;
-	        	player.ap+=player.ap_re;
-		        if(player.ap>player.ap_max){
-		        	player.ap=player.ap_max;
-		        }
-		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
-		        setTime();
+	        if(player.x>map_prop.width*map_prop.cord_x){
+	        	if(map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3)){
+	        		player.sprite.x -= map_prop.tile_size;
+		        	player.x--;
+		        	game.camera.x -= map_prop.tile_size;
+		        	turn.time+=turn.pas;
+		        	player.ap+=player.ap_re;
+			        if(player.ap>player.ap_max){
+			        	player.ap=player.ap_max;
+			        }
+			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
+			        setTime();
+	        	}
 	        }else if(player.x>0 && ((map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)){
 				is_map[map_prop.cord_y][map_prop.cord_x-1].exist=true;
 				this_map.destroy();
@@ -390,8 +475,13 @@ function update() {
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
 				ui.map_button.bringToTop();
+				inventory.icon_log.bringToTop();
+				inventory.logText.bringToTop();
+				player.hp_ui.bringToTop();
+				player.ap_ui.bringToTop();
 	        }
 	        player.sprite.animations.play('left');
+	        player.dir='w';
 	        move_rule.l=true;
 	        x_ass=true;
 	    }else if(cursors.left.isUp && move_rule.r==false){
@@ -402,21 +492,23 @@ function update() {
 	    	if((player.x+1)%map_prop.width==0 && map[player.y][player.x+1].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x+1,map_prop.cord_y);
 	        	if(map_prop.cord_x+1>map_prop.max_x){
-	        		alert("generate_map==true");
 	        		map_prop.max_x++;
 	        	}
 	        }
-	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2))){
-	        	game.camera.x += map_prop.tile_size;
-	        	player.sprite.x += map_prop.tile_size;
-	        	player.x++;
-	        	turn.time+=turn.pas;
-	        	player.ap+=player.ap_re;
-		        if(player.ap>player.ap_max){
-		        	player.ap=player.ap_max;
-		        }
-		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
-		        setTime();
+	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1){
+	        	if(map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2)){
+	        		game.camera.x += map_prop.tile_size;
+		        	player.sprite.x += map_prop.tile_size;
+		        	player.x++;
+		        	turn.time+=turn.pas;
+		        	player.ap+=player.ap_re;
+			        if(player.ap>player.ap_max){
+			        	player.ap=player.ap_max;
+			        }
+			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
+			        setTime();
+	        	}
+	        	
 	        }else if((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1){
 				if(map_prop.cord_x+1==100){
 					gen_map(is_map.length,is_map[0].length);
@@ -441,8 +533,13 @@ function update() {
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
 				ui.map_button.bringToTop();
+				inventory.icon_log.bringToTop();
+				inventory.logText.bringToTop();
+				player.hp_ui.bringToTop();
+				player.ap_ui.bringToTop();
 	        }
 	        player.sprite.animations.play('right');
+	        player.dir='e';
 	        move_rule.r=true;
 	        x_ass=true;
 	    }else if(cursors.right.isUp && move_rule.l==false){
