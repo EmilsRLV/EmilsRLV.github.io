@@ -485,10 +485,6 @@ function spawnPlayer(x,y,name,cor_x,cor_y){
 			player.sprite = game.add.sprite(gtpx, gtpy, name);
 			player.x=tpx;
 			player.y=tpy;
-			player.hp_ui = game.add.sprite(10,10,'HP');
-			player.hp_ui.fixedToCamera=true;
-			player.ap_ui = game.add.sprite(10,40,'AP');
-			player.ap_ui.fixedToCamera=true;
 			player.sprite.animations.add('up', [0], 10, true);
 			player.sprite.animations.add('right', [1], 10, true);
 			player.sprite.animations.add('down', [2], 10, true);
