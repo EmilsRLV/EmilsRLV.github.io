@@ -399,17 +399,9 @@ function make_mini_map(dose){
 		if(map_prop.game_x/(map_prop.tile_size*(map_prop.width*(map_prop.max_x+1)))<sc){
 			sc=map_prop.game_x/(map_prop.tile_size*(map_prop.width*(map_prop.max_x+1)));
 		}
-		var x=0;
-		var y=0;
 		for(var i=0;i<map_prop.height*(map_prop.max_y+1);i++){
-			if(i>0 && i%map_prop.height==0){
-				y++;
-			}
 			for(var j=0;j<map_prop.width*(map_prop.max_x+1);j++){
-				if(j>0 && j%map_prop.width==0){
-					x=j/20;
-				}
-				if(is_map[y][x].exist==true){
+				if(is_map[Math.floor(i/map_prop.height)][Math.floor(j/map_prop.width)].exist==true){
 					var nx = j*(map_prop.tile_size*sc);
 					var ny = i*(map_prop.tile_size*sc);
 					if(map[i][j].id==0.1){
