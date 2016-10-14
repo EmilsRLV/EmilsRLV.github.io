@@ -137,10 +137,10 @@ function create() {
 }
 
 function setTime() {
-	if(turn.time>=230){
+	if(turn.time>=240){
 		turn.pas*=-1;
 		//turn.time-=(turn.time-48);
-	}else if(turn.time<=-10){
+	}else if(turn.time<=-20){
 		turn.pas*=-1;
 		//turn.time-=(turn.time*2);
 	}
