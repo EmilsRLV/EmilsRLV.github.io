@@ -1,8 +1,8 @@
 var game = new Phaser.Game(1248, 672, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
-	width : 40,
-	height : 40,
+	width : 20,
+	height : 20,
 	tile_size : 48,
 	//(game_x/tile_size)%2==1 un (game_y/tile_size)%2==1
 	game_x : 1248,
@@ -10,13 +10,16 @@ var map_prop = {
 	field : 0,
 	cord_x : 0,
 	cord_y : 0,
+	max_y : -1,
+	max_x : -1,
 	world_size_x : 10,
 	world_size_y : 5,
-	min_map : true
+	min_map : false
 };
 
 var night;
 var turn;
+var this_map;
 
 var boot = {
 	new_game : 0,
@@ -76,6 +79,8 @@ var ui = {
 var map;
 
 var min_map;
+
+var is_map;
 
 var waters=0;
 
@@ -183,19 +188,26 @@ function update() {
 		game.world.setBounds(0-(map_prop.game_x-map_prop.tile_size)/2, 0-(map_prop.game_y-map_prop.tile_size)/2, map_prop.width*map_prop.tile_size+(map_prop.game_x-map_prop.tile_size), map_prop.height*map_prop.tile_size+(map_prop.game_y-map_prop.tile_size));
 
 		//Generates a map
-		map=generate_map(map_prop.width,map_prop.height,true,true);
-		
+		is_map = new Array();
+		gen_map(is_map.length,0);
+		map = new Array();
+		this_map = game.add.group();
+		is_map[map_prop.cord_y][map_prop.cord_x].exist=true;
+		generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y);
+		map_prop.max_y++;
+		map_prop.max_x++;
 		//Draw all the map tiles
 		//map_prop.field = game.add.sprite(0, 0, 'grass3');
 		//map_prop.field.scale.setTo(map_prop.width, map_prop.height);
-		map=build_map(map_prop.cord_x,map_prop.cord_y);
+		
+		build_map(map_prop.cord_x,map_prop.cord_y);
 		spawnPlayer(0,0,'man',map_prop.cord_x,map_prop.cord_y);
 		turn = {
 			time : rnd(0,200),
 			pas : 1
 		}
 		night = game.add.sprite(0, 0,'night');
-		night.scale.setTo(map_prop.width, map_prop.height);
+		night.scale.setTo(map_prop.game_x/map_prop.tile_size, map_prop.game_y/map_prop.tile_size);
 		night.fixedToCamera = true;
 		ui.pause = game.add.sprite(map_prop.game_x/2-380, map_prop.game_y/2-312, 'pause');
 		ui.pause.fixedToCamera = true;
@@ -249,6 +261,9 @@ function update() {
 	    	 x_buttons.space_presed=false;
 	    }
 		if (cursors.up.isDown && y_ass==false){
+	        if(player.y>0 && (player.y)%map_prop.height==0 && map[player.y-1][player.x].id<0){
+	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y-1);
+	        }
 	        if(player.y>map_prop.height*map_prop.cord_y && (map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2))){
 	        	player.sprite.y -= map_prop.tile_size;
 	        	player.y--;
@@ -261,7 +276,10 @@ function update() {
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
 	        }else if(player.y>0 && ((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2) || map[player.y-1][player.x].id<1)){
-	        	map=build_map(map_prop.cord_x,map_prop.cord_y-1);
+				is_map[map_prop.cord_y-1][map_prop.cord_x].exist=true;
+				this_map.destroy();
+	        	this_map = game.add.group();
+	        	build_map(map_prop.cord_x,map_prop.cord_y-1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y-1,'man',map_prop.cord_x,map_prop.cord_y-1);
 	        	map_prop.cord_y--;
@@ -287,6 +305,12 @@ function update() {
 	    	 move_rule.u=false;
 	    }
 	    if (cursors.down.isDown && y_ass==false){
+	    	if((player.y+1)%map_prop.height==0 && map[player.y+1][player.x].id<0){
+	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y+1);
+	        	if(map_prop.cord_y+1>map_prop.max_y){
+	        		map_prop.max_y++;
+	        	}
+	        }
 	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2))){
 	        	player.sprite.y += map_prop.tile_size;
 	        	player.y++;
@@ -298,8 +322,14 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.y<map_prop.height*map_prop.world_size_y-1 && ((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1)){
-	        	map=build_map(map_prop.cord_x,map_prop.cord_y+1);
+	        }else if((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1){
+				if(map_prop.cord_y+1==100){
+					gen_map(is_map.length,is_map[0].length);
+				}
+				is_map[map_prop.cord_y+1][map_prop.cord_x].exist=true;
+				this_map.destroy();
+	        	this_map = game.add.group();
+	        	build_map(map_prop.cord_x,map_prop.cord_y+1);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x,player.y+1,'man',map_prop.cord_x,map_prop.cord_y+1);
 	        	map_prop.cord_y++;
@@ -325,6 +355,9 @@ function update() {
 	    	 y_ass=false;
 	    }
 	    if (cursors.left.isDown && x_ass==false){
+	    	if(player.x>0 && (player.x)%map_prop.width==0 && map[player.y][player.x-1].id<0){
+	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x-1,map_prop.cord_y);
+	        }
 	        if(player.x>map_prop.width*map_prop.cord_x && (map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3))){
 	        	player.sprite.x -= map_prop.tile_size;
 	        	player.x--;
@@ -337,7 +370,10 @@ function update() {
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
 	        }else if(player.x>0 && ((map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)){
-	        	map=build_map(map_prop.cord_x-1,map_prop.cord_y);
+				is_map[map_prop.cord_y][map_prop.cord_x-1].exist=true;
+				this_map.destroy();
+	        	this_map = game.add.group();
+	        	build_map(map_prop.cord_x-1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x-1,player.y,'man',map_prop.cord_x-1,map_prop.cord_y);
 	        	map_prop.cord_x--;
@@ -363,6 +399,13 @@ function update() {
 	    	 x_ass=false;
 	    }
 	    if (cursors.right.isDown && x_ass==false){
+	    	if((player.x+1)%map_prop.width==0 && map[player.y][player.x+1].id<0){
+	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x+1,map_prop.cord_y);
+	        	if(map_prop.cord_x+1>map_prop.max_x){
+	        		alert("generate_map==true");
+	        		map_prop.max_x++;
+	        	}
+	        }
 	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2))){
 	        	game.camera.x += map_prop.tile_size;
 	        	player.sprite.x += map_prop.tile_size;
@@ -374,8 +417,14 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
-	        }else if(player.x<map_prop.width*map_prop.world_size_x-1 && ((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1)){
-	        	map=build_map(map_prop.cord_x+1,map_prop.cord_y);
+	        }else if((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1){
+				if(map_prop.cord_x+1==100){
+					gen_map(is_map.length,is_map[0].length);
+				}
+				is_map[map_prop.cord_y][map_prop.cord_x+1].exist=true;
+				this_map.destroy();
+	        	this_map = game.add.group();
+	        	build_map(map_prop.cord_x+1,map_prop.cord_y);
 	        	player.sprite.destroy();
 	        	spawnPlayer(player.x+1,player.y,'man',map_prop.cord_x+1,map_prop.cord_y);
 	        	map_prop.cord_x++;
