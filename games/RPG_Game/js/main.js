@@ -38,7 +38,13 @@ var x_buttons = {
 	mini_map : 0,
 	mini_map_presed : false,
 	esc : 0,
-	esc_presed : false
+	esc_presed : false,
+	one : 0,
+	one_presed : false,
+	two : 0,
+	two_presed : false,
+	three : 0,
+	three_presed : false
 }
 
 var int=14;
@@ -84,7 +90,10 @@ var ui = {
 var inventory = {
 	icon_log : 0,
 	logText : 0,
-	log : 0
+	log : 4,
+	icon_apple : 0,
+	appleText : 0,
+	apple : 4
 }
 
 var map;
@@ -103,12 +112,15 @@ function preload() {
 	game.load.image('grass', 'assets/tiles/grass.png');  //grass
 	game.load.image('grass2', 'assets/tiles/grass2.png');  //grass2
 	game.load.image('grass3', 'assets/tiles/grass3.png');  //grass3
+	game.load.image('floor', 'assets/tiles/floor.png');  //floor
 	game.load.image('sand', 'assets/tiles/sand.png');  //sand
 	game.load.image('tree', 'assets/tiles/tree.png');  //tree
 	game.load.image('tree2', 'assets/tiles/tree2.png');  //tree2
+	game.load.image('tree3', 'assets/tiles/tree3.png');  //tree3
 	game.load.image('water', 'assets/tiles/water.png'); //water
 	game.load.image('water2', 'assets/tiles/water2.png'); //water2
 	game.load.image('water3', 'assets/tiles/water3.png'); //water3
+	game.load.image('wall', 'assets/tiles/wall.png'); //wall
 
 	//Characters
 	game.load.spritesheet('man', 'assets/tiles/man.png', 48, 48, 4);  //sleep
@@ -119,6 +131,7 @@ function preload() {
 	game.load.image('new_button', 'assets/ui/buttons/new_button.png');  //new game button
 	game.load.image('load_button', 'assets/ui/buttons/load_button.png'); //load game button
 	game.load.image('log', 'assets/ui/icons/log.png');  //log icon
+	game.load.image('apple', 'assets/ui/icons/apple.png');  //apple icon
 	game.load.image('inventory_button', 'assets/ui/buttons/inventory_button.png'); //inventory button
 	game.load.image('map_button', 'assets/ui/buttons/map_button.png'); //map button
 	game.load.image('HP', 'assets/ui/buttons/HP.png'); //hp ui
@@ -138,22 +151,21 @@ function create() {
 }
 
 function setTime() {
-	if(turn.time>=240){
+	if(turn.time>=1400){
 		turn.pas*=-1;
-		//turn.time-=(turn.time-48);
-	}else if(turn.time<=-20){
+		turn.mid=true;
+		grow();
+	}else if(turn.time<=-100){
 		turn.pas*=-1;
-		//turn.time-=(turn.time*2);
+		turn.mid=true;
+		grow();
 	}
-	//alert(turn.time);
-	//alert(night.alpha);
-	night.alpha = 1*(turn.time/220);
-	if(night.alpha>1){
-		night.alpha = 1;
+	night.alpha = 1*(turn.time/1200);
+	if(night.alpha>=0.9){
+		night.alpha = 0.9;
 	}else if(night.alpha<0){
 		night.alpha = 0;
 	}
-	//alert(night.alpha);
 }
 
 function update() {
@@ -163,6 +175,9 @@ function update() {
 	};
 	x_buttons.pause = game.input.keyboard.addKey(Phaser.Keyboard.P);
 	x_buttons.esc = game.input.keyboard.addKey(Phaser.Keyboard.ESC);
+	x_buttons.one = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
+	x_buttons.two = game.input.keyboard.addKey(Phaser.Keyboard.TWO);
+	x_buttons.three = game.input.keyboard.addKey(Phaser.Keyboard.THREE);
 	//x_buttons.mini_map = game.input.keyboard.addKey(Phaser.Keyboard.M);
 	if(x_buttons.pause_presed==true && x_buttons.pause_down==false){
 	    if(map_prop.min_map!=true){
@@ -216,6 +231,11 @@ function update() {
 		game.world.setBounds(0-(map_prop.game_x-map_prop.tile_size)/2, 0-(map_prop.game_y-map_prop.tile_size)/2, map_prop.width*map_prop.tile_size+(map_prop.game_x-map_prop.tile_size), map_prop.height*map_prop.tile_size+(map_prop.game_y-map_prop.tile_size));
 
 		//Generates a map
+		turn = {
+			time : rnd(0,1400),
+			pas : 1,
+			mid : false
+		}
 		is_map = new Array();
 		gen_map(is_map.length,0);
 		map = new Array();
@@ -230,10 +250,6 @@ function update() {
 		
 		build_map(map_prop.cord_x,map_prop.cord_y);
 		spawnPlayer(0,0,'man',map_prop.cord_x,map_prop.cord_y);
-		turn = {
-			time : rnd(0,200),
-			pas : 1
-		}
 		night = game.add.sprite(0, 0,'night');
 		night.scale.setTo(map_prop.game_x/map_prop.tile_size, map_prop.game_y/map_prop.tile_size);
 		night.fixedToCamera = true;
@@ -242,6 +258,11 @@ function update() {
 		inventory.icon_log.fixedToCamera=true;
 		inventory.logText = game.add.text(60, 70, inventory.log, { fontSize: '40px', fill: '#7F5A1C' });
 		inventory.logText.fixedToCamera=true;
+		inventory.icon_apple = game.add.sprite(10,120,'apple');
+		inventory.icon_apple.scale.setTo(40/24,40/24);
+		inventory.icon_apple.fixedToCamera=true;
+		inventory.appleText = game.add.text(60, 120, inventory.apple, { fontSize: '40px', fill: '#7F5A1C' });
+		inventory.appleText.fixedToCamera=true;
 		player.hp_ui = game.add.sprite(10,10,'HP');
 		player.hp_ui.fixedToCamera=true;
 		player.ap_ui = game.add.sprite(10,40,'AP');
@@ -301,40 +322,150 @@ function update() {
 	    	x_buttons.mini_map_presed=false;
 	    }*/
 		if (x_buttons.space.isDown && x_buttons.space_presed==false){
-			if(player.dir=='z' && player.y>map_prop.height*map_prop.cord_y && map[player.y-1][player.x].id<2 && map[player.y-1][player.x].id>=1){
-				map[player.y-1][player.x].id=0.1;
-				cut_tree((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
-				x_buttons.space_presed=true;
-		        turn.time+=turn.pas*2;
-				setTime();
-			}else if(player.dir=='s' && player.y<map_prop.height*(map_prop.cord_y+1)-1 && map[player.y+1][player.x].id<2 && map[player.y+1][player.x].id>=1){
-				map[player.y+1][player.x].id=0.1;
-				cut_tree((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
-				x_buttons.space_presed=true;
-		        turn.time+=turn.pas*2;
-				setTime();
-			}else if(player.dir=='w' && player.x>map_prop.width*map_prop.cord_x && map[player.y][player.x-1].id<2 && map[player.y][player.x-1].id>=1){
-				map[player.y][player.x-1].id=0.1;
-				cut_tree((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
-				x_buttons.space_presed=true;
-		        turn.time+=turn.pas*2;
-				setTime();
-			}else if(player.dir=='e' && player.x<map_prop.width*(map_prop.cord_x+1)-1 && map[player.y][player.x+1].id<2 && map[player.y][player.x+1].id>=1){
-				map[player.y][player.x+1].id=0.1;
-				cut_tree((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
-				x_buttons.space_presed=true;
-		        turn.time+=turn.pas*2;
-		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
-				setTime();
+			if(player.dir=='z' && player.y>map_prop.height*map_prop.cord_y){
+				if(map[player.y-1][player.x].id>=1 && map[player.y-1][player.x].id<2){
+					cut_tree((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+					x_buttons.space_presed=true;
+			        turn.time+=turn.pas*2;
+					setTime();
+					if(map[player.y-1][player.x].id==1.1 || map[player.y-1][player.x].id==1.3){
+						map[player.y-1][player.x].id=0.1;
+					}else if(map[player.y-1][player.x].id==1.2){
+						map[player.y-1][player.x].id=1.1;
+						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}
+				}
+			}else if(player.dir=='s' && player.y<map_prop.height*(map_prop.cord_y+1)-1){
+				if(map[player.y+1][player.x].id>=1 && map[player.y+1][player.x].id<2){
+					cut_tree((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+					x_buttons.space_presed=true;
+			        turn.time+=turn.pas*2;
+					setTime();
+					if(map[player.y+1][player.x].id==1.1 || map[player.y+1][player.x].id==1.3){
+						map[player.y+1][player.x].id=0.1;
+					}else if(map[player.y+1][player.x].id==1.2){
+						map[player.y+1][player.x].id=1.1;
+						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}
+				}
+				
+			}else if(player.dir=='w' && player.x>map_prop.width*map_prop.cord_x){
+				if(map[player.y][player.x-1].id>=1 && map[player.y][player.x-1].id<2){
+					cut_tree((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+					x_buttons.space_presed=true;
+			        turn.time+=turn.pas*2;
+					setTime();
+					if(map[player.y][player.x-1].id==1.1 || map[player.y][player.x-1].id==1.3){
+						map[player.y][player.x-1].id=0.1;
+					}else if(map[player.y][player.x-1].id==1.2){
+						map[player.y][player.x-1].id=1.1;
+						this_map.add(game.add.sprite((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}
+				}
+				
+			}else if(player.dir=='e' && player.x<map_prop.width*(map_prop.cord_x+1)-1){
+				if(map[player.y][player.x+1].id>=1 && map[player.y][player.x+1].id<2){
+					cut_tree((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size,(player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size,map_prop.cord_x,map_prop.cord_y);
+					x_buttons.space_presed=true;
+			        turn.time+=turn.pas*2;
+			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
+					setTime();
+					if(map[player.y][player.x+1].id==1.1 || map[player.y][player.x+1].id==1.3){
+						map[player.y][player.x+1].id=0.1;
+					}else if(map[player.y][player.x+1].id==1.2){
+						map[player.y][player.x+1].id=1.1;
+						this_map.add(game.add.sprite((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}
+				}
+				
 			}
 	    }else if(x_buttons.space.isUp){
 	    	 x_buttons.space_presed=false;
+	    }
+	    if (x_buttons.one.isDown && x_buttons.one_presed==false){
+	    	if(player.dir=='z' && player.y>map_prop.height*map_prop.cord_y){
+				if(map[player.y-1][player.x].id<1 && inventory.log>=4){
+					inventory.log-=4;
+					inventory.logText.text = inventory.log;
+					x_buttons.space_presed=true;
+					map[player.y-1][player.x].id=4.1;
+					this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'wall'));
+				}
+			}else if(player.dir=='s' && player.y<map_prop.height*(map_prop.cord_y+1)-1){
+				if(map[player.y+1][player.x].id<1 && inventory.log>=4){
+					inventory.log-=4;
+					inventory.logText.text = inventory.log;
+					x_buttons.space_presed=true;
+					map[player.y+1][player.x].id=4.1;
+					this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'wall'));
+				}
+				
+			}else if(player.dir=='w' && player.x>map_prop.width*map_prop.cord_x){
+				if(map[player.y][player.x-1].id<1 && inventory.log>=4){
+					inventory.log-=4;
+					inventory.logText.text = inventory.log;
+					x_buttons.space_presed=true;
+					map[player.y][player.x-1].id=4.1;
+					this_map.add(game.add.sprite((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'wall'));
+				}
+				
+			}else if(player.dir=='e' && player.x<map_prop.width*(map_prop.cord_x+1)-1){
+				if(map[player.y][player.x+1].id<1 && inventory.log>=4){
+					inventory.log-=4;
+					inventory.logText.text = inventory.log;
+					x_buttons.space_presed=true;
+					map[player.y][player.x+1].id=4.1;
+					this_map.add(game.add.sprite((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'wall'));
+				}
+			}
+	    }else if(x_buttons.one.isUp){
+	    	 x_buttons.one_presed=false;
+	    }
+	    if (x_buttons.two.isDown && x_buttons.two_presed==false){
+			if(player.dir=='z' && player.y>map_prop.height*map_prop.cord_y){
+				if(map[player.y-1][player.x].id<1 && inventory.apple>=1){
+					inventory.apple--;
+					inventory.appleText.text = inventory.apple;
+					x_buttons.space_presed=true;
+					map[player.y-1][player.x].id=1.3;
+					this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree3'));
+				}
+			}else if(player.dir=='s' && player.y<map_prop.height*(map_prop.cord_y+1)-1){
+				if(map[player.y+1][player.x].id<1 && inventory.apple>=1){
+					inventory.apple--;
+					inventory.appleText.text = inventory.apple;
+					x_buttons.space_presed=true;
+					map[player.y+1][player.x].id=1.3;
+					this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree3'));
+				}
+				
+			}else if(player.dir=='w' && player.x>map_prop.width*map_prop.cord_x){
+				if(map[player.y][player.x-1].id<1 && inventory.apple>=1){
+					inventory.apple--;
+					inventory.appleText.text = inventory.apple;
+					x_buttons.space_presed=true;
+					map[player.y][player.x-1].id=1.3;
+					this_map.add(game.add.sprite((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree3'));
+				}
+				
+			}else if(player.dir=='e' && player.x<map_prop.width*(map_prop.cord_x+1)-1){
+				if(map[player.y][player.x+1].id<1 && inventory.apple>=1){
+						inventory.apple--;
+						inventory.appleText.text = inventory.apple;
+						x_buttons.space_presed=true;
+						map[player.y][player.x+1].id=1.3;
+						this_map.add(game.add.sprite((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree3'));
+				}
+				
+			}
+	    }else if(x_buttons.two.isUp){
+	    	 x_buttons.two_presed=false;
 	    }
 		if (cursors.up.isDown && y_ass==false){
 	        if(player.y>0 && (player.y)%map_prop.height==0 && map[player.y-1][player.x].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y-1);
 	        }
-	        if(player.y>map_prop.height*map_prop.cord_y){
+	        if(player.y>map_prop.height*map_prop.cord_y && player.dir=='z'){
 	        	if(map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2)){
 	        		player.sprite.y -= map_prop.tile_size;
 		        	player.y--;
@@ -347,7 +478,7 @@ function update() {
 			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 			        setTime();
 		        }
-	        }else if(player.y>0 && ((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2) || map[player.y-1][player.x].id<1)){
+	        }else if(player.y>0 && (((map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2) || map[player.y-1][player.x].id<1) && player.dir=='z')){
 				is_map[map_prop.cord_y-1][map_prop.cord_x].exist=true;
 				this_map.destroy();
 	        	this_map = game.add.group();
@@ -370,6 +501,8 @@ function update() {
 				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
+				inventory.icon_apple.bringToTop();
+				inventory.appleText.bringToTop();
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
@@ -388,7 +521,7 @@ function update() {
 	        		map_prop.max_y++;
 	        	}
 	        }
-	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1){
+	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && player.dir=='s'){
 	        	if(map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2)){
 	        		player.sprite.y += map_prop.tile_size;
 		        	player.y++;
@@ -401,7 +534,7 @@ function update() {
 			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 			        setTime();
 	        	}
-	        }else if((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1){
+	        }else if(((map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2) || map[player.y+1][player.x].id<1) && player.dir=='s'){
 				if(map_prop.cord_y+1==100){
 					gen_map(is_map.length,is_map[0].length);
 				}
@@ -427,6 +560,8 @@ function update() {
 				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
+				inventory.icon_apple.bringToTop();
+				inventory.appleText.bringToTop();
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
@@ -442,7 +577,7 @@ function update() {
 	    	if(player.x>0 && (player.x)%map_prop.width==0 && map[player.y][player.x-1].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x-1,map_prop.cord_y);
 	        }
-	        if(player.x>map_prop.width*map_prop.cord_x){
+	        if(player.x>map_prop.width*map_prop.cord_x && player.dir=='w'){
 	        	if(map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3)){
 	        		player.sprite.x -= map_prop.tile_size;
 		        	player.x--;
@@ -455,7 +590,7 @@ function update() {
 			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 			        setTime();
 	        	}
-	        }else if(player.x>0 && ((map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)){
+	        }else if(player.x>0 && (((map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3) || map[player.y][player.x-1].id<1)) && player.dir=='w'){
 				is_map[map_prop.cord_y][map_prop.cord_x-1].exist=true;
 				this_map.destroy();
 	        	this_map = game.add.group();
@@ -478,6 +613,8 @@ function update() {
 				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
+				inventory.icon_apple.bringToTop();
+				inventory.appleText.bringToTop();
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
@@ -496,7 +633,7 @@ function update() {
 	        		map_prop.max_x++;
 	        	}
 	        }
-	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1){
+	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && player.dir=='e'){
 	        	if(map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2)){
 	        		game.camera.x += map_prop.tile_size;
 		        	player.sprite.x += map_prop.tile_size;
@@ -510,7 +647,7 @@ function update() {
 			        setTime();
 	        	}
 	        	
-	        }else if((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1){
+	        }else if(((map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2) || map[player.y][player.x+1].id<1) && player.dir=='e'){
 				if(map_prop.cord_x+1==100){
 					gen_map(is_map.length,is_map[0].length);
 				}
@@ -536,6 +673,8 @@ function update() {
 				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
+				inventory.icon_apple.bringToTop();
+				inventory.appleText.bringToTop();
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
@@ -572,8 +711,4 @@ function update() {
 	    }
 	}
 
-}
-
-function rnd(min,max){
-    return Math.floor(Math.random()*(max-min+1)+min);
 }
