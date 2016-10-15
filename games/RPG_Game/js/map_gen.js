@@ -360,8 +360,20 @@ function build_map(cor_x,cor_y){
 				this_map.add(game.add.sprite(nx, ny, 'grass'));
 				if(map[i][j].id == 1.1){
 					this_map.add(game.add.sprite(nx, ny, 'tree'));
-				}else{
+				}else if(map[i][j].id == 1.2){
 					this_map.add(game.add.sprite(nx, ny, 'tree2'));
+				}else if(turn.mid==true){
+					var r = rnd(1,4);
+					if(r>1){
+						map[i][j].id = 1.1;
+						this_map.add(game.add.sprite(nx, ny, 'tree'));
+					}else{
+						map[i][j].id = 1.2;
+						this_map.add(game.add.sprite(nx, ny, 'tree2'));
+					}
+				}else{
+					map[i][j].id = 1.3;
+					this_map.add(game.add.sprite(nx, ny, 'tree3'));
 				}
 			}else if(map[i][j].id==2){
 				map[i][j].id = 2.1;
@@ -388,7 +400,26 @@ function build_map(cor_x,cor_y){
 				}else{
 					this_map.add(game.add.sprite(nx, ny, 'water3'));
 				}
+			}else if(map[i][j].id==4.1){
+				this_map.add(game.add.sprite(nx, ny, 'wall'));
 			}
+		}
+	}
+	turn.mid=false;
+}
+
+function grow(){
+	for (var i = 0; i < this_map.children.length; i++) {
+		if(this_map.children[i].key=='tree3'){
+			var r = rnd(1,4);
+			if(r>1){
+				map[this_map.children[i].y/map_prop.tile_size][this_map.children[i].x/map_prop.tile_size].id = 1.1;
+				this_map.add(game.add.sprite(this_map.children[i].x, this_map.children[i].y, 'tree'));
+			}else{
+				map[this_map.children[i].y/map_prop.tile_size][this_map.children[i].x/map_prop.tile_size].id = 1.2;
+				this_map.add(game.add.sprite(this_map.children[i].x, this_map.children[i].y, 'tree2'));
+			}
+			this_map.children[i].destroy();
 		}
 	}
 }
@@ -491,8 +522,5 @@ function spawnPlayer(x,y,name,cor_x,cor_y){
 
 }
 
-function rnd(min,max){
-    return Math.floor(Math.random()*(max-min+1)+min);
-}
 
 
