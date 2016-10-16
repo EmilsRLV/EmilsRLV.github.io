@@ -371,9 +371,15 @@ function build_map(cor_x,cor_y){
 						map[i][j].id = 1.2;
 						this_map.add(game.add.sprite(nx, ny, 'tree2'));
 					}
-				}else{
+				}else if(map[i][j].id == 1.3){
 					map[i][j].id = 1.3;
 					this_map.add(game.add.sprite(nx, ny, 'tree3'));
+				}else if(map[i][j].id == 1.4){
+					map[i][j].id = 1.4;
+					this_map.add(game.add.sprite(nx, ny, 'tree4'));
+				}else if(map[i][j].id == 1.5){
+					map[i][j].id = 1.5;
+					this_map.add(game.add.sprite(nx, ny, 'tree5'));
 				}
 			}else if(map[i][j].id==2){
 				map[i][j].id = 2.1;
