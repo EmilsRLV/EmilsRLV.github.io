@@ -7,7 +7,14 @@ function cut_tree(x,y,cor_x,cor_y){
 				inventory.logText.text = inventory.log;
 				break;
 			}
-		}else if(this_map.children[i].key=='tree3'){
+		}else if(this_map.children[i].key=='tree5'){
+			if(this_map.children[i].x==x && this_map.children[i].y==y){
+				this_map.children[i].destroy();
+				inventory.log++;
+				inventory.logText.text = inventory.log;
+				break;
+			}
+		}else if(this_map.children[i].key=='tree3' || this_map.children[i].key=='tree4'){
 			if(this_map.children[i].x==x && this_map.children[i].y==y){
 				this_map.children[i].destroy();
 				inventory.log+=0.5;
