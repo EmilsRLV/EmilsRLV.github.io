@@ -1,8 +1,8 @@
 var game = new Phaser.Game(1248, 672, Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
-	width : 20,
-	height : 20,
+	width : 40,
+	height : 40,
 	tile_size : 48,
 	//(game_x/tile_size)%2==1 un (game_y/tile_size)%2==1
 	game_x : 1248,
@@ -18,6 +18,7 @@ var map_prop = {
 };
 
 var night;
+var night2;
 var turn;
 var this_map;
 
@@ -44,7 +45,11 @@ var x_buttons = {
 	two : 0,
 	two_presed : false,
 	three : 0,
-	three_presed : false
+	three_presed : false,
+	shift : 0,
+	shift_presed : false,
+	ctrl : 0,
+	ctrl_presed : false
 }
 
 var int=14;
@@ -80,11 +85,6 @@ var ui = {
 	inventory_button_x : 0,
 	inventory_button_y : 0,
 	inventory_button_down : false,
-	map_button : 0,
-	map_button_x : 0,
-	map_button_y : 0,
-	map_button_down : false
-
 };
 
 var inventory = {
@@ -114,9 +114,11 @@ function preload() {
 	game.load.image('grass3', 'assets/tiles/grass3.png');  //grass3
 	game.load.image('floor', 'assets/tiles/floor.png');  //floor
 	game.load.image('sand', 'assets/tiles/sand.png');  //sand
-	game.load.image('tree', 'assets/tiles/tree.png');  //tree
+	game.load.image('tree', 'assets/tiles/tree_1.png');  //tree
 	game.load.image('tree2', 'assets/tiles/tree2.png');  //tree2
 	game.load.image('tree3', 'assets/tiles/tree3.png');  //tree3
+	game.load.image('tree4', 'assets/tiles/tree4.png');  //tree4
+	game.load.image('tree5', 'assets/tiles/tree5.png');  //tree5
 	game.load.image('water', 'assets/tiles/water.png'); //water
 	game.load.image('water2', 'assets/tiles/water2.png'); //water2
 	game.load.image('water3', 'assets/tiles/water3.png'); //water3
@@ -133,7 +135,6 @@ function preload() {
 	game.load.image('log', 'assets/ui/icons/log.png');  //log icon
 	game.load.image('apple', 'assets/ui/icons/apple.png');  //apple icon
 	game.load.image('inventory_button', 'assets/ui/buttons/inventory_button.png'); //inventory button
-	game.load.image('map_button', 'assets/ui/buttons/map_button.png'); //map button
 	game.load.image('HP', 'assets/ui/buttons/HP.png'); //hp ui
 	game.load.image('AP', 'assets/ui/buttons/AP.png'); //ap ui
 
@@ -146,7 +147,7 @@ function create() {
 	//alert(string-"");
 	boot.load_sprite = game.add.sprite(map_prop.game_x/2-104.5,map_prop.game_y/2-63,'load_button');
 	boot.new_sprite = game.add.sprite(map_prop.game_x/2-102,map_prop.game_y/2+10,'new_button');
-	//game.time.events.loop(Phaser.Timer.SECOND, setTime, this);
+	game.time.events.loop(200, doButtons, this);
 
 }
 
@@ -160,12 +161,15 @@ function setTime() {
 		turn.mid=true;
 		grow();
 	}
-	night.alpha = 1*(turn.time/1200);
-	if(night.alpha>=0.9){
-		night.alpha = 0.9;
+	night.alpha = 1*(turn.time/1400);
+	if(night.alpha>=0.98){
+		night.alpha = 0.98;
 	}else if(night.alpha<0){
 		night.alpha = 0;
 	}
+}
+function doButtons() {
+	x_buttons.shift_presed=false;
 }
 
 function update() {
@@ -178,27 +182,10 @@ function update() {
 	x_buttons.one = game.input.keyboard.addKey(Phaser.Keyboard.ONE);
 	x_buttons.two = game.input.keyboard.addKey(Phaser.Keyboard.TWO);
 	x_buttons.three = game.input.keyboard.addKey(Phaser.Keyboard.THREE);
-	//x_buttons.mini_map = game.input.keyboard.addKey(Phaser.Keyboard.M);
+	x_buttons.mini_map = game.input.keyboard.addKey(Phaser.Keyboard.M);
+	x_buttons.shift = game.input.keyboard.addKey(Phaser.Keyboard.SHIFT);
+	x_buttons.ctrl = game.input.keyboard.addKey(Phaser.Keyboard.CONTROL);
 	if(x_buttons.pause_presed==true && x_buttons.pause_down==false){
-	    if(map_prop.min_map!=true){
-	    	ui.map_button.alpha=0.5;
-	    }else if(mouse.local.x>=ui.map_button_x && mouse.local.x<=ui.map_button_x+96 && mouse.local.y>=ui.map_button_y && mouse.local.y<=ui.map_button_y+48){
-	        ui.map_button.alpha=1;
-	        if(mouse.local.isDown && ui.map_button_down==false){
-	        	ui.map_button_down=true;
-	        	x_buttons.pause_do=false;
-	        	min_map = game.add.group();
-	        	make_mini_map(1);
-	        }
-	    }else if(ui.map_button_down==false){
-	    	ui.map_button.alpha=0.8;
-	    }else if(x_buttons.esc.isDown && x_buttons.esc_presed==false){
-	    	min_map.destroy();
-	    	min_map=0;
-	    	ui.map_button_down=false;
-	    	x_buttons.esc_presed=true;
-	    	x_buttons.pause_do=true;
-	    }
 	    if(mouse.local.x>=ui.inventory_button_x && mouse.local.x<=ui.inventory_button_x+166 && mouse.local.y>=ui.inventory_button_y && mouse.local.y<=ui.inventory_button_y+48){
 	        ui.inventory_button.alpha=1;
 	        if(mouse.local.isDown && ui.inventory_button_down==false){
@@ -219,7 +206,6 @@ function update() {
 			x_buttons.pause_presed=false;
 			ui.pause.visible = false;
 			ui.inventory_button.visible = false;
-			ui.map_button.visible = false;
 			x_buttons.pause_down = true;
 			setTime();
 	    }else if(x_buttons.pause.isUp){
@@ -250,6 +236,10 @@ function update() {
 		
 		build_map(map_prop.cord_x,map_prop.cord_y);
 		spawnPlayer(0,0,'man',map_prop.cord_x,map_prop.cord_y);
+		night2 = game.add.sprite(0, 0,'night');
+		night2.scale.setTo(map_prop.game_x/map_prop.tile_size, map_prop.game_y/map_prop.tile_size);
+		night2.alpha=0;
+		night2.fixedToCamera = true;
 		night = game.add.sprite(0, 0,'night');
 		night.scale.setTo(map_prop.game_x/map_prop.tile_size, map_prop.game_y/map_prop.tile_size);
 		night.fixedToCamera = true;
@@ -275,12 +265,6 @@ function update() {
 		ui.inventory_button_y=map_prop.game_y/2-272;
 		ui.inventory_button.fixedToCamera = true;
 		ui.inventory_button.visible = false;
-		ui.map_button = game.add.sprite(map_prop.game_x/2-48, map_prop.game_y/2-204, 'map_button');
-		ui.map_button_x=map_prop.game_x/2-48;
-		ui.map_button_y=map_prop.game_y/2-204;
-		ui.map_button.fixedToCamera = true;
-		ui.map_button.visible = false;
-		min_map = game.add.group();
 		setTime();
 		game.camera.x = player.x*map_prop.tile_size-(map_prop.game_x-map_prop.tile_size)/2;
 		game.camera.y = player.y*map_prop.tile_size-(map_prop.game_y-map_prop.tile_size)/2;
@@ -309,7 +293,6 @@ function update() {
 			x_buttons.pause_presed=true;
 			ui.pause.visible = true;
 			ui.inventory_button.visible = true;
-			ui.map_button.visible = true;
 			x_buttons.pause_down = true;
 			night.alpha=1;
 	    }else if(x_buttons.pause.isUp){
@@ -321,6 +304,18 @@ function update() {
 	    }else if(x_buttons.mini_map.isUp){
 	    	x_buttons.mini_map_presed=false;
 	    }*/
+	    if(map_prop.min_map==true && x_buttons.mini_map.isDown && x_buttons.mini_map_presed==false){
+	        x_buttons.mini_map_presed=true;
+	        min_map = game.add.group();
+	        make_mini_map(1);
+	    }else if(x_buttons.esc.isDown && x_buttons.esc_presed==false && x_buttons.mini_map_presed==true){
+	    	min_map.destroy();
+	    	min_map=0;
+	    	x_buttons.esc_presed=true;
+	    }if(x_buttons.esc.isUp && x_buttons.esc_presed==true){
+	    	x_buttons.esc_presed=false;
+	    	x_buttons.mini_map_presed=false;
+	    }
 		if (x_buttons.space.isDown && x_buttons.space_presed==false){
 			if(player.dir=='z' && player.y>map_prop.height*map_prop.cord_y){
 				if(map[player.y-1][player.x].id>=1 && map[player.y-1][player.x].id<2){
@@ -328,11 +323,17 @@ function update() {
 					x_buttons.space_presed=true;
 			        turn.time+=turn.pas*2;
 					setTime();
-					if(map[player.y-1][player.x].id==1.1 || map[player.y-1][player.x].id==1.3){
-						map[player.y-1][player.x].id=0.1;
+					if(map[player.y-1][player.x].id==1.1){
+						map[player.y-1][player.x].id=1.5;
+						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree5'));
+					}else if(map[player.y-1][player.x].id==1.3){
+						map[player.y-1][player.x].id=1.4;
+						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree4'));
 					}else if(map[player.y-1][player.x].id==1.2){
 						map[player.y-1][player.x].id=1.1;
 						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}else if(map[player.y-1][player.x].id==1.4 || map[player.y-1][player.x].id==1.5){
+						map[player.y-1][player.x].id=0.1;
 					}
 				}
 			}else if(player.dir=='s' && player.y<map_prop.height*(map_prop.cord_y+1)-1){
@@ -341,11 +342,17 @@ function update() {
 					x_buttons.space_presed=true;
 			        turn.time+=turn.pas*2;
 					setTime();
-					if(map[player.y+1][player.x].id==1.1 || map[player.y+1][player.x].id==1.3){
-						map[player.y+1][player.x].id=0.1;
+					if(map[player.y+1][player.x].id==1.1){
+						map[player.y+1][player.x].id=1.5;
+						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree5'));
+					}else if(map[player.y+1][player.x].id==1.3){
+						map[player.y+1][player.x].id=1.4;
+						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree4'));
 					}else if(map[player.y+1][player.x].id==1.2){
 						map[player.y+1][player.x].id=1.1;
 						this_map.add(game.add.sprite((player.x-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y+1-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}else if(map[player.y+1][player.x].id==1.4 || map[player.y+1][player.x].id==1.5){
+						map[player.y+1][player.x].id=0.1;
 					}
 				}
 				
@@ -355,11 +362,17 @@ function update() {
 					x_buttons.space_presed=true;
 			        turn.time+=turn.pas*2;
 					setTime();
-					if(map[player.y][player.x-1].id==1.1 || map[player.y][player.x-1].id==1.3){
-						map[player.y][player.x-1].id=0.1;
+					if(map[player.y][player.x-1].id==1.1){
+						map[player.y][player.x-1].id=1.5;
+						this_map.add(game.add.sprite((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree5'));
+					}else if(map[player.y][player.x-1].id==1.3){
+						map[player.y][player.x-1].id=1.4;
+						this_map.add(game.add.sprite((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree4'));
 					}else if(map[player.y][player.x-1].id==1.2){
 						map[player.y][player.x-1].id=1.1;
 						this_map.add(game.add.sprite((player.x-1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}else if(map[player.y][player.x-1].id==1.4 || map[player.y][player.x-1].id==1.5){
+						map[player.y][player.x-1].id=0.1;
 					}
 				}
 				
@@ -370,11 +383,17 @@ function update() {
 			        turn.time+=turn.pas*2;
 			        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 					setTime();
-					if(map[player.y][player.x+1].id==1.1 || map[player.y][player.x+1].id==1.3){
-						map[player.y][player.x+1].id=0.1;
+					if(map[player.y][player.x+1].id==1.1){
+						map[player.y][player.x+1].id=1.5;
+						this_map.add(game.add.sprite((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree5'));
+					}else if(map[player.y][player.x+1].id==1.3){
+						map[player.y][player.x+1].id=1.4;
+						this_map.add(game.add.sprite((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree4'));
 					}else if(map[player.y][player.x+1].id==1.2){
 						map[player.y][player.x+1].id=1.1;
 						this_map.add(game.add.sprite((player.x+1-map_prop.width*map_prop.cord_x)*map_prop.tile_size, (player.y-map_prop.height*map_prop.cord_y)*map_prop.tile_size, 'tree'));
+					}else if(map[player.y][player.x+1].id==1.4 || map[player.y][player.x+1].id==1.5){
+						map[player.y][player.x+1].id=0.1;
 					}
 				}
 				
@@ -461,11 +480,12 @@ function update() {
 	    }else if(x_buttons.two.isUp){
 	    	 x_buttons.two_presed=false;
 	    }
-		if (cursors.up.isDown && y_ass==false){
+		if (cursors.up.isDown && (y_ass==false || (x_buttons.shift.isDown && x_buttons.shift_presed==false))){
+	    	x_buttons.shift_presed=true;
 	        if(player.y>0 && (player.y)%map_prop.height==0 && map[player.y-1][player.x].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y-1);
 	        }
-	        if(player.y>map_prop.height*map_prop.cord_y && player.dir=='z'){
+	        if(player.y>map_prop.height*map_prop.cord_y && (player.dir=='z' || x_buttons.ctrl.isDown)){
 	        	if(map[player.y-1][player.x].id<1 || (map[player.y-1][player.x].id<3 && map[player.y-1][player.x].id>=2)){
 	        		player.sprite.y -= map_prop.tile_size;
 		        	player.y--;
@@ -495,10 +515,10 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
+		        night2.bringToTop(); 
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
-				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
 				inventory.icon_apple.bringToTop();
@@ -506,22 +526,25 @@ function update() {
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
-	        player.sprite.animations.play('up');
-	        player.dir='z';
+	        if(x_buttons.ctrl.isUp){
+	        	player.sprite.animations.play('up');
+	        	player.dir='z';
+	   		}
 	        move_rule.u=true;
 	        y_ass=true;
 	    }else if(cursors.up.isUp && move_rule.d==false){
 	    	 y_ass=false;
 	    	 move_rule.u=false;
 	    }
-	    if (cursors.down.isDown && y_ass==false){
+	    if (cursors.down.isDown && (y_ass==false || (x_buttons.shift.isDown && x_buttons.shift_presed==false))){
+	    	x_buttons.shift_presed=true;
 	    	if((player.y+1)%map_prop.height==0 && map[player.y+1][player.x].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x,map_prop.cord_y+1);
 	        	if(map_prop.cord_y+1>map_prop.max_y){
 	        		map_prop.max_y++;
 	        	}
 	        }
-	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && player.dir=='s'){
+	        if(player.y<map_prop.height*(map_prop.cord_y+1)-1 && (player.dir=='s' || x_buttons.ctrl.isDown)){
 	        	if(map[player.y+1][player.x].id<1 || (map[player.y+1][player.x].id<3 && map[player.y+1][player.x].id>=2)){
 	        		player.sprite.y += map_prop.tile_size;
 		        	player.y++;
@@ -554,10 +577,10 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
+		        night2.bringToTop(); 
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
-				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
 				inventory.icon_apple.bringToTop();
@@ -565,19 +588,22 @@ function update() {
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
-	        player.sprite.animations.play('down');
-	        player.dir='s';
+	        if(x_buttons.ctrl.isUp){
+	        	player.sprite.animations.play('down');
+	        	player.dir='s';
+	   		}
 	        move_rule.d=true;
 	        y_ass=true;
 	    }else if(cursors.down.isUp && move_rule.u==false){
 	    	 move_rule.d=false;
 	    	 y_ass=false;
 	    }
-	    if (cursors.left.isDown && x_ass==false){
+	    if (cursors.left.isDown && (x_ass==false || (x_buttons.shift.isDown && x_buttons.shift_presed==false))){
+	    	x_buttons.shift_presed=true;
 	    	if(player.x>0 && (player.x)%map_prop.width==0 && map[player.y][player.x-1].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x-1,map_prop.cord_y);
 	        }
-	        if(player.x>map_prop.width*map_prop.cord_x && player.dir=='w'){
+	        if(player.x>map_prop.width*map_prop.cord_x && (player.dir=='w' || x_buttons.ctrl.isDown)){
 	        	if(map[player.y][player.x-1].id<1 || (map[player.y][player.x-1].id>=2 && map[player.y][player.x-1].id<3)){
 	        		player.sprite.x -= map_prop.tile_size;
 		        	player.x--;
@@ -607,10 +633,10 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
+		        night2.bringToTop(); 
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
-				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
 				inventory.icon_apple.bringToTop();
@@ -618,22 +644,25 @@ function update() {
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
-	        player.sprite.animations.play('left');
-	        player.dir='w';
+	        if(x_buttons.ctrl.isUp){
+	        	player.sprite.animations.play('left');
+	        	player.dir='w';
+	   		}
 	        move_rule.l=true;
 	        x_ass=true;
 	    }else if(cursors.left.isUp && move_rule.r==false){
 	    	 move_rule.l=false;
 	    	 x_ass=false;
 	    }
-	    if (cursors.right.isDown && x_ass==false){
+	    if (cursors.right.isDown && (x_ass==false || (x_buttons.shift.isDown && x_buttons.shift_presed==false))){
+	    	x_buttons.shift_presed=true;
 	    	if((player.x+1)%map_prop.width==0 && map[player.y][player.x+1].id<0){
 	        	generate_map(map_prop.width,map_prop.height,true,true,map_prop.cord_x+1,map_prop.cord_y);
 	        	if(map_prop.cord_x+1>map_prop.max_x){
 	        		map_prop.max_x++;
 	        	}
 	        }
-	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && player.dir=='e'){
+	        if(player.x<map_prop.width*(map_prop.cord_x+1)-1 && (player.dir=='e' || x_buttons.ctrl.isDown)){
 	        	if(map[player.y][player.x+1].id<1 || (map[player.y][player.x+1].id<3 && map[player.y][player.x+1].id>=2)){
 	        		game.camera.x += map_prop.tile_size;
 		        	player.sprite.x += map_prop.tile_size;
@@ -667,10 +696,10 @@ function update() {
 		        }
 		        player.ap_ui.scale.setTo(player.ap/player.ap_max, 1);
 		        setTime();
+		        night2.bringToTop(); 
 		        night.bringToTop(); 
 				ui.pause.bringToTop(); 
 				ui.inventory_button.bringToTop();
-				ui.map_button.bringToTop();
 				inventory.icon_log.bringToTop();
 				inventory.logText.bringToTop();
 				inventory.icon_apple.bringToTop();
@@ -678,8 +707,10 @@ function update() {
 				player.hp_ui.bringToTop();
 				player.ap_ui.bringToTop();
 	        }
-	        player.sprite.animations.play('right');
-	        player.dir='e';
+	        if(x_buttons.ctrl.isUp){
+	        	player.sprite.animations.play('right');
+	        	player.dir='e';
+	   		}
 	        move_rule.r=true;
 	        x_ass=true;
 	    }else if(cursors.right.isUp && move_rule.l==false){
