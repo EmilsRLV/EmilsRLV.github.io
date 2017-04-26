@@ -1,4 +1,4 @@
-var game = new Phaser.Game(1248, 672, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game("100", "100", Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
 	width : 40,
