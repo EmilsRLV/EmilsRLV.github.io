@@ -16,7 +16,7 @@ function preload() {
 
 function create() {
 	//boot.new_sprite = game.add.sprite(game.world.centerX-102,game.world.centerY+10,'new_button');
-	boot.new_sprite = game.add.button(game.world.centerX-102,game.world.centerY+10, 'button', actionOnClick, this, 2, 1, 0);
+	boot.new_sprite = game.add.button(game.world.centerX-102,game.world.centerY+10, 'new_button', actionOnClick, this, 2, 1, 0);
 	//game.time.events.loop(200, doButtons, this);
 }
 
