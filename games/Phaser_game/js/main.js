@@ -8,9 +8,10 @@ var boot = {
 };
 
 function preload() {
-	game.load.image('earth02', 'assets2/tiles/earth_tile02.png');  //earth with grass 01
-	game.load.image('earth03', 'assets2/tiles/earth_tile03.png');  //earth with grass 02
+	game.load.image('earth02', 'assets2/tiles/png/Tiles/2.png');  //earth 01
+	game.load.image('earth03', 'assets2/tiles/png/Tiles/5.png');  //earth 02
 	game.load.image('new_button', 'assets2/ui/new_button.png');  //new game button
+	game.load.spritesheet('char', 'assets2/SpriteSheets/allinall.tps', 48, 48, 4);  //sprite
 }
 
 function create() {
