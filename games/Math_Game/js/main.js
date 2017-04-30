@@ -1,4 +1,4 @@
-var game = new Phaser.Game('100', '100', Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game('99.9', '99.9', Phaser.AUTO, '', { preload: preload, create: create, update: update });
 
 var map_prop = {
 	width : 80,
@@ -70,6 +70,14 @@ var inventory = {
 
 var map;
 
+var field;
+var backfield={
+	l : 0,
+	r : 0,
+	sides : 0
+};
+var back;
+
 var min_map;
 
 var world_map;
@@ -97,6 +105,8 @@ function preload() {
 	game.load.spritesheet('man', 'assets/tiles/man.png', 48, 48, 4);  //sleep
 
 	game.load.image('new_button', 'assets/ui/buttons/new_button.png');  //new game button
+	game.load.spritesheet('field', 'assets/ui/field.png',672,672,4);
+	game.load.image('backfield', 'assets/ui/backfield.png');
 
 }
 
@@ -127,8 +137,43 @@ function update() {
 		
 		build_map();
 		spawnPlayer(0,0,'man');
+		back=game.add.sprite(0,0,'backfield');
+		back.scale.setTo(game.width,game.height);
+		back.alpha=0.8;
+		back.fixedToCamera=true;
+		field = game.add.sprite(0,0,'field');
+		field.animations.add('up', [2], 10, true);
+		field.animations.add('right', [3], 10, true);
+		field.animations.add('down', [0], 10, true);
+		field.animations.add('left', [1], 10, true);
+		backfield.l=game.add.sprite(0,0,'backfield');
+		var sc=game.height/field.height;
+		field.sides=0;
+		if(game.width/field.width<sc){
+			sc=game.width/field.width;
+			field.sides=1;
+		}
+		field.scale.setTo(sc,sc);
+		if(field.sides==0){
+			field.x=game.width/2-field.height/2;
+			field.y=game.height/2-field.height/2;
+			backfield.l.scale.setTo(field.x,game.height);
+			backfield.r=game.add.sprite(field.x+field.width,0,'backfield');
+			backfield.r.scale.setTo(field.x,game.height);
+		}else{
+			field.x=game.width/2-field.width/2;
+			field.y=game.height/2-field.width/2;
+			backfield.l.scale.setTo(game.width,field.y);
+			backfield.r=game.add.sprite(0,field.y+field.height,'backfield');
+			backfield.r.scale.setTo(game.width,field.y);
+		}
+		backfield.l.fixedToCamera=true;
+		backfield.r.fixedToCamera=true;
+		field.fixedToCamera=true;
+		field.animations.play('up');
 		min_map = game.add.group();
 		make_mini_map();
+
 		//player.sprigin.fixedToCamera=true;
 		game.camera.x = player.x*map_prop.tile_size-(game.width-map_prop.tile_size)/2;
 		game.camera.y = player.y*map_prop.tile_size-(game.height-map_prop.tile_size)/2;
@@ -151,6 +196,7 @@ function update() {
 	        move_rule.u=true;
 	        move_rule.y_ass=true;
 	        player.sprigin.animations.play('up');
+	        field.animations.play('up');
 	        player.dir='z';
 	    }else if(cursors.up.isUp && move_rule.d==false){
 	    	 move_rule.y_ass=false;
@@ -167,6 +213,7 @@ function update() {
 	        move_rule.d=true;
 	        move_rule.y_ass=true;
 	        player.sprigin.animations.play('down');
+	        field.animations.play('down');
 	        player.dir='s';
 	    }else if(cursors.down.isUp && move_rule.u==false){
 	    	move_rule.d=false;
@@ -183,6 +230,7 @@ function update() {
 	        move_rule.l=true;
 	        move_rule.x_ass=true;
 	        player.sprigin.animations.play('left');
+	        field.animations.play('left');
 	        player.dir='w';
 	    }else if(cursors.left.isUp && move_rule.r==false){
 	    	 move_rule.l=false;
@@ -199,6 +247,7 @@ function update() {
 	        move_rule.r=true;
 	        move_rule.x_ass=true;
 	        player.sprigin.animations.play('right');
+	        field.animations.play('right');
 	        player.dir='e';
 	    }else if(cursors.right.isUp && move_rule.l==false){
 	    	 move_rule.r=false;
