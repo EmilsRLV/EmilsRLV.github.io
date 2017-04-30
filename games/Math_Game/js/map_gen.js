@@ -351,63 +351,74 @@ function make_mini_map(){
 		if(map_prop.game_x/(map_prop.tile_size*map_prop.width)<sc){
 			sc=mgame.width/(map_prop.tile_size*map_prop.width);
 		}
-		sc/=4;
+		sc/=3;
 		for(var i=0;i<map_prop.height;i++){
 			for(var j=0;j<map_prop.width;j++){
 				var nx = j*(map_prop.tile_size*sc);
-				var ny = i*(map_prop.tile_size*sc);
+				var ny = i*(map_prop.tile_size*sc)+map_prop.tile_size*sc*map_prop.height*2;
 				if(world_map[i][j].id==0.1){
 					var main = game.add.sprite(nx, ny, 'grass');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==0.2){
 					var main = game.add.sprite(nx, ny, 'grass2');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
-						min_map.add(main);
+					main.alpha=0.5;
+					min_map.add(main);
 				}else if(world_map[i][j].id==0.3){
 					var main = game.add.sprite(nx, ny, 'grass3');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==1.1){
 					var main = game.add.sprite(nx, ny, 'grass3');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 					var main = game.add.sprite(nx, ny, 'tree');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==1.2){
 					var main = game.add.sprite(nx, ny, 'grass3');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 					var main = game.add.sprite(nx, ny, 'tree2');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==2){
 					var main = game.add.sprite(nx, ny, 'sand');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==3.1){
 					var main = game.add.sprite(nx, ny, 'water');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==3.2){
 					var main = game.add.sprite(nx, ny, 'water2');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);
 				}else if(world_map[i][j].id==3.3){
 					var main = game.add.sprite(nx, ny, 'water3');
 					main.scale.setTo(sc,sc);
 					main.fixedToCamera=true;
+					main.alpha=0.5;
 					min_map.add(main);	
 				}
 			}
