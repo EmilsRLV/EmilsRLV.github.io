@@ -82,7 +82,22 @@ var min_map;
 
 var world_map;
 
+var key = {
+	up : 0,
+	left : 0,
+	right : 0,
+	down : 0
+}
+
 var tmep;
+
+var up;
+var left;
+var right;
+var down;
+
+var counter=0;
+
 function preload() {
 	game.stage.backgroundColor = '#666666';
 
@@ -107,6 +122,12 @@ function preload() {
 	game.load.image('new_button', 'assets/ui/buttons/new_button.png');  //new game button
 	game.load.spritesheet('field', 'assets/ui/field.png',672,672,4);
 	game.load.image('backfield', 'assets/ui/backfield.png');
+
+	game.load.image('arrowup', 'assets/ui/buttons/arrowup.png');
+	game.load.image('arrowright', 'assets/ui/buttons/arrowright.png');
+	game.load.image('arrowdown', 'assets/ui/buttons/arrowdown.png');
+	game.load.image('arrowleft', 'assets/ui/buttons/arrowleft.png');
+
 
 }
 
@@ -171,8 +192,33 @@ function update() {
 		backfield.r.fixedToCamera=true;
 		field.fixedToCamera=true;
 		field.animations.play('up');
+		key.up = game.add.button(game.width-129,game.height-195, 'arrowup');
+		key.right = game.add.button(game.width-66,game.height-129, 'arrowright');
+		key.down = game.add.button(game.width-129,game.height-66, 'arrowdown');
+		key.left = game.add.button(game.width-195,game.height-129, 'arrowleft');
+		key.right.fixedToCamera = true;
+	    key.right.events.onInputOver.add(function(){right=true;});
+	    key.right.events.onInputOut.add(function(){right=false;});
+	    key.right.events.onInputDown.add(function(){right=true;});
+	    key.right.events.onInputUp.add(function(){right=false;});
+		key.up.fixedToCamera = true;  //our buttons should stay on the same place  
+	    key.up.events.onInputOver.add(function(){up=true;});
+	    key.up.events.onInputOut.add(function(){up=false;});
+	    key.up.events.onInputDown.add(function(){up=true;});
+	    key.up.events.onInputUp.add(function(){up=false;});
+	    key.down.fixedToCamera = true;
+	    key.down.events.onInputOver.add(function(){down=true;});
+	    key.down.events.onInputOut.add(function(){down=false;});
+	    key.down.events.onInputDown.add(function(){down=true;});
+	    key.down.events.onInputUp.add(function(){down=false;});
+		key.left.fixedToCamera = true;  //our buttons should stay on the same place  
+	    key.left.events.onInputOver.add(function(){left=true;});
+	    key.left.events.onInputOut.add(function(){left=false;});
+	    key.left.events.onInputDown.add(function(){left=true;});
+	    key.left.events.onInputUp.add(function(){left=false;});
 		min_map = game.add.group();
 		make_mini_map();
+		game.time.events.loop(Phaser.Timer.QUARTER, function(){counter++;}, this);
 
 		//player.sprigin.fixedToCamera=true;
 		game.camera.x = player.x*map_prop.tile_size-(game.width-map_prop.tile_size)/2;
@@ -183,9 +229,9 @@ function update() {
 	}else if(boot.load_game==1){
 
 	}else if(boot.new_game==2 || boot.load_game==2){
-		var cursors = game.input.keyboard.createCursorKeys();
 	
-		if (cursors.up.isDown && move_rule.y_ass==false){
+		if (up==true && counter>1){
+			counter=0;
 	        if(player.y>0 && player.dir=='z'){
 	        	if(world_map[player.y-1][player.x].id<1 || (world_map[player.y-1][player.x].id<3 && world_map[player.y-1][player.x].id>=2)){
 		        	player.y--;
@@ -193,16 +239,12 @@ function update() {
 		        	game.camera.y -= map_prop.tile_size;
 		        }
 	        }
-	        move_rule.u=true;
-	        move_rule.y_ass=true;
 	        player.sprigin.animations.play('up');
 	        field.animations.play('up');
 	        player.dir='z';
-	    }else if(cursors.up.isUp && move_rule.d==false){
-	    	 move_rule.y_ass=false;
-	    	 move_rule.u=false;
 	    }
-	    if (cursors.down.isDown && move_rule.y_ass==false){
+	    if (down==true && counter>1){
+	    	counter=0;
 	        if(player.y<map_prop.height-1 && player.dir=='s'){
 	        	if(world_map[player.y+1][player.x].id<1 || (world_map[player.y+1][player.x].id<3 && world_map[player.y+1][player.x].id>=2)){
 		        	player.y++;
@@ -210,16 +252,12 @@ function update() {
 		        	player.sprigin.y += map_prop.tile_size;
 	        	}
 	        }
-	        move_rule.d=true;
-	        move_rule.y_ass=true;
 	        player.sprigin.animations.play('down');
 	        field.animations.play('down');
 	        player.dir='s';
-	    }else if(cursors.down.isUp && move_rule.u==false){
-	    	move_rule.d=false;
-	    	move_rule.y_ass=false;
 	    }
-	    if (cursors.left.isDown && move_rule.x_ass==false){
+	    if (left==true && counter>1){
+	    	counter=0;
 	        if(player.x>0 && player.dir=='w'){
 	        	if(world_map[player.y][player.x-1].id<1 || (world_map[player.y][player.x-1].id>=2 && world_map[player.y][player.x-1].id<3)){
 		        	player.x--;
@@ -227,16 +265,12 @@ function update() {
 		        	player.sprigin.x -= map_prop.tile_size;
 	        	}
 	        }
-	        move_rule.l=true;
-	        move_rule.x_ass=true;
 	        player.sprigin.animations.play('left');
 	        field.animations.play('left');
 	        player.dir='w';
-	    }else if(cursors.left.isUp && move_rule.r==false){
-	    	 move_rule.l=false;
-	    	 move_rule.x_ass=false;
 	    }
-	    if (cursors.right.isDown && move_rule.x_ass==false){
+	    if (right==true && counter>1){
+	    	counter=0;
 	        if(player.x<map_prop.width-1 && player.dir=='e'){
 	        	if(world_map[player.y][player.x+1].id<1 || (world_map[player.y][player.x+1].id<3 && world_map[player.y][player.x+1].id>=2)){
 	        		game.camera.x += map_prop.tile_size;
@@ -244,14 +278,9 @@ function update() {
 		        	player.sprigin.x += map_prop.tile_size;
 	        	}
 	        }
-	        move_rule.r=true;
-	        move_rule.x_ass=true;
 	        player.sprigin.animations.play('right');
 	        field.animations.play('right');
 	        player.dir='e';
-	    }else if(cursors.right.isUp && move_rule.l==false){
-	    	 move_rule.r=false;
-	    	 move_rule.x_ass=false;
 	    }
 	}else{
 	    if (mouse.local.x>=boot.new_sprigin.x && mouse.local.x<=boot.new_sprigin.x+204 && mouse.local.y>=boot.new_sprigin.y && mouse.local.y<=boot.new_sprigin.y+53){
@@ -269,4 +298,10 @@ function update() {
 
 function rnd(min,max){
     return Math.floor(Math.random()*(max-min+1)+min);
+}
+
+function updateCounter() {
+
+    counter++;
+
 }
