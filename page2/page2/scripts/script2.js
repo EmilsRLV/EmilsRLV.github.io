@@ -84,7 +84,21 @@ function updateGameArea() {
     for (i = 0; i < myObstacles.length; i += 1) {
         if (myGamePiece.crashWith(myObstacles[i])) {
             //myGamePiece.speedX*=-1;
-            //myGamePiece.speedY*=-1; 
+            //myGamePiece.speedY*=-1;
+		if(myGamePiece.speedY!=0){
+			if(myGamePiece.speedY>0){
+				myGamePiece.speedY-=0.2;
+			}else{
+				myGamePiece.speedY+=0.2;
+			}
+		}
+		if(myGamePiece.speedX!=0){
+			if(myGamePiece.speedX>0){
+				myGamePiece.speedX-=0.2;
+			}else{
+				myGamePiece.speedX+=0.2;
+			}
+		}
             myObstacles.splice(i, 1);
         } 
     }
