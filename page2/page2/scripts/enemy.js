@@ -1,4 +1,5 @@
 function spawn(width, height, color, x, y) {
+	this.target=false;
 	this.destinationX = Math.random()*(myGameArea.canvas.width-100);
     this.destinationY = Math.random()*(myGameArea.canvas.height-100);
 	this.width = width;												//this. gives a atribute to a variable if var = function 
@@ -20,7 +21,10 @@ function spawn(width, height, color, x, y) {
         ctx.fillRect(this.x, this.y, this.width, this.height);
         //saveData();
     }
-    this.newPos = function(runfromobj) { // need function to check if collision on rout and functionif enemy in destined position
+    this.newPos = function(runftoobj) { // need function to check if collision on rout and functionif enemy in destined position
+		if(this.target==true){
+			this.setCourse(runftoobj)
+		}
 		this.x += this.speedX;
 	    this.y += this.speedY;
 	    this.hitBottom();
@@ -58,7 +62,17 @@ function spawn(width, height, color, x, y) {
         }
         return crash;
     }
-    this.willCrashWith = function(otherobj) {
+    this.setCourse = function(otherobj) {// sets destination as my center
+    	var vecX1=otherobj.x+otherobj.width/2;
+    	var vecY1=otherobj.y+otherobj.height/2;
+    	var vecX2=this.x+this.width/2;
+    	var vecY2=this.y+this.height/2;
+    	this.speedY=vecY1-vecY2;
+    	this.speedX=vecX1-vecX2;
+    	var big=Math.max(Math.abs(this.speedY),Math.abs(this.speedX));
+    	this.speedY=(this.speedY/big)*0.5;
+    	this.speedX=(this.speedX/big)*0.5;
+        
         /*var mytop = runfromobj.y;
     	var mybottom = mytop + (this.height);
 
@@ -72,9 +86,9 @@ function spawn(width, height, color, x, y) {
         var otherbottom = runfromobj.y + (runfromobj.height);
         var crash = true;
         if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-            */this.x += this.speedX;
+            this.x += this.speedX;
 	        this.y += this.speedY;
-	        this.hitBottom();
+	        this.hitBottom();*/
         /*}else{
         	this.destinationX = Math.random()*(myGameArea.canvas.width-100);
     		this.destinationY = Math.random()*(myGameArea.canvas.height-100);
