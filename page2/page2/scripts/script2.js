@@ -1,7 +1,7 @@
 var myGamePiece;
 var myObstacles = [];
 var myScore;
-var best;
+var best=0;
 var bestScore;
 var enemyCount=2;
 var page_width,page_height;
