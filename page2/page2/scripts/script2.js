@@ -10,10 +10,10 @@ function startGame() {
     page_width=$(window).width();
     page_height=$(window).height();
     myScore = new component("30px", "Consolas", "black", 280, 40);
-	bestScore = new component("30px", "Consolas", "black", 280, 70);
-	myGamePiece=new draw(200,200,"#FF0000",0,0);
-	myGameArea.start();
-	myGamePiece.update();
+    bestScore = new component("30px", "Consolas", "black", 280, 70);
+    myGamePiece=new draw(200,200,"#FF0000",0,0);
+    myGameArea.start();
+    myGamePiece.update();
 }
 
 function component(fontSize, font, color, x, y) {
@@ -31,15 +31,15 @@ function component(fontSize, font, color, x, y) {
 }
 
 function draw(width, height, color, x, y) {
-	this.width = width;												//this. gives a atribute to a variable if var = function 
+    this.width = width;                                             //this. gives a atribute to a variable if var = function 
     this.height = height;
     this.speedX = 0;
     this.speedY = 0;   
     this.x = x;
     this.y = y;
-	this.drag = 0.001;
-	this.update = function() {
-        ctx = myGameArea.context;									//unlike this. is only used in function and retains its value
+    this.drag = 0.001;
+    this.update = function() {
+        ctx = myGameArea.context;                                   //unlike this. is only used in function and retains its value
         ctx.fillStyle = color;
         ctx.fillRect(this.x, this.y, this.width, this.height);
         //saveData();
@@ -47,25 +47,25 @@ function draw(width, height, color, x, y) {
     this.newPos = function() {
         this.x += this.speedX;
         this.y += this.speedY;
-	    this.speedX*=(1-this.drag);
-	    this.speedY*=(1-this.drag);
+        this.speedX*=(1-this.drag);
+        this.speedY*=(1-this.drag);
         this.hitBottom();
     }
     this.hitBottom = function() {
-        var rockbottom_y = myGameArea.canvas.height - this.height;	//when defined with var always when called defined anew or the other way round
+        var rockbottom_y = myGameArea.canvas.height - this.height;  //when defined with var always when called defined anew or the other way round
         var rockbottom_x = myGameArea.canvas.width - this.width;
         if (this.y > rockbottom_y) {
             this.y = rockbottom_y;
             this.speedY *= -1*(1-this.drag);
         }else if(this.y < 0){
-        	this.y = 0;
+            this.y = 0;
             this.speedY *= -1*(1-this.drag);
         }
         if (this.x > rockbottom_x) {
             this.x = rockbottom_x;
             this.speedX *= -1*(1-this.drag);
         }else if(this.x < 0){
-        	this.x = 0;
+            this.x = 0;
             this.speedX *= -1*(1-this.drag);
         }
     }
@@ -89,8 +89,8 @@ function draw(width, height, color, x, y) {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = page_width;							
-        this.canvas.height = page_height-200;
+        this.canvas.width = page_width-25;                         
+        this.canvas.height = page_height-25;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
@@ -106,25 +106,28 @@ function updateGameArea() {
         if (myGamePiece.crashWith(myObstacles[i])) {
             //myGamePiece.speedX*=-1;
             //myGamePiece.speedY*=-1;
-		if(myGamePiece.speedY!=0){
-			if(myGamePiece.speedY>0){
-				myGamePiece.speedY-=0.2;
-			}else{
-				myGamePiece.speedY+=0.2;
-			}
-		}
-		if(myGamePiece.speedX!=0){
-			if(myGamePiece.speedX>0){
-				myGamePiece.speedX-=0.2;
-			}else{
-				myGamePiece.speedX+=0.2;
-			}
-		}
+        if(myGamePiece.speedY!=0){
+            if(myGamePiece.speedY>0){
+                myGamePiece.speedY-=0.2;
+            }else{
+                myGamePiece.speedY+=0.2;
+            }
+        }
+        if(myGamePiece.speedX!=0){
+            if(myGamePiece.speedX>0){
+                myGamePiece.speedX-=0.2;
+            }else{
+                myGamePiece.speedX+=0.2;
+            }
+        }
             myObstacles.splice(i, 1);
         } 
     }
     myGameArea.clear();
     for (i = 0; i < myObstacles.length; i += 1) {
+        if(Math.abs(myObstacles[i].x-myGamePiece.x)<200 || Math.abs(myObstacles[i].y-myGamePiece.y)<200){
+            myObstacles[i].target=true;
+        }
         myObstacles[i].newPos(myGamePiece);
         myObstacles[i].update();  
     }
@@ -153,9 +156,9 @@ function updateGameArea() {
     }*/
     ///myScore.text="SCORE: " + myGameArea.frameNo;
     //myScore.update();
-	best=Math.max(best,Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2)));
-	myScore.text="SPEED: " + Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2));
-	bestScore.text="TOP SPEED: " + best;
+    best=Math.max(best,Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2)));
+    myScore.text="SPEED: " + Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2));
+    bestScore.text="TOP SPEED: " + best;
     myScore.update();
     bestScore.update();
     myGamePiece.newPos();
@@ -163,22 +166,22 @@ function updateGameArea() {
 }
 function accelerate(event) {
     var x = event.which || event.keyCode;
-	if(x==119){
-		myGamePiece.speedY+=-0.1;
-	}else if(x==56){
-		myGamePiece.speedY+=-0.5;
-	}else if(x==100){
-		myGamePiece.speedX+=0.1;
-	}else if(x==54){
-		myGamePiece.speedX+=0.5;
-	}else if(x==115){
-		myGamePiece.speedY+=0.1;
-	}else if(x==53){
-		myGamePiece.speedY+=0.5;
-	}else if(x==97){
-		myGamePiece.speedX+=-0.1;
-	}else if(x==52){
-		myGamePiece.speedX+=-0.5;
-	}
+    if(x==119){
+        myGamePiece.speedY+=-0.1;
+    }else if(x==56){
+        myGamePiece.speedY+=-0.5;
+    }else if(x==100){
+        myGamePiece.speedX+=0.1;
+    }else if(x==54){
+        myGamePiece.speedX+=0.5;
+    }else if(x==115){
+        myGamePiece.speedY+=0.1;
+    }else if(x==53){
+        myGamePiece.speedY+=0.5;
+    }else if(x==97){
+        myGamePiece.speedX+=-0.1;
+    }else if(x==52){
+        myGamePiece.speedX+=-0.5;
+    }
     //myGamePiece.newPos(); update somewhere else
 }
