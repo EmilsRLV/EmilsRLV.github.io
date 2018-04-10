@@ -145,9 +145,6 @@ function accelerate(event) {
 		myGamePiece.speedY+=0.1;
 	}else if(x==97){
 		myGamePiece.speedX+=-0.1;
-	}else{
-		myGamePiece.speedY=0;
-		myGamePiece.speedX=0;
 	}
     //myGamePiece.newPos(); update somewhere else
 }
