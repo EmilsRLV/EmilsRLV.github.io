@@ -8,7 +8,6 @@ function startGame() {
     page_width=$(window).width();
     page_height=$(window).height();
 	myGamePiece=new draw(200,200,"#FF0000",0,0);
-    changeXY();
 	myGameArea.start();
 	myGamePiece.update();
 }
