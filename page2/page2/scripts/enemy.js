@@ -21,37 +21,9 @@ function spawn(width, height, color, x, y) {
         //saveData();
     }
     this.newPos = function(runfromobj) { // need function to check if collision on rout and functionif enemy in destined position
-		/*var mytop = runfromobj.y;
-    	var mybottom = mytop + (this.height);
-
-    	var myleft = this.x+Math.abs(Math.abs(this.y-runfromobj.y)/0.5)*this.speedX;
-        var myright = myleft + (this.width);
-        
-        
-        var otherleft = runfromobj.x;
-        var otherright = runfromobj.x + (runfromobj.width);
-        var othertop = runfromobj.y;
-        var otherbottom = runfromobj.y + (runfromobj.height);
-        var crash = true;
-        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
-            */this.x += this.speedX;
-	        this.y += this.speedY;
-	        this.hitBottom();
-        /*}else{
-        	this.destinationX = Math.random()*(myGameArea.canvas.width-100);
-    		this.destinationY = Math.random()*(myGameArea.canvas.height-100);
-		    if(this.destinationY>this.y){
-		    	this.speedY = 0.5; 
-		    }else{
-		    	this.speedY = -0.5;
-		    }
-		    this.speedX = Math.abs(this.destinationX-this.x)/(Math.abs(this.y-this.destinationY)/0.5) ;
-		    if((this.destinationX>this.x && this.speedX<0) || (this.destinationX<this.x && this.speedX>0)){
-		    	this.speedY *= -1; 
-		    }
-		    this.speedX = Math.abs(this.destinationX-x)/(Math.abs(y-this.destinationY)/0.5) ;
-    		this.newPos(runfromobj);	
-        }*/
+		this.x += this.speedX;
+	    this.y += this.speedY;
+	    this.hitBottom();
     }
     this.hitBottom = function() {
         var rockbottom_y = myGameArea.canvas.height - this.height;	//when defined with var always when called defined anew or the other way round
@@ -85,5 +57,38 @@ function spawn(width, height, color, x, y) {
             crash = false;
         }
         return crash;
+    }
+    this.willCrashWith = function(otherobj) {
+        /*var mytop = runfromobj.y;
+    	var mybottom = mytop + (this.height);
+
+    	var myleft = this.x+Math.abs(Math.abs(this.y-runfromobj.y)/0.5)*this.speedX;
+        var myright = myleft + (this.width);
+        
+        
+        var otherleft = runfromobj.x;
+        var otherright = runfromobj.x + (runfromobj.width);
+        var othertop = runfromobj.y;
+        var otherbottom = runfromobj.y + (runfromobj.height);
+        var crash = true;
+        if ((mybottom < othertop) || (mytop > otherbottom) || (myright < otherleft) || (myleft > otherright)) {
+            */this.x += this.speedX;
+	        this.y += this.speedY;
+	        this.hitBottom();
+        /*}else{
+        	this.destinationX = Math.random()*(myGameArea.canvas.width-100);
+    		this.destinationY = Math.random()*(myGameArea.canvas.height-100);
+		    if(this.destinationY>this.y){
+		    	this.speedY = 0.5; 
+		    }else{
+		    	this.speedY = -0.5;
+		    }
+		    this.speedX = Math.abs(this.destinationX-this.x)/(Math.abs(this.y-this.destinationY)/0.5) ;
+		    if((this.destinationX>this.x && this.speedX<0) || (this.destinationX<this.x && this.speedX>0)){
+		    	this.speedY *= -1; 
+		    }
+		    this.speedX = Math.abs(this.destinationX-x)/(Math.abs(y-this.destinationY)/0.5) ;
+    		this.newPos(runfromobj);	
+        }*/
     }
 }
