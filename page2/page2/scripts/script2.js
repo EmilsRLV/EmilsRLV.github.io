@@ -125,7 +125,7 @@ function updateGameArea() {
     }
     myGameArea.clear();
     for (i = 0; i < myObstacles.length; i += 1) {
-        if(Math.abs(myObstacles[i].x-myGamePiece.x)<200 || Math.abs(myObstacles[i].y-myGamePiece.y)<200){
+        if(Math.sqrt(Math.pow(Math.abs(myObstacles[i].x+myObstacles[i].width/2-myGamePiece.x-myGamePiece.width/2),2) + Math.pow(Math.abs(myObstacles[i].y+myObstacles[i].height/2-myGamePiece.y-myGamePiece.height/2),2))<300){
             myObstacles[i].target=true;
         }
         myObstacles[i].newPos(myGamePiece);
