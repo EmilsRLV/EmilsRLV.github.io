@@ -89,8 +89,8 @@ function draw(width, height, color, x, y) {
 var myGameArea = {
     canvas : document.createElement("canvas"),
     start : function() {
-        this.canvas.width = page_width-25;                         
-        this.canvas.height = page_height-25;
+        this.canvas.width = page_width-20;                         
+        this.canvas.height = page_height-20;
         this.context = this.canvas.getContext("2d");
         document.body.insertBefore(this.canvas, document.body.childNodes[0]);
         this.frameNo = 0;
@@ -182,6 +182,9 @@ function accelerate(event) {
         myGamePiece.speedX+=-0.1;
     }else if(x==52){
         myGamePiece.speedX+=-0.5;
+    }else if(x==32){
+        myGamePiece.speedX=0;
+        myGamePiece.speedY=0;
     }
     //myGamePiece.newPos(); update somewhere else
 }
