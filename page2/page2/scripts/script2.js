@@ -152,8 +152,9 @@ function updateGameArea() {
     //myScore.update();
 	best=Math.max(best,Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2)));
 	myScore.text="SPEED: " + Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2));
-	myScore.text="TOP SPEED: " + best;
+	bestScore.text="TOP SPEED: " + best;
     myScore.update();
+    bestScore.update();
     myGamePiece.newPos();
     myGamePiece.update();
 }
