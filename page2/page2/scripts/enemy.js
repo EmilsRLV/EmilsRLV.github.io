@@ -4,15 +4,8 @@ function spawn(width, height, color, x, y) {
     this.destinationY = Math.random()*(myGameArea.canvas.height-100);
 	this.width = width;												//this. gives a atribute to a variable if var = function 
     this.height = height;
-    if(this.destinationY>y){
-    	this.speedY = 0.5; 
-    }else{
-    	this.speedY = -0.5;
-    }
-    this.speedX = Math.abs(this.destinationX-x)/(Math.abs(y-this.destinationY)/0.5) ;
-    if((this.destinationX>x && this.speedX<0) || (this.destinationX<x && this.speedX>0)){
-    	this.speedY *= -1; 
-    }
+    this.speedY = Math.random()*0.5; 
+    this.speedX = Math.random()*0.5;
     this.x = x;
     this.y = y;
 	this.update = function() {
