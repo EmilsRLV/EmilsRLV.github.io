@@ -37,7 +37,7 @@ function draw(width, height, color, x, y) {
     this.speedY = 0;   
     this.x = x;
     this.y = y;
-    this.drag = 0.001;
+    this.drag = 0.0001;
     this.update = function() {
         ctx = myGameArea.context;                                   //unlike this. is only used in function and retains its value
         ctx.fillStyle = color;
@@ -131,12 +131,9 @@ function updateGameArea() {
         myObstacles[i].newPos(myGamePiece);
         myObstacles[i].update();  
     }
-    if(myObstacles.length==0){
-        enemyCount+=3;
-        while(enemyCount>myObstacles.length){
+    while(enemyCount>myObstacles.length){
             
-            myObstacles.push(new spawn(100, 100, "green", Math.random()*(myGameArea.canvas.width-100), Math.random()*(myGameArea.canvas.height-100)));
-        }
+        myObstacles.push(new spawn(100, 100, "green", Math.random()*(myGameArea.canvas.width-100), Math.random()*(myGameArea.canvas.height-100)));
     }
     myGameArea.frameNo += 1;
     /*if (myGameArea.frameNo == 1 || everyinterval(150)) {
@@ -157,7 +154,21 @@ function updateGameArea() {
     ///myScore.text="SCORE: " + myGameArea.frameNo;
     //myScore.update();
     best=Math.max(best,Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2)));
-    myScore.text="SPEED: " + Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2));
+    var speed=Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2));
+    myScore.text="SPEED: " + speed;
+    if(speed<10){
+        enemyCount=1;
+    }else if(speed<20){
+        enemyCount=3;
+    }else if(speed<30){
+        enemyCount=4;
+    }else if(speed<40){
+        enemyCount=7;
+    }else if(speed<50){
+        enemyCount=12;
+    }else if(speed<60){
+        enemyCount=20;
+    }
     bestScore.text="TOP SPEED: " + best;
     myScore.update();
     bestScore.update();
