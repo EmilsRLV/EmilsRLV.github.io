@@ -139,12 +139,20 @@ function accelerate(event) {
     var x = event.which || event.keyCode;
 	if(x==119){
 		myGamePiece.speedY+=-0.1;
+	}else if(x==56){
+		myGamePiece.speedY+=-0.5;
 	}else if(x==100){
 		myGamePiece.speedX+=0.1;
+	}else if(x==54){
+		myGamePiece.speedX+=0.5;
 	}else if(x==115){
 		myGamePiece.speedY+=0.1;
+	}else if(x==53){
+		myGamePiece.speedY+=0.5;
 	}else if(x==97){
 		myGamePiece.speedX+=-0.1;
+	}else if(x==52){
+		myGamePiece.speedX+=-0.5;
 	}
     //myGamePiece.newPos(); update somewhere else
 }
