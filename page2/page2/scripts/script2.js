@@ -37,6 +37,7 @@ function draw(width, height, color, x, y) {
     this.speedY = 0;   
     this.x = x;
     this.y = y;
+	this.drag = 0.001;
 	this.update = function() {
         ctx = myGameArea.context;									//unlike this. is only used in function and retains its value
         ctx.fillStyle = color;
@@ -46,6 +47,8 @@ function draw(width, height, color, x, y) {
     this.newPos = function() {
         this.x += this.speedX;
         this.y += this.speedY;
+	    this.speedX*=(1-this.drag);
+	    this.speedY*=(1-this.drag);
         this.hitBottom();
     }
     this.hitBottom = function() {
@@ -53,17 +56,17 @@ function draw(width, height, color, x, y) {
         var rockbottom_x = myGameArea.canvas.width - this.width;
         if (this.y > rockbottom_y) {
             this.y = rockbottom_y;
-            this.speedY *= -1;
+            this.speedY *= -1*(1-this.drag);
         }else if(this.y < 0){
         	this.y = 0;
-            this.speedY *= -1;
+            this.speedY *= -1*(1-this.drag);
         }
         if (this.x > rockbottom_x) {
             this.x = rockbottom_x;
-            this.speedX *= -1;
+            this.speedX *= -1*(1-this.drag);
         }else if(this.x < 0){
         	this.x = 0;
-            this.speedX *= -1;
+            this.speedX *= -1*(1-this.drag);
         }
     }
     this.crashWith = function(otherobj) {
@@ -126,7 +129,7 @@ function updateGameArea() {
         myObstacles[i].update();  
     }
     if(myObstacles.length==0){
-        enemyCount++;
+        enemyCount+=3;
         while(enemyCount>myObstacles.length){
             
             myObstacles.push(new spawn(100, 100, "green", Math.random()*(myGameArea.canvas.width-100), Math.random()*(myGameArea.canvas.height-100)));
