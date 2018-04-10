@@ -9,8 +9,8 @@ var page_width,page_height;
 function startGame() {
     page_width=$(window).width();
     page_height=$(window).height();
-    myScore = new component("30px", "Consolas", "black", 280, 40);
-    bestScore = new component("30px", "Consolas", "black", 280, 70);
+    myScore = new component("30px", "Consolas", "black", 30, 40);
+    bestScore = new component("30px", "Consolas", "black", 30, 70);
     myGamePiece=new draw(200,200,"#FF0000",0,0);
     myGameArea.start();
     myGamePiece.update();
