@@ -1,6 +1,8 @@
 var myGamePiece;
 var myObstacles = [];
 var myScore;
+var best;
+var bestScore;
 var enemyCount=2;
 var page_width,page_height;
 
@@ -8,6 +10,7 @@ function startGame() {
     page_width=$(window).width();
     page_height=$(window).height();
     myScore = new component("30px", "Consolas", "black", 280, 40);
+	bestScore = new component("30px", "Consolas", "black", 280, 70);
 	myGamePiece=new draw(200,200,"#FF0000",0,0);
 	myGameArea.start();
 	myGamePiece.update();
@@ -147,7 +150,9 @@ function updateGameArea() {
     }*/
     ///myScore.text="SCORE: " + myGameArea.frameNo;
     //myScore.update();
+	best=Math.max(best,Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2)));
 	myScore.text="SPEED: " + Math.sqrt(Math.pow(myGamePiece.speedX, 2)+Math.pow(myGamePiece.speedY, 2));
+	myScore.text="TOP SPEED: " + best;
     myScore.update();
     myGamePiece.newPos();
     myGamePiece.update();
