@@ -27,17 +27,17 @@ function spawn(width, height, color, x, y) {
         var rockbottom_x = myGameArea.canvas.width - this.width;
         if (this.y > rockbottom_y) {
             this.y = rockbottom_y;
-            this.speedY *= -1;
+    		this.speedY = Math.random()*0.5*(-1)-0.001; 
         }else if(this.y < 0){
         	this.y = 0;
-            this.speedY *= -1;
+            this.speedY = Math.random()*0.5+0.001;
         }
         if (this.x > rockbottom_x) {
             this.x = rockbottom_x;
-            this.speedX *= -1;
+    		this.speedX = Math.random()*0.5*(-1)-0.001;
         }else if(this.x < 0){
         	this.x = 0;
-            this.speedX *= -1;
+            this.speedX = Math.random()*0.5+0.001;
         }
     }
     this.crashWith = function(otherobj) {
