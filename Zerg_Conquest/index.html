@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+
+    <head>
+        <title>Page3</title>
+        <link href="assets/style.css" rel="stylesheet"/>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <script src="scripts/script1.js"></script>
+        <script src="scripts/main.js"></script>
+        <script src="scripts/script2.js"></script>
+        <script src="scripts/drawRect.js"></script>
+        <script src="scripts/drawCircle.js"></script>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    </head>
+
+    <body onload="startGame()" onclick="showCoords(event)" onkeypress="cancelMove(event)">
+        <div class="btn-group" id="DEMO">
+            <tr>
+            <button type="button" onclick="loadDoc4()">Update Data</button>
+            <button type="button" onclick="loadDoc2()">Save Data</button>
+            <button type="button" onclick="loadDoc3()">UnSave Data</button>
+            </tr>
+        </div>
+        <div class="btn-group">
+            <button type="button" onclick="spawnplayer1()">Spawn Allay</button>
+            <button type="button" onclick="spawnplayer2()">Spawn Enemy</button>
+        </div>
+        <table id="demo"></table>
+        <!--p>Use the ACCELERATE button to stay in the air</p>
+        <p>How long can you stay alive?</p-->
+    </body>
+
+</html>
