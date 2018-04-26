@@ -1,3 +1,21 @@
+function rotate(deg,x,y,centerX,centerY){
+    deg*=(Math.PI/180);
+    var cosDeg=Math.cos(deg);
+    var sinDeg=Math.sin(deg);
+    var dis=Math.sqrt(Math.pow((centerX-x),2)+Math.pow((centerY-y),2));
+    var dis2=dis/cosDeg;
+    var dis3=dis2*sinDeg;
+    var deg2=(Math.PI/2)-deg;
+    var cosDeg2=Math.cos(deg2);
+    var sinDeg2=Math.sin(deg2);
+    var dis4=dis*cosDeg;
+    var dis5=dis2*sinDeg;
+    var cords = {
+        x: x+dis5,
+        y: y+dis4
+    }
+    return cords;
+}
 function drawRectShip(color, width, height, x, y, speed) {
     this.group= "neutral";
     this.type="rect";
@@ -13,14 +31,18 @@ function drawRectShip(color, width, height, x, y, speed) {
     this.target = false;
     this.selected = false;
     this.alpha = false;
-    this.update = function() {
+    this.update = function(centerX,centerY) {
         ctx = myGameArea.context;                                   //unlike this. is only used in function and retains its value
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.moveTo(this.x-8,this.y-8);
-        ctx.lineTo(this.x-8,this.y-8+this.height);
-        ctx.lineTo(this.x-8+this.width,this.y-8+this.height);
-        ctx.lineTo(this.x-8+this.width,this.y-8);
+        var temp = rotate(45,this.x-8,this.y-8,centerX,centerY);
+        ctx.moveTo(temp.x,temp.y);
+        var temp = rotate(45,this.x-8,this.y-8+this.height,centerX,centerY);
+        ctx.lineTo(temp.x,temp.y);
+        var temp = rotate(45,this.x-8+this.width,this.y-8+this.height,centerX,centerY);
+        ctx.lineTo(temp.x,temp.y);
+        var temp = rotate(45,this.x-8+this.width,this.y-8,centerX,centerY);
+        ctx.lineTo(temp.x,temp.y);
         ctx.closePath();
         ctx.strokeStyle=color;
         if(this.alpha==true){
