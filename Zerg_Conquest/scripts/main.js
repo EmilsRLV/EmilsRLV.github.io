@@ -66,16 +66,16 @@ function updateGameArea() {
         myGameArea.clear();
         for (i = 0; i < myEnemy.length; i += 1) {
             //myEnemy[i].newPos();
-            myEnemy[i].update();  
+            myEnemy[i].update(myEnemy[i].x+myEnemy[i].width/2,myEnemy[i].y+myEnemy[i].heght/2);  
         }
         for (i = 0; i < myObstruction.length; i += 1) {
             //myEnemy[i].newPos();
-            myObstruction[i].update();  
+            myObstruction[i].update(myObstruction[i].x+myObstruction[i].width/2,myObstruction[i].y+myObstruction[i].heght/2);  
         }
         for (i = 0; i < myGamePiece.length; i += 1) {
             
             myGamePiece[i].newPos();
-            myGamePiece[i].update();  
+            myGamePiece[i].update(myGamePiece[i].x+myGamePiece[i].width/2,myGamePiece[i].y+myGamePiece[i].heght/2);  
         }
     }
 }
