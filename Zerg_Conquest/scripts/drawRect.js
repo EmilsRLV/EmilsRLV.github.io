@@ -8,8 +8,8 @@ function rotate(deg,x,y,centerX,centerY){
     var deg2=(Math.PI/2)-deg;
     var cosDeg2=Math.cos(deg2);
     var sinDeg2=Math.sin(deg2);
-    var dis4=dis*cosDeg;
-    var dis5=dis2*sinDeg;
+    var dis4=dis3*cosDeg2;
+    var dis5=dis3*sinDeg2;
     var cords = {
         x: x+dis5,
         y: y+dis4
