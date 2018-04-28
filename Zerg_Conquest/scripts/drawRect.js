@@ -133,6 +133,16 @@ function drawRectShip(color, width, height, x, y, speed) {
         if(this.direction==0){
             return;
         }
+        this.cornersX[0]+= this.speedX;
+        this.cornersX[1]+= this.speedX;
+        this.cornersX[2]+= this.speedX;
+        this.cornersX[3]+= this.speedX;
+
+
+        this.cornersY[0]+= this.speedY;
+        this.cornersY[1]+= this.speedY;
+        this.cornersY[2]+= this.speedY;
+        this.cornersY[3]+= this.speedY;
         this.y += this.speedY;
         this.x += this.speedX;
         //this.speed*=(1-this.drag);
