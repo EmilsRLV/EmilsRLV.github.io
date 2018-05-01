@@ -67,10 +67,13 @@ function rotate(deg,x,y,centerX,centerY){
         x1*=(-1);
         y2=-(r-u);
         y1*=(-1);
-    }else{
+    }else if(x-centerX>0 && y-centerY<0){
         x2=r-u;
         y1*=(-1);
         y2=-(t+s);
+    }else{
+        x2=x1;
+        y2=y1;
     }
     
 
@@ -103,19 +106,19 @@ function drawRectShip(color, width, height, x, y, speed) {
         ctx = myGameArea.context;                                   //unlike this. is only used in function and retains its value
         ctx.fillStyle = color;
         ctx.beginPath();
-        var temp = rotate(deg,this.cornersX[0],this.cornersY[0],centerX,centerY);
+        var temp = rotate(deg,this.cornersX[0],this.cornersY[0],this.cornersX[0],this.cornersY[0]);
         this.cornersX[0]=temp.x;
         this.cornersY[0]=temp.y;
         ctx.moveTo(this.cornersX[0],this.cornersY[0]);
-        temp = rotate(deg,this.cornersX[1],this.cornersY[1],centerX,centerY);
+        temp = rotate(deg,this.cornersX[1],this.cornersY[1],this.cornersX[0],this.cornersY[0]);
         this.cornersX[1]=temp.x;
         this.cornersY[1]=temp.y;
         ctx.lineTo(this.cornersX[1],this.cornersY[1]);
-        temp = rotate(deg,this.cornersX[2],this.cornersY[2],centerX,centerY);
+        temp = rotate(deg,this.cornersX[2],this.cornersY[2],this.cornersX[0],this.cornersY[0]);
         this.cornersX[2]=temp.x;
         this.cornersY[2]=temp.y;
         ctx.lineTo(this.cornersX[2],this.cornersY[2]);
-        temp = rotate(deg,this.cornersX[3],this.cornersY[3],centerX,centerY);
+        temp = rotate(deg,this.cornersX[3],this.cornersY[3],this.cornersX[0],this.cornersY[0]);
         this.cornersX[3]=temp.x;
         this.cornersY[3]=temp.y;
         ctx.lineTo(this.cornersX[3],this.cornersY[3]);
