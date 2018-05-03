@@ -12,15 +12,92 @@ function pathFinding(object, x, y) {
 }
 
 function loadDoc() {
-  var xhttp = new XMLHttpRequest();
+  /*var xhttp = new XMLHttpRequest();
   xhttp.onreadystatechange = function() {
     if (this.readyState == 4 && this.status == 200) {
       document.getElementById("demo").innerHTML = this.responseText;
     }
   };
   xhttp.open("GET", "ajax_info.txt", true);
-  xhttp.send();
+  xhttp.send();*/
+  for(ji=0;ji<myGamePiece.length;ji++){
+    lD(ji);
+  }
 }
+
+function lD(i){
+  var x = myGamePiece[i].x; 
+  var y = myGamePiece[i].y;
+  var pos = {
+    x: x,
+    y: y,
+    i: i,
+    ti: 0
+  };
+  $.ajax({
+    type:'POST',
+    data:pos,
+    url:'actives.php',
+    success:function(data) {
+      var rez=JSON.parse(data);
+      console.log(rez);
+      myGamePiece[i].x=rez.x; 
+      myGamePiece[i].y=rez.y;
+    }
+  });
+}
+
+function loadDoc1() {
+  for(ji=0;ji<myGamePiece.length;ji++){
+    lD1(ji)
+    
+  }
+}
+
+function lD1(i){
+  var x = myGamePiece[i].x; 
+  var y = myGamePiece[i].y;
+  var pos = {
+    x: x,
+    y: y,
+    i: i+1,
+    ti: 1
+  };
+  $.ajax({
+    type:'POST',
+    data:pos,
+    url:'actives.php',
+    success:function(data) {
+      console.log(data);
+    }
+  });
+}
+
+function loadDoc2() {
+  for(ji=myGamePiece.length;ji<myGamePiece.length+10;ji++){
+    lD2(ji)
+    
+  }
+}
+
+function lD2(i){
+  var x = 0; 
+  var y = 0+i*50;
+  var pos = {
+    x: x,
+    y: y,
+    ti: 2
+  };
+  $.ajax({
+    type:'POST',
+    data:pos,
+    url:'actives.php',
+    success:function(data) {
+      console.log(data);
+    }
+  });
+}
+/*
 function loadDoc4() {
   var xhttp = new XMLHttpRequest();
     xhttp.onreadystatechange = function() {
@@ -79,4 +156,4 @@ function myFunction(xml) {
     "</td></tr>";
   }
   document.getElementById("demo").innerHTML = table;
-}
+}*/

@@ -1,89 +1,17 @@
-function rotate(deg,x,y,centerX,centerY){
-    /*deg%=360;
-    deg*=(Math.PI/180);
-    var x1=x-centerX;
-    var y1=y-centerY;
+function rotate(x,y,centerX,centerY,a){
+        
 
-    var L=Math.sqrt(Math.pow(x1,2)+Math.pow(y1,2));
-    var deg2=Math.atan(Math.abs(y1/x1));
-    if(x1>0 && y1>0){
-        deg2+=(3*Math.PI/2);
-    }else if(x1<0 && y1>0){
-        deg2+=(2*Math.PI/2);
-    }else if(x1<0 && y1<0){
-        deg2+=(Math.PI/2);
-    }
-    var x2=Math.cos((deg+deg2)%(2*Math.PI))*L;
-    var y2=Math.sin((deg+deg2)%(2*Math.PI))*L;
-
-    //var x2=Math.cos(deg)*x1-Math.sin(deg)*y1;
-    //var y2=Math.sin(deg)*x1-Math.cos(deg)*y1;
-    if((deg+deg2)%(2*Math.PI)>(Math.PI/2) && (deg+deg2)%(2*Math.PI)<(3*Math.PI/2)){
-        if(x2>0){
-            x2*=(-1);
-        }
-    }else{
-        if(x2<0){
-            x2*=(-1);
-        }
-    }
-    if((deg+deg2)%(2*Math.PI)<Math.PI){
-        if(y2>0){
-            y2*=(-1);
-        }
-    }else{
-        if(y2<0){
-            y2*=(-1);
-        }
-    }*/
-    deg%=360;
-    deg*=(Math.PI/180);
-    var x1=Math.abs(x-centerX);
-    var y1=Math.abs(y-centerY);
-    if((x-centerX<0 && y-centerY<0) || (x-centerX>0 && y-centerY>0)){
-        var deg2=Math.atan(Math.abs(x1/y1));
-    }else{
-        var deg2=Math.atan(Math.abs(y1/x1));
-    }
-    
-    var L=Math.sqrt(Math.pow(x1,2)+Math.pow(y1,2));
-    var q=L*Math.sin(deg);
-    var p=L*Math.cos(deg);
-    var s=p*Math.sin(deg2);
-    var t=q*Math.cos(deg2);
-    var u=q*Math.sin(deg2);
-    var r=p*Math.cos(deg2);
-    var y2;
-    var x2;
-    if(x-centerX>0 && y-centerY>0){
-        y2=(r-u);
-        x2=(t+s);
-    }else if(x-centerX<0 && y-centerY>0){
-        y2=t+s;
-        x2=-(r-u);
-        x1*=(-1);
-    }else if(x-centerX<0 && y-centerY<0){
-        x2=-(t+s);
-        x1*=(-1);
-        y2=-(r-u);
-        y1*=(-1);
-    }else if(x-centerX>0 && y-centerY<0){
-        x2=r-u;
-        y1*=(-1);
-        y2=-(t+s);
-    }else{
-        x2=x1;
-        y2=y1;
-    }
-    
-
-    var cords = {
-        x: x+(x2-x1),
-        y: y+(y2-y1)
-    }
-    return cords;
-}
-function drawRectShip(color, width, height, x, y, speed) {
+      var x1=x-centerX; 
+      var y1=y-centerY;
+      var x2=x1*a[0][0]+y1*a[0][1];
+      var y2=x1*a[1][0]+y1*a[1][1];
+      var cords = {
+          x: x+(x2-x1),
+          y: y+(y2-y1)
+      }
+      return cords;
+  }
+function drawRectShip(color, width, height, x, y, speed,centerX,centerY) {
     this.group= "neutral";
     this.type="rect";
     this.speedX = 0;
@@ -95,30 +23,73 @@ function drawRectShip(color, width, height, x, y, speed) {
     this.y = y-8;
     this.width = width;
     this.height = height;
+    
+    var centerX=centerX;
+    var centerY=centerY;
+
+
+    this.corner1 = [
+        [this.x-centerX], 
+        [this.y-centerY],
+    ];
+    this.corner3 = [
+        [this.x+this.width-centerX],
+        [this.y+this.height-centerY],
+    ];
+    this.corner2 = [
+        [this.x-centerX], 
+        [this.y+this.height-centerY],
+    ];
+    this.corner4 = [
+        [this.x+this.width-centerX], 
+        [this.y-centerY],
+    ];
+
+
     this.cornersX = [this.x,this.x,this.x+this.width,this.x+this.width];
     this.cornersY = [this.y,this.y+this.height,this.y+this.height,this.y];
     this.target = false;
     this.selected = false;
     this.alpha = false;
-    this.rotate = 0;
-    this.update = function(centerX,centerY) {
-        var deg=1;
+    this.rotate = 1;
+
+    this.rotation = [
+        [Math.cos((this.rotate%360)*(Math.PI/180)), -Math.sin((this.rotate%360)*(Math.PI/180))],
+        [Math.sin((this.rotate%360)*(Math.PI/180)), Math.cos((this.rotate%360)*(Math.PI/180))]
+    ];
+
+
+    this.update = function() {
         ctx = myGameArea.context;                                   //unlike this. is only used in function and retains its value
         ctx.fillStyle = color;
         ctx.beginPath();
-        var temp = rotate(deg,this.cornersX[0],this.cornersY[0],this.cornersX[0],this.cornersY[0]);
+        var deg=this.rotate;
+        var temp = rotate(this.cornersX[0],this.cornersY[0],centerX,centerY,this.rotation);
         this.cornersX[0]=temp.x;
         this.cornersY[0]=temp.y;
         ctx.moveTo(this.cornersX[0],this.cornersY[0]);
-        temp = rotate(deg,this.cornersX[1],this.cornersY[1],this.cornersX[0],this.cornersY[0]);
+       /* this.corner1=multiplyMatrices(this.corner1,this.rotation);
+        ctx.moveTo(this.corner1[0][0]+centerX,this.corner1[1][0]+centerY);
+
+        this.corner2=multiplyMatrices(this.corner2,this.rotation);
+        ctx.lineTo(this.corner2[0][0]+centerX,this.corner2[1][0]+centerY);
+
+        this.corner3=multiplyMatrices(this.corner3,this.rotation);
+        ctx.lineTo(this.corner3[0][0]+centerX,this.corner3[1][0]+centerY);
+
+        this.corner4=multiplyMatrices(this.corner4,this.rotation);
+        ctx.lineTo(this.corner4[0][0]+centerX,this.corner4[1][0]+centerY);
+        
+
+        */temp = rotate(this.cornersX[1],this.cornersY[1],centerX,centerY,this.rotation);
         this.cornersX[1]=temp.x;
         this.cornersY[1]=temp.y;
         ctx.lineTo(this.cornersX[1],this.cornersY[1]);
-        temp = rotate(deg,this.cornersX[2],this.cornersY[2],this.cornersX[0],this.cornersY[0]);
+        temp = rotate(this.cornersX[2],this.cornersY[2],centerX,centerY,this.rotation);
         this.cornersX[2]=temp.x;
         this.cornersY[2]=temp.y;
         ctx.lineTo(this.cornersX[2],this.cornersY[2]);
-        temp = rotate(deg,this.cornersX[3],this.cornersY[3],this.cornersX[0],this.cornersY[0]);
+        temp = rotate(this.cornersX[3],this.cornersY[3],centerX,centerY,this.rotation);
         this.cornersX[3]=temp.x;
         this.cornersY[3]=temp.y;
         ctx.lineTo(this.cornersX[3],this.cornersY[3]);
@@ -148,6 +119,17 @@ function drawRectShip(color, width, height, x, y, speed) {
         this.cornersY[3]+= this.speedY;
         this.y += this.speedY;
         this.x += this.speedX;
+
+        centerX+= this.speedX;
+        centerY+= this.speedY;
+        /*this.corner1[0][0]+=this.speedX;
+        this.corner1[1][0]+=this.speedY;
+        this.corner2[0][0]+=this.speedX;
+        this.corner2[1][0]+=this.speedY;
+        this.corner3[0][0]+=this.speedX;
+        this.corner3[1][0]+=this.speedY;
+        this.corner4[0][0]+=this.speedX;
+        this.corner4[1][0]+=this.speedY;*/
         //this.speed*=(1-this.drag);
         //this.hitBottom();
     }

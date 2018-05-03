@@ -11,15 +11,6 @@ function startGame() {
     myObstruction.push(new drawCircle("#F00000",40,x,y,0));
     myObstruction[0].group="unbreakable";
     //mapTiles[y][x]=1;
-    for(i = 0; i < 1; i++){
-    	myGamePiece.push(new drawRectShip("#FF0000",40,40,0,0+i*50,10));
-    	myGamePiece[i].group="player1";
-    	
-    	x=Math.random()*(myGameArea.canvas.width-40);
-    	y=Math.random()*(myGameArea.canvas.height-40);
-    	myEnemy.push(new drawRectShip("#FFFF00",40,40, x, y,0));
-    	myEnemy[i].group="player2";
-    }
 }
 
 
@@ -66,16 +57,16 @@ function updateGameArea() {
         myGameArea.clear();
         for (i = 0; i < myEnemy.length; i += 1) {
             //myEnemy[i].newPos();
-            myEnemy[i].update(myEnemy[i].x+myEnemy[i].width/2,myEnemy[i].y+myEnemy[i].height/2);  
+            myEnemy[i].update();  
         }
         for (i = 0; i < myObstruction.length; i += 1) {
             //myEnemy[i].newPos();
-            myObstruction[i].update(myObstruction[i].x+myObstruction[i].width/2,myObstruction[i].y+myObstruction[i].height/2);  
+            myObstruction[i].update();  
         }
         for (i = 0; i < myGamePiece.length; i += 1) {
             
             myGamePiece[i].newPos();
-            myGamePiece[i].update(myGamePiece[i].x+myGamePiece[i].width/2,myGamePiece[i].y+myGamePiece[i].height/2);  
+            myGamePiece[i].update();  
         }
     }
 }
@@ -88,13 +79,7 @@ function showCoords(event) {
         return;
     }
     for (i = 0; i < myGamePiece.length; i += 1) {
-        if(myGamePiece[i].x<x && myGamePiece[i].x+myGamePiece[i].width>x && myGamePiece[i].y<y && myGamePiece[i].y+myGamePiece[i].height>y){
-            if(myGamePiece[i].selected==false){
-                myGamePiece[i].selected=true;    
-            }else{
-                myGamePiece[i].selected=false;
-                myGamePiece[i].alpha=false;
-            }
+        if(myGamePiece[i].onIt(x,y)==true){
             return;
         }
     }
@@ -124,8 +109,8 @@ function cancelMove(event) {
     		myGamePiece[i].speedX=0;
             myGamePiece[i].speedY=0;
             myGamePiece[i].target=false;
-            myGamePiece[i].selected=false;
-            myGamePiece[i].alpha=false;
+            myGamePiece[i].rotate();
+            //myGamePiece[i].selected=false;
     	}
         
     }else if(x==112){
@@ -135,18 +120,23 @@ function cancelMove(event) {
             pause=false;
         }
         
+    }else if(x==117){
+        for (i = 0; i < myGamePiece.length; i += 1) {
+            myGamePiece[i].unSelect();
+        }
     }
     //myGamePiece.newPos(); update somewhere else
 }
 
 function spawnplayer1(){
-    myGamePiece.push(new drawRectShip("#FF0000",40,40,0,0+i*50,10));
-    myGamePiece[i].group="player1";
+    myGamePiece.push(new spawnCorvet(100,100));
+    //myGamePiece.push(new drawRectShip("#FF0000",40,40,0,0+i*50,10));
+    myGamePiece[myGamePiece.length-1].group="player1";
 }
 function spawnplayer2(){
         
     x=Math.random()*(myGameArea.canvas.width-40);
     y=Math.random()*(myGameArea.canvas.height-40);
-    myEnemy.push(new drawRectShip("#FFFF00",40,40, x, y,0));
-    myEnemy[i].group="player2";
+    myEnemy.push(new drawRectShip("#FFFF00",40,40, x, y,0,x+12,y+12));
+    myEnemy[myEnemy.length-1].group="player2";
 }
