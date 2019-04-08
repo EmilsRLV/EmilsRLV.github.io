@@ -1,0 +1,151 @@
+<!doctype html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=yes">
+        <!-- Bootstrap CSS -->
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.2/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">  
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="css/basic.css">
+        <title>Japāna</title>
+    </head>
+    <body>
+        <div id="app">
+            <div v-cloak class="w-100 h-100">
+                <div class="v-cloak--flex" style="height: 100vh; width: 100%;">
+                    <div class="sk-circle align-self-center">
+                        <div class="sk-circle1 sk-child"></div>
+                        <div class="sk-circle2 sk-child"></div>
+                        <div class="sk-circle3 sk-child"></div>
+                        <div class="sk-circle4 sk-child"></div>
+                        <div class="sk-circle5 sk-child"></div>
+                        <div class="sk-circle6 sk-child"></div>
+                        <div class="sk-circle7 sk-child"></div>
+                        <div class="sk-circle8 sk-child"></div>
+                        <div class="sk-circle9 sk-child"></div>
+                        <div class="sk-circle10 sk-child"></div>
+                        <div class="sk-circle11 sk-child"></div>
+                        <div class="sk-circle12 sk-child"></div>
+                    </div>
+                </div>
+                <div class="v-cloak--hidden w-100 h-100">
+                    <div id="demo" class="carousel slide w-100 h-100" data-interval="false" data-ride="carousel">
+
+                        <!-- Indicators -->
+                        
+                        <!-- The slideshow -->
+                        <div class="carousel-inner bg-dark">
+                            <div class="carousel-item justify-content-center active">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo1" class="my-photo position-absolute align-self-center" :style="'width: '+imgW[1]+'; height: '+imgH[1]+';'" src="assets/japan.jpg">
+                                    <div class="d-flex flex-wrap justify-content-center w-100 h-100">
+                                        <h1 style="color: #fff;text-align: center;width: 700px; height: 120px;min-width: 60%;" class="align-self-center mx-auto">{{pageText[0][peoples]}}</h1>       
+                                        <div v-if="peoples<2" class="progress mx-auto overflow-hidden" style="width: 800px;height:30px">
+                                            <div @mouseover="peoples=1" @mouseleave="peoples=0" class="progress-bar" style="width:98.5%"></div>
+                                            <div @mouseover="peoples=2" class="progress-bar bg-warning" style="width:1.5%;"></div>
+                                        </div>                           
+                                        <div v-if="peoples>=2" class="progress mx-auto overflow-hidden" style="width: 800px;min-width: 50%;height:30px">
+                                            <div @mouseover="peoples=3" @mouseleave="peoples=2" class="progress-bar bg-danger" style="width:33.3%"></div>
+                                            <div @mouseover="peoples=4" @mouseleave="peoples=2" class="progress-bar bg-warning" style="width:26.7%;"></div>
+                                            <div @mouseover="peoples=5" @mouseleave="peoples=2" class="progress-bar bg-success" style="width:41%;"></div>
+                                        </div>                           
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo2" class="my-photo position-absolute align-self-center" src="assets/writing.jpg" :style="'width: '+imgW[2]+'; height: '+imgH[2]+';'">
+                                    <div class="circle position-absolute">
+                                        <div class="position-relative text">
+                                            <h2 style="width: 600px;height: auto;">KANJI(学校), HIRAGANA(がっこう), KATAKATANA(スクール)</h2>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex justify-content-center position-absolute h-auto" style="top: 0; left: 0;">
+                                        <h1 style="color: #fff;text-align: center;" class="align-self-center">VALODAS UN RAKSTĪBAS KULTŪRA</h1>                                    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item position-relative justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <iframe src="http://i.imgur.com/rzv85dn.png" style="width: 100vw;height: 95vh;"></iframe>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo4" class=" position-absolute align-self-center" src="assets/temple3.JPG" :style="'width: '+imgW[4]+'; height: '+imgH[4]+';'">
+                                    <div style="z-index: 3;cursor: pointer;left: calc(50% - 10px);right: calc(50% - 10px);top: calc(100% - 20px);bottom: 0;border-radius: 10px;background-color: rgb(0, 100, 200)" @click="pictures=!pictures" class="position-absolute">
+                                    </div>
+                                    <div v-if="pictures==true" style="top: 0;z-index: 2;" class="d-flex flex-wrap justify-content-between position-absolute w-100 h-100" >
+                                        <img src="assets/monk.jpg" class="h-50 w-auto" alt="Monk">
+                                        <img src="assets/temple.jpg" class="h-50 w-auto" alt="Temple">
+                                        <img src="assets/buda.jpg" class="h-50 w-auto" alt="Buda Statue">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo4" class=" position-absolute align-self-center" src="assets/shrine.jpg" :style="'width: '+imgW[5]+'; height: '+imgH[5]+';'">
+                                    <div style="z-index: 3;cursor: pointer;left: calc(50% - 10px);right: calc(50% - 10px);top: calc(100% - 20px);bottom: 0;border-radius: 10px;background-color: rgb(0, 100, 200)" @click="pictures=!pictures" class="position-absolute">
+                                    </div>
+                                    <div v-if="pictures==true" style="top: 0;z-index: 2;" class="d-flex flex-wrap justify-content-between position-absolute w-100 h-100" >
+                                        <img src="assets/temple.jpg" class="h-50 w-auto" alt="Temple">
+                                        <img src="assets/miko.jpg" class="h-50 w-auto" alt="Miko">
+                                        <img src="assets/takemizuchi.jpg" class="h-50 w-auto" alt="Tori">
+                                        <img src="assets/tori.jpg" class="h-50 w-auto" alt="Tori">
+                                        <img src="assets/coincat.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100" @click="videoOn=true">
+                                    <img ref="photo4" class="my-photo position-absolute align-self-center" src="assets/buto.jpg" style="cursor: pointer;" :style="'width: '+imgW[6]+'; height: '+imgH[6]+';'">
+                                    <div class="d-flex flex-wrap justify-content-round"  v-if="videoOn">
+                                        <video class="align-self-center" width="480" height="360" controls>
+                                            <source src="assets/buto.mp4" type="video/mp4">
+                                        </video>
+                                        <video class="align-self-center" width="640" height="360" controls>
+                                            <source src="assets/buto2.mp4" type="video/mp4">
+                                        </video>
+                                        <img src="assets/buto2.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                        <img src="assets/buto3.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/sumo2.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[7]+'; height: '+imgH[7]+';'">
+                                    <div class="d-flex justify-content-center w-100 h-100">
+                                        <h1 style="color: #fff;text-align: center;" class="align-self-center">SUMO</h1>                                    
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/karate.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[8]+'; height: '+imgH[8]+';'">
+                                    <div class="d-flex justify-content-center w-100 h-100">
+                                        <h1 style="color: #fff;text-align: center;" class="align-self-center">KARATE</h1>                                    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Left and right controls -->
+                        <a class="carousel-control-prev" @click="videoOn=false;pictures=false" href="#demo" data-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </a>
+                        <a class="carousel-control-next" @click="videoOn=false;pictures=false" href="#demo" data-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script language="javascript" type="text/javascript" src="js/app.js"></script>
+</html>
