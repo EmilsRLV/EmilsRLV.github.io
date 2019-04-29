@@ -30,6 +30,10 @@
                     </div>
                 </div>
                 <div class="v-cloak--hidden w-100 h-100">
+                    <video v-if="type=='VIDEO' && src!==null" class="trans" @click="resize" style="position: absolute;top: 0;z-index: 6;left: auto;right: auto;width: 100vw;height: 100vh;" controls>
+                        <source :src="src" type="video/mp4">
+                    </video>
+                    <img v-else-if="src!==null" @click="resize" :src="src" class="trans" style="background: #fff;position: absolute;top: auto;bottom: auto;z-index: 6;left: auto;right: auto;width: auto;height: 90vh;"></img>
                     <div id="demo" class="carousel slide w-100 h-100" data-interval="false" data-ride="carousel">
 
                         <!-- Indicators -->
@@ -37,6 +41,237 @@
                         <!-- The slideshow -->
                         <div class="carousel-inner bg-dark">
                             <div class="carousel-item justify-content-center active">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/city2.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[12]+'; height: '+imgH[12]+';'">
+                                    <div class="justify-content-center d-flex flex-wrap w-100 h-50">
+                                        <h1 style="color: #fff;text-align: center;" @click="resize({src:'assets/shogun.jpg'})" class="align-self-center mx-auto">SHŌGUN</h1>
+                                        <h1 style="color: #fff;text-align: center;" @click="resize({src:'assets/emporor.jpg'})" class="align-self-center mx-auto">IMPERĀTORS</h1>
+                                        <h1 style="color: #fff;text-align: center;" @click="resize({src:'assets/minister.jpg'})" class="align-self-center mx-auto">PREMJERMINISTRS</h1>
+                                    </div>
+                                    <div class="justify-content-center d-flex flex-wrap w-100 h-50">                         
+                                        <img @click="resize" src="assets/flag1.svg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/crest1.png" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/flag2.svg" class="h-50 w-auto" alt="Karate2">
+                                        <img @click="resize" src="assets/crest2.png" class="h-50 w-auto" alt="Karate2">  
+                                        <img @click="resize" src="assets/crest3.png" class="h-50 w-auto" alt="Karate2">  
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo4" class="my-photo position-absolute align-self-center" src="assets/city.jpg" :style="'width: '+imgW[13]+'; height: '+imgH[13]+';'">
+                                    <div v-if="videoOn==0" class="d-flex justify-content-center w-100 h-100">
+                                        <h1 style="color: #fff;text-align: center;cursor: pointer;" @click="videoOn=1" class="align-self-center">BĒRNI</h1>                                    
+                                    </div>
+                                    <video v-else-if="videoOn==1" class="align-self-center" width="1280" height="720" autoplay>
+                                        <source src="assets/kid.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <div style="overflow-y: scroll;height: calc(100% - 20px);">
+                                        <table class="align-self-center mx-auto" style="color: #fff;text-align:center" >
+                                            <tbody>
+                                                <tr>
+                                                    <th>Vecums</th>
+                                                    <th>Klase</th>
+                                                    <th colspan="6">Mācību iestāde</th>
+                                                </tr>
+                                                <tr>
+                                                    <td>6–7</td>
+                                                    <td>1</td>
+                                                    <td rowspan="6" colspan="5">
+                                                        <p>Sākumskola</p>
+                                                        <b>Obligāta</b>
+                                                    </td>
+                                                    <td rowspan="14" style="width:5%;">
+                                                        <p>Īpašām vajadzībām</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>7–8</td>
+                                                    <td>2</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>8–9</td>
+                                                    <td>3</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>9–10</td>
+                                                    <td>4</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>10–11</td>
+                                                    <td>5</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>11–12</td>
+                                                    <td>6</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>12–13</td>
+                                                    <td>1 (7)
+                                                </td>
+                                                    <td rowspan="3" colspan="5">
+                                                        <p>Pamatskola</p>
+                                                        <b>Obligāta</b>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>13–14</td>
+                                                    <td>2 (8)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>14–15</td>
+                                                    <td>3 (9)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>15–16</td>
+                                                    <td>1 (10)</td>
+                                                    <td rowspan="3" colspan="4">
+                                                        <p>Vidusskola</p>
+                                                    </td>
+                                                    <td rowspan="5" style="width:8%;">
+                                                        <p>Tehnoloģiju koledža</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>16–17</td>
+                                                    <td>2 (11)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>17–18</td>
+                                                    <td>3 (12)</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>18–19</td>
+                                                    <td rowspan="2">Studenti</td>
+                                                    <td rowspan="4">
+                                                        <p>Universitāte, Bakalaura grāds</p>
+                                                    </td>
+                                                    <td rowspan="4" style="width:15%;">
+                                                        <p>Nacionlā akadēmija</p>
+                                                    </td>
+                                                    <td rowspan="6" style="width:18%;">
+                                                        <p>Medskola</p>
+                                                        <p>Veternārskola</p>
+                                                        <p>Zobārstniecības skola</p>
+                                                        <p>Farmācijas skola</p>
+                                                        <p>Nacionālās aizsardzības medicīnas skola</p>
+                                                    </td>
+                                                    <td rowspan="2" style="width:13%;">
+                                                        <p>Sabiedrības koledža</p>
+                                                        <p>Profesionālā skola</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>19–20</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>20–21</td>
+                                                    <td rowspan="2">Bakalauri</td>
+                                                    <td rowspan="8" colspan="2"></td>
+                                                </tr>
+                                                <tr>
+                                                    <td>21–22</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>22–23</td>
+                                                    <td rowspan="2">Maģistri</td>
+                                                    <td rowspan="2">
+                                                        <p>Universitāte, maģistrantūra</p>
+                                                    </td>
+                                                    <td rowspan="2">Nacionālā akadēmija, maģistrantūra</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>23–24</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>24–25</td>
+                                                    <td rowspan="3">Ph.D.</td>
+                                                    <td rowspan="3">
+                                                        <p>Universitāte, Ph.D.</p>
+                                                    </td>
+                                                    <td rowspan="3">
+                                                        <p>Nacionālās aizsardzības akadēmija, Ph.D.</p>
+                                                    </td>
+                                                    <td rowspan="4">
+                                                        <p>Medskola, Ph.D.</p>
+                                                        <p>Veternārskola, Ph.D.</p>
+                                                        <p>Zobārsniecības skola, Ph.D.</p>
+                                                        <p>Farmācijas skola, Ph.D.</p>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td>25–26</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>26–27</td>
+                                                </tr>
+                                                <tr>
+                                                    <td>27–</td>
+                                                    <td>Ph.D.</td>
+                                                    <td colspan="2"></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/school.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[14]+'; height: '+imgH[14]+';'">
+                                    <div class="d-flex flex-wrap justify-content-center w-100 h-100">                                    
+                                        <img @click="resize" src="assets/school1.jpg" class="h-45 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/school2.jpg" class="h-45 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/school3.jpg" class="h-45 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/school4.jpg" class="h-45 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/school6.jpg" class="h-45 w-auto" alt="Karate2">                               
+                                        <img @click="resize" src="assets/school5.jpg" class="h-45 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/school7.jpg" class="h-45 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/school8.JPG" class="h-45 w-auto" alt="Karate2">     
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/eticit.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[15]+'; height: '+imgH[15]+';'">
+                                    <div class="d-flex flex-wrap justify-content-center w-100 h-100">                                    
+                                        <img @click="resize" src="assets/eticit1.jpg" class="h-30 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/eticit2.jpg" class="h-30 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/eticit3.jpeg" class="h-30 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/eticit4.jpg" class="h-30 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/eticit5.jpg" class="h-30 w-auto" alt="Karate2">                               
+                                        <img @click="resize" src="assets/eticit5.png" class="h-30 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/eticit4.jpeg" class="h-30 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/eticit6.jpg" class="h-30 w-auto" alt="Karate2">                                     
+                                        <img @click="resize" src="assets/eticit7.jpg" class="h-30 w-auto" alt="Karate2">                                     
+                                        <img @click="resize" src="assets/eticit8.jpg" class="h-30 w-auto" alt="Karate2">                                      
+                                        <img @click="resize" src="assets/eticit9.jpg" class="h-30 w-auto" alt="Karate2">                                      
+                                        <img @click="resize" src="assets/eticit10.jpg" class="h-30 w-auto" alt="Karate2">     
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100" style="overflow: scroll;">
+                                    <img v-if="videoOn<2" ref="photo4" class="bg-white position-absolute" src="assets/dialect.png" @click="videoOn=2" style="width: 1905px; height: auto;">
+                                    <video v-else-if="videoOn==2" class="align-self-center" width="1280" height="720" autoplay>
+                                        <source src="assets/dialect.mp4" type="video/mp4">
+                                    </video>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/architect.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[16]+'; height: '+imgH[16]+';'">
+                                    <div class="d-flex flex-wrap justify-content-center w-100 h-100">                                    
+                                        <img @click="resize" src="assets/architect1.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/arc.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/architect2.jpg" class="h-50 w-auto" alt="Karate2">  
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
                                 <div class="position-relative justify-content-center d-flex w-100 h-100">
                                     <img ref="photo1" class="my-photo position-absolute align-self-center" :style="'width: '+imgW[1]+'; height: '+imgH[1]+';'" src="assets/japan.jpg">
                                     <div class="d-flex flex-wrap justify-content-center w-100 h-100">
@@ -61,9 +296,27 @@
                                             <h2 style="width: 600px;height: auto;">KANJI(学校), HIRAGANA(がっこう), KATAKATANA(スクール)</h2>
                                         </div>
                                     </div>
+                                    <div class="circle2 position-absolute">
+                                        <img class="position-relative text" src="assets/caligraphy.jpg">
+                                    </div>
                                     <div class="d-flex justify-content-center position-absolute h-auto" style="top: 0; left: 0;">
                                         <h1 style="color: #fff;text-align: center;" class="align-self-center">VALODAS UN RAKSTĪBAS KULTŪRA</h1>                                    
                                     </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/kimono.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[11]+'; height: '+imgH[11]+';'">
+                                    <h1 v-if="videoOn2<3" style="color: #fff;text-align: center;" @click="videoOn2=3" class="align-self-center mx-auto">KIMONO</h1>
+                                    <div v-else-if="videoOn==3" class="d-flex flex-wrap justify-content-center w-100 h-100">                                    
+                                        <img @click="resize" src="assets/kimono2.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/kimono3.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/kimono4.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/kimono5.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/sandels.jpg" class="h-50 w-auto" alt="Karate2">                               
+                                        <img @click="resize" src="assets/kimono6.jpg" class="h-50 w-auto" alt="Karate2">                                    
+                                        <img @click="resize" src="assets/kimono7.jpg" class="h-50 w-auto" alt="Karate2">     
+                                    </div> 
                                 </div>
                             </div>
                             <div class="carousel-item position-relative justify-content-center">
@@ -77,9 +330,9 @@
                                     <div style="z-index: 3;cursor: pointer;left: calc(50% - 10px);right: calc(50% - 10px);top: calc(100% - 20px);bottom: 0;border-radius: 10px;background-color: rgb(0, 100, 200)" @click="pictures=!pictures" class="position-absolute">
                                     </div>
                                     <div v-if="pictures==true" style="top: 0;z-index: 2;" class="d-flex flex-wrap justify-content-between position-absolute w-100 h-100" >
-                                        <img src="assets/monk.jpg" class="h-50 w-auto" alt="Monk">
-                                        <img src="assets/temple.jpg" class="h-50 w-auto" alt="Temple">
-                                        <img src="assets/buda.jpg" class="h-50 w-auto" alt="Buda Statue">
+                                        <img @click="resize" src="assets/monk.jpg" class="h-50 w-auto" alt="Monk">
+                                        <img @click="resize" src="assets/temple.jpg" class="h-50 w-auto" alt="Temple">
+                                        <img @click="resize" src="assets/buda.jpg" class="h-50 w-auto" alt="Buda Statue">
                                     </div>
                                 </div>
                             </div>
@@ -89,52 +342,92 @@
                                     <div style="z-index: 3;cursor: pointer;left: calc(50% - 10px);right: calc(50% - 10px);top: calc(100% - 20px);bottom: 0;border-radius: 10px;background-color: rgb(0, 100, 200)" @click="pictures=!pictures" class="position-absolute">
                                     </div>
                                     <div v-if="pictures==true" style="top: 0;z-index: 2;" class="d-flex flex-wrap justify-content-between position-absolute w-100 h-100" >
-                                        <img src="assets/temple.jpg" class="h-50 w-auto" alt="Temple">
-                                        <img src="assets/miko.jpg" class="h-50 w-auto" alt="Miko">
-                                        <img src="assets/takemizuchi.jpg" class="h-50 w-auto" alt="Tori">
-                                        <img src="assets/tori.jpg" class="h-50 w-auto" alt="Tori">
-                                        <img src="assets/coincat.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                        <img @click="resize" src="assets/temple.jpg" class="h-50 w-auto" alt="Temple">
+                                        <img @click="resize" src="assets/miko.jpg" class="h-50 w-auto" alt="Miko">
+                                        <img @click="resize" src="assets/takemizuchi.jpg" class="h-50 w-auto" alt="Tori">
+                                        <img @click="resize" src="assets/tori.jpg" class="h-50 w-auto" alt="Tori">
+                                        <img @click="resize" src="assets/coincat.jpg" class="h-50 w-auto" alt="Coin Cat">
                                     </div>
                                 </div>
                             </div>
                             <div class="carousel-item justify-content-center">
-                                <div class="position-relative justify-content-center d-flex w-100 h-100" @click="videoOn=true">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
                                     <img ref="photo4" class="my-photo position-absolute align-self-center" src="assets/buto.jpg" style="cursor: pointer;" :style="'width: '+imgW[6]+'; height: '+imgH[6]+';'">
-                                    <div class="d-flex flex-wrap justify-content-round"  v-if="videoOn">
-                                        <video class="align-self-center" width="480" height="360" controls>
+                                    <h1 v-if="videoOn<4" style="color: #fff;text-align: center;" class="align-self-center"  @click="videoOn=4">KABUKI</h1>
+                                    <div class="d-flex flex-wrap justify-content-around w-100 h-100"  v-if="videoOn==4">
+                                        <video @click="resize" class="align-self-center" width="480" height="360">
                                             <source src="assets/buto.mp4" type="video/mp4">
                                         </video>
-                                        <video class="align-self-center" width="640" height="360" controls>
+                                        <img @click="resize" src="assets/kabuki2.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                        <img @click="resize" src="assets/kabuki.jpeg" class="h-50 w-auto" alt="Coin Cat">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex w-100 h-100">
+                                    <img ref="photo4" class="my-photo position-absolute align-self-center" src="assets/kabuki.jpg" style="cursor: pointer;" :style="'width: '+imgW[9]+'; height: '+imgH[9]+';'">
+                                    <h1  v-if="videoOn<5" style="color: #fff;text-align: center;" class="align-self-center"  @click="videoOn=5">BUTO DEJA</h1>
+                                    <div class="d-flex flex-wrap justify-content-around"  v-if="videoOn==5">
+                                        <video @click="resize" class="align-self-center" width="640" height="360">
                                             <source src="assets/buto2.mp4" type="video/mp4">
                                         </video>
-                                        <img src="assets/buto2.jpg" class="h-50 w-auto" alt="Coin Cat">
-                                        <img src="assets/buto3.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                        <img @click="resize" src="assets/buto2.jpg" class="h-50 w-auto" alt="Coin Cat">
+                                        <img @click="resize" src="assets/buto3.jpg" class="h-50 w-auto" alt="Coin Cat">
                                     </div>
                                 </div>
                             </div>
                             <div class="carousel-item justify-content-center">
                                 <div class="position-relative justify-content-center d-flex w-100 h-100">
                                     <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/sumo2.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[7]+'; height: '+imgH[7]+';'">
-                                    <div class="d-flex justify-content-center w-100 h-100">
-                                        <h1 style="color: #fff;text-align: center;" class="align-self-center">SUMO</h1>                                    
+                                    <div class="d-flex flex-wrap justify-content-center w-100 h-100">
+                                        <h1 style="color: #fff;text-align: center;" class="align-self-center">SUMO, JUDO</h1>
+                                        <div class="d-flex flex-wrap justify-content-around w-100 h-100">
+                                            <img @click="resize" src="assets/sumo.jpg" class="h-50 w-auto" alt="Sumo">
+                                            <img @click="resize" src="assets/sumo3.jpg" class="h-50 w-auto" alt="Sumo3">
+                                            <img @click="resize" src="assets/judo.jpg" class="h-50 w-auto" alt="Putin">
+                                        </div>                                    
                                     </div>
                                 </div>
                             </div>
                             <div class="carousel-item justify-content-center">
                                 <div class="position-relative justify-content-center d-flex w-100 h-100">
                                     <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/karate.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[8]+'; height: '+imgH[8]+';'">
-                                    <div class="d-flex justify-content-center w-100 h-100">
-                                        <h1 style="color: #fff;text-align: center;" class="align-self-center">KARATE</h1>                                    
-                                    </div>
+                                    <h1 style="color: #fff;text-align: center;" class="align-self-center">KARATE</h1>
+                                    <div class="d-flex flex-wrap justify-content-center w-100 h-100">                                    
+                                        <img @click="resize" src="assets/karate2.jpg" class="h-50 w-auto" alt="Karate2">
+                                        <img @click="resize" src="assets/karate3.jpg" class="h-50 w-auto" alt="Karate3">
+                                        <img @click="resize" src="assets/kyokushin.png" class="h-50 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/shotokan.png" class="h-50 w-auto" alt="Putin">
+                                    </div> 
+                                </div>
+                            </div>
+                            <div class="carousel-item justify-content-center">
+                                <div class="position-relative justify-content-center d-flex flex-wrap w-100 h-100">
+                                    <img ref="photo5" class="my-photo position-absolute align-self-center" src="assets/food.jpg" style="filter: grayscale(80%) blur(1px);" :style="'width: '+imgW[10]+'; height: '+imgH[10]+';'">
+                                    <h1 v-if="videoOn<6" style="color: #fff;text-align: center;" @click="videoOn=6" class="align-self-center mx-auto">ĒDIENI</h1>
+                                    <div v-else-if="videoOn==6" class="d-flex flex-wrap justify-content-center w-100 h-100">                                    
+                                        <img @click="resize" src="assets/bento.jpg" class="h-33 w-auto" alt="Karate2">
+                                        <img @click="resize" src="assets/rice.jpg" class="h-33 w-auto" alt="Karate3">
+                                        <img @click="resize" src="assets/sushi2.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/udon.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/taiyaki.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/squid.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/ramen.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/tempura.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/rice2.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/okonomiyaki.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/sake2.jpg" class="h-33 w-auto" alt="Putin">
+                                        <img @click="resize" src="assets/yakitori.jpg" class="h-33 w-auto" alt="Putin">
+                                    </div> 
                                 </div>
                             </div>
                         </div>
                         
                         <!-- Left and right controls -->
-                        <a class="carousel-control-prev" @click="videoOn=false;pictures=false" href="#demo" data-slide="prev">
+                        <a class="carousel-control-prev" @click="videoOn=0;pictures=false;resize()" href="#demo" data-slide="prev">
                             <span class="carousel-control-prev-icon"></span>
                         </a>
-                        <a class="carousel-control-next" @click="videoOn=false;pictures=false" href="#demo" data-slide="next">
+                        <a class="carousel-control-next" @click="videoOn=0;pictures=false;resize()" href="#demo" data-slide="next">
                             <span class="carousel-control-next-icon"></span>
                         </a>
                     </div>
